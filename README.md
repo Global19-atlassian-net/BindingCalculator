@@ -3,7 +3,7 @@ SamplePrepCalculator
 
 This folder contains a version of the sample preparation calculator
 used with the PacBio RS and PacBio RS II sequencers. It is used to
-calculate binding and annealing reactions and preparing DNA samples
+calculate binding and annealing reactions and to prepare DNA samples
 for use in these sequencers.
 
 Installation
@@ -14,14 +14,30 @@ file, a RELEASENOTES file describing changes between versions,
 as well as a single-file version of the calculator named
 Calculator.html
 
-Copy the Calculator.html file to a location on your computer
-like your desktop or your documents folder. Then double click
+1. Copy the Calculator.html file to a location on your computer
+like your Desktop, Applications or your Documents folder. 
+2. Then double click
 on that file to launch the calculator in your browser.
+
+Browser Compatibility
+---------------------
+The recommended web browsers to use with the Sample Calculator 
+are Firefox browser and Chrome browser.  Safari browser, including 
+mobile Safari, will also work although we have not tested it as 
+extensively.
+
+Opening Calculator.html in Chrome and Safari will always show the 
+list of old calculations. Opening a new version of Calculator.html 
+in Firefox will show old calculations only if the location of the 
+new version of Calculator.html is placed in the same location as 
+the old version of Calculator.html. If a new location is used, 
+Firefox will show a fresh (blank) list of calculations.
+
 
 Versions
 --------
-This version of the calculator may differ from the version of
-software installed on your PacBio RS or PacBio RS II sequencer.
+This version of the calculator may differ from the version 
+installed on your PacBio RS or PacBio RS II sequencer.
 Make sure that your version of software is compatible with this
 calculator by checking with Pacific Biosciences support.
 

@@ -6,6 +6,9 @@ used with the PacBio RS and PacBio RS II sequencers. It is used to
 calculate binding and annealing reactions and to prepare DNA samples
 for use in these sequencers.
 
+For more information, please refer to the calculator section in the
+Customer Training Slide set posted in the portal.
+
 Installation
 ------------
 To download this version of the sample preparation calculator, 

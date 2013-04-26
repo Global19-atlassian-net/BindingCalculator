@@ -1,0 +1,654 @@
+﻿
+/*	Resets
+	------	*/
+
+.normal, body {
+	font: 12px/18px Helvetica, Arial, sans-serif;
+	font-family: Arial, Sans-Serif;
+	background: rgb(201, 201, 206);
+}
+.small {
+	font-size: 9px;
+	line-height: 14px;
+} 
+
+/*	Layout
+	------	*/
+
+.push2andhalf { left:210px; }
+
+article > div {
+    float: right;
+    width: 372px;
+    margin-left: 24px;
+    margin-bottom: 18px;
+    padding: 24px;
+    background: #FFF;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+} 
+article > aside {
+    float: left;
+    width: 228px;
+    margin-bottom: 18px;
+}
+article > header,
+article > footer {
+    clear: both;
+    float: none;
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.footerlike,
+article > div,
+article > footer > div,
+article > aside > div {
+    background: rgb(243,243,243);
+    padding: 12px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.footerlike 
+{
+    margin-bottom: 18px;
+}
+
+article > div > section
+{
+    margin-left:18px;
+}
+
+/*	Wide screen
+	-----------	*/
+
+@media only screen and (min-width: 1212px) {
+  body {
+    padding: 72px 72px 0;
+    width: 1068px;
+    position: relative;
+  }
+  article > div {
+    width: 768px;
+    /*width: 600px;*/
+    margin-bottom: 18px;
+  }
+  article > aside {
+    width: 228px;
+    /*width: 396px;*/
+  }
+}
+
+/*	Medium screen ( no changes / default )
+	-----------	*/
+
+/*	Narrow screen
+	-----------	*/
+
+@media only screen and (max-width: 767px) and (min-width: 480px) {
+  body {
+    padding: 60px 42px 0;
+    width: 396px;
+    -webkit-text-size-adjust: 100%;
+  }
+  article > div, 
+  article > footer, 
+  article > aside {
+    float: none;
+    clear: none;
+  }
+  article > div 
+  {
+    margin-left: 0px;
+    width: /*348px */ 372px;
+  }
+  article > aside 
+  {
+      margin-bottom: 18px;
+  }
+}
+
+/*	Mobile screen
+	-----------	*/
+
+@media only screen and (max-width: 479px) {
+  body {
+    padding: 48px 46px 0;
+    width: 228px;
+    -webkit-text-size-adjust: 100%;
+    font-size: 13px;
+    line-height: 18px;
+  }
+  article > div {
+    width: 192px;
+    padding: 18px;
+    margin-bottom: 18px;
+    margin-left: 0px;
+  }
+  article > header > h1 {
+    font-size: 26px;
+    line-height: 36px;
+  }
+  article > div > header > h2 {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  article > div, 
+  article > footer, 
+  article > aside {
+    float: none;
+    clear: none;
+  }
+  article > aside 
+  {
+      margin-bottom: 18px;
+  }
+  p, section, aside, ul {
+    margin-top: 18px;
+  }
+}
+
+/*	Tables
+	------	*/
+
+.sample-table
+{
+    padding: 4px;
+}
+
+.sample-table thead
+{
+    background-color: #dddddd;
+}
+
+.sample-table td, th
+{
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+/*
+ * Dashboard style header
+ */
+
+div.banner
+{
+	/* matches the dashboard roughly, though I made it end a little lighter and with a slight blue tinge*/
+    background-image: linear-gradient(to left, #2c2c2c 0%, #8a8a8a 100%);       /* Proposed W3C Markup */
+    background-image: -o-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);       /* Opera */ 
+    background-image: -moz-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);     /* Mozilla Firefox */ 
+    background-image: -webkit-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);  /* Webkit (Chrome 11+) */ 
+    background-image: -ms-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);      /* IE10 */ 
+
+    background-image: -webkit-gradient(
+	    linear,
+	    top left,
+	    top right,
+	    color-stop(0, #2c2c2c),
+	    color-stop(1, #8a8a8a)
+    );                                                                          /* Webkit (Safari/Chrome 10) */ 
+    
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType='1', startColorstr='#ff2c2c2c', endColorstr='#ff8a8a6a');  /*  IE9 */
+
+	padding-top: 3px;
+	padding-bottom: 3px;
+    -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px;
+    -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px;
+}
+
+div.banner 
+{
+    box-shadow: 5px 5px 5px #aaaaaa;
+}
+
+div.banner h3 {
+	padding-left: 1em;
+	color: rgb(245,245,245);
+}
+
+div.belowbanner {
+    background-color: rgb(243,243,243); /* was #D8D6D3; like dash, now matches other panels*/
+    box-shadow: 5px 5px 5px #aaaaaa;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	
+    -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px;
+    -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px;
+}
+
+div.headerversion {
+	float:right;
+	padding-right:1em;
+	/*color:rgb(245,245,245);*/
+	font-style:italic;
+}
+
+div.headernavigation {
+	float:left;
+	margin-right: 2em;
+}
+
+/*
+ * Page specific layouts
+ */
+
+article > aside > div > h4
+{
+    color:rgb(245,245,245);
+	background-color: #7a7a7a7;
+    padding-left:6px;
+    margin-bottom: 0.5em;
+    padding-left: 1em;
+    line-height: 36px;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
+    
+    background-image: linear-gradient(to left, #2c2c2c 0%, #8a8a8a 100%);       /* Proposed W3C Markup */
+    background-image: -o-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);       /* Opera */ 
+    background-image: -moz-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);     /* Mozilla Firefox */ 
+    background-image: -webkit-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);  /* Webkit (Chrome 11+) */ 
+    background-image: -ms-linear-gradient(left, #2c2c2c 0%, #8a8a8a 100%);      /* IE10 */ 
+
+    background-image: -webkit-gradient(
+	    linear,
+	    top left,
+	    top right,
+	    color-stop(0, #2c2c2c),
+	    color-stop(1, #8a8a8a)
+    );                                                                          /* Webkit (Safari/Chrome 10) */ 
+    
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType='1', startColorstr='#ff2c2c2c', endColorstr='#ff8a8a6a');  /*  IE9 */
+}
+
+.worksheet-item
+{
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    margin-right: 1em;
+    line-height: 36px;
+    text-decoration: none;
+    font-weight: bolder;
+    display:block;
+}
+
+.worksheet-item:hover
+{
+    color: rgb(222,119,40); 
+}
+
+.worksheet-selected
+{
+    /* the following inlined image is the selection triange, was titled "Arrow_Table_COLLAPSE.png" */
+    background: rgb(191,224,236) url(data:image/png;base64,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) no-repeat 170px 15px;
+    
+    -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
+    padding-right: 24px; /* to protect arrow from text collision */
+}
+
+.header-belowtabs
+{
+    padding:12px;
+}
+
+.header-belowtabs > div > a
+{
+    color:rgb(245,245,245);
+    font-weight:bold;
+    text-decoration:none
+}
+
+.header-belowtabs > div > a:hover
+{
+    color:rgb(222,119,40);
+}
+
+.header-toolbar
+{
+	background: rgb(104, 125, 140);
+    height:24px;
+    padding-left: 1em;
+    -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
+}
+
+/*
+ * Special sections
+*/
+
+.global_AllowNonStandardReverseCalculations 
+{
+	display: none;	
+}
+.global_ShowChemistryOption 
+{
+	display: none;	
+}
+.global_ShowStrobeOption 
+{
+	display: none;	
+}
+.global_ShowCellOption 
+{
+	display: none;	
+}
+
+/*
+ * Errors
+ */
+
+.global_error 
+{  
+    margin: 1em;
+    padding: 1em;
+    max-width: 400px;
+    font-weight: bolder;
+    color: rgb(222,119,40);
+    border: 1px solid rgb(222,119,40);
+}
+.global_error p
+{
+    margin-bottom: 0em;
+}
+.error_message
+{
+    padding-left: 1em;
+    font-weight: bolder;
+    color: rgb(222,119,40);
+}
+.error_highlight 
+{
+    border: 1px solid rgb(222,119,40);
+}
+.error_color
+{
+    font-weight: bolder;
+    color: rgb(222,119,40);
+}
+.negative_value
+{
+    font-weight: bolder;
+    color: rgb(222,119,40);
+}
+
+.global_aside .global_error {
+	max-width: 240px;
+}
+
+/*
+ * Misc adjustments (TODO: many of these should be cleaned up and incorporated above)
+ */
+
+p { margin-bottom:1em;}
+h4 { margin-top:0.8em; margin-bottom:0.4em;}
+section { margin-bottom: 2em; }
+input { padding-left:0.2em; }
+
+#dilution-table td { padding-left: 0.2em; padding-right:1em; }
+
+#statusMessage 
+{
+    float:left;
+    margin-left:3em;
+    margin-top:10px;
+    color: rgb(16,93,172);
+    font-style:italic;
+    font-size:14px;
+}
+#statusIcon
+{
+    float:left;
+    margin-left:4px;
+    margin-top:7px;
+}
+.status_error {
+	margin-bottom: 1em;
+}
+
+.gray { color: Gray }
+.cc-input { width: 40px; margin-right: 0.2em; }
+.rightalign { text-align: right; }
+.addendum { padding-left: 1em; font-style: italic; } 
+
+@media only screen and (max-width: 479px) 
+{
+    .rightalign { text-align: left; }
+}
+
+/*
+ * List view, modified from SMRTPortal layout
+ */
+
+.ui-widget-content th.ui-state-default { border-width: 0px; border-right: solid 1px rgb(153,153,153); }
+.ui-jqgrid-view .ui-jqgrid-hdiv, .ui-jqgrid-view:active .ui-jqgrid-hdiv { border: none; }
+div.ui-state-default.ui-jqgrid-hdiv { height: 18px; }
+
+.ui-jqgrid tr.ui-row-ltr td
+{
+    height: 44px; 
+    border: none; 
+    border-right: solid 1px rgb(153,153,153); 
+    border-bottom: solid 1px #2c2c2c;
+}
+.ui-th-column, .ui-jqgrid .ui-jqgrid-htable th.ui-th-column, div.ui-state-default.ui-jqgrid-hdiv
+{
+    height: 2.6em; 
+	background-color: #5c5c5c;
+	color: rgb(243,243,243);
+    text-align: left;
+    font-size: 11px;
+
+    -moz-border-radius: 0; -webkit-border-radius: 0;
+    -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px;
+    -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px;
+}
+.ui-th-column:active, .ui-jqgrid .ui-jqgrid-htable th.ui-th-column:active
+{
+	background: rgb(243,243,243);
+}
+
+div.ui-state-default.ui-jqgrid-hdiv:active { background: rgb(243,243,243); }
+.ui-widget-header .ui-closer { border: none; background: none; margin: 2px; }
+.ui-widget-header .ui-closer:hover { border: 2px solid rgb(222,119,40); margin: 0; }
+
+/*.ui-jqgrid-btable  { /*border-bottom: 1px solid rgb(243,243,243); } */
+.ui-jqgrid-bdiv { background: rgb(243,243,243); }
+.ui-jqgrid .loading { background: none; background: rgb(243,243,243); }
+
+.ui-jqgrid-titlebar-close, .jqResize { display:none; }
+.ui-jqgrid .ui-jqgrid-titlebar{ display: none; }
+.ui-jqgrid-title { display:none; }
+
+/************************************************************************************************
+ *
+ * Print view, we manually set the background to white in the view
+ * then these rules help layout the tables and whatnot
+ *
+ */
+
+div#printview div, div#printview span, div#printview object, div#printview iframe, 
+div#printview h1, div#printview h2, div#printview h3, div#printview h4, div#printview h5, div#printview h6, 
+div#printview p, div#printview blockquote, div#printview pre, div#printview a, 
+div#printview abbr, div#printview address, div#printview cite, div#printview code, div#printview del, 
+div#printview dfn, div#printview em, div#printview img, div#printview ins, div#printview kbd, 
+div#printview q, div#printview samp, div#printview small, div#printview strong, div#printview sub, 
+div#printview sup, div#printview var, div#printview b, div#printview i, 
+div#printview dl, div#printview dt, div#printview dd, div#printview ol, 
+div#printview ul, div#printview li, div#printview fieldset, div#printview form, 
+div#printview label, div#printview legend, div#printview table, div#printview caption, 
+div#printview tbody, div#printview tfoot, div#printview thead, div#printview tr, div#printview th, 
+div#printview td, div#printview article, div#printview aside, div#printview canvas, div#printview details, 
+div#printview figure, div#printview figcaption, div#printview hgroup, div#printview menu,
+div#printview footer, div#printview header, div#printview nav, div#printview section, 
+div#printview summary, div#printview time, div#printview mark, div#printview audio, div#printview video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+div#printview .gigantic {
+	font-size: 110px;
+	line-height: 120px;
+	letter-spacing: -2px;
+}
+
+div#printview .huge, div#printview h1 {
+	font-size: 68px;
+	line-height: 72px;
+	letter-spacing: -1px;
+}
+
+div#printview .large, div#printview h2 {
+	font-size: 42px;
+	line-height: 48px;
+}
+
+div#printview .big, div#printview h3 {
+	font-size: 28px;
+	line-height: 40px;
+}
+
+div#printview div#printview h4 {
+	font-size: 22px;
+	line-height: 32px;
+	padding-top: 1em;
+}
+
+div#printview div#printview h5 {
+	font-size: 20px;
+	line-height: 26px;
+	padding-top: 1em;
+}
+
+div#printview .normal, div#printview body {
+	font: 16px/24px Helvetica, Arial, sans-serif;
+}
+
+div#printview .small {
+	font-size: 13px;
+	line-height: 18px;
+} 
+
+
+div#printview .normal, div#printview {
+	font: 16px/24px Helvetica, Arial, sans-serif;
+}
+
+div#printview .small {
+	font-size: 13px;
+	line-height: 18px;
+} 
+
+/*	Resets to less
+	------	*/
+
+div#printview .normal, div#printview {
+	font: 12px/18px Helvetica, Arial, sans-serif;
+	font-family: Arial, Sans-Serif;
+}
+div#printview .small {
+	font-size: 9px;
+	line-height: 14px;
+} 
+
+div#printview h4
+{
+    padding-top:1em;
+}
+    
+div#printview table
+{
+    padding: 1em;
+}
+    
+div#printview table td
+{
+    padding-left: 1em;
+    padding-right: 1em;
+    border-right: 1px solid rgb(51,51,51);
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    vertical-align: top;
+}
+    
+div#printview table .rowheader
+{
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+}
+    
+div#printview table .columnheader
+{
+    background-color: rgb(215, 215, 215);
+}
+    
+div#printview table .columnheader th
+{
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+}
+    
+div#printview .DilutionTable td
+{
+    min-width: 40px;
+}
+    
+div#printview tr.lineabove td
+{
+    border-top: 2px solid rgb(51,51,51);
+}
+
+div#printview .lightgray
+{
+    background-color: rgb(245, 245, 245);
+}
+    
+div#printview .gray
+{
+    background-color: rgb(153,153,153)
+}
+
+div#printview .page-break  
+{ 
+    display:block; 
+    page-break-before:always; 
+}
+
+div#printview .total, div#printview .topbar
+{
+	border-top: 2px solid rgb(51,51,51);
+}
+    
+div#printview .doublebar
+{
+	border-top: 5px solid rgb(51,51,51);
+}
+    
+div#printview td ul li 
+{ 
+    margin-left:10px; 
+    max-width:130px; 
+    font-size :0.85em;
+}
+      
+div#printview p
+{
+    width: 500px;
+}
+
+/* Firefox hacks. */
+/*
+@-moz-document url-prefix() 
+{
+    .grid-search button.ui-state-default { top: 0px; }
+}
+*/

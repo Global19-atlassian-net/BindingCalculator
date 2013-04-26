@@ -1,0 +1,1664 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+
+    <link rel="stylesheet" media="all" href="less.css"/>
+    <link rel="stylesheet" media="all" href="ui.jqgrid-4.4.4.css"/>
+    <link rel="stylesheet" media="all" href="calculator.css"/>
+    
+    <script type="text/javascript">
+        var isInternetExplorer = false; // will be toggled below using conditional comments
+
+        /*@cc_on
+        /*@if (@_jscript_version >= 5)
+        isInternetExplorer = true;
+        /*@end
+        @*/
+
+    </script>
+
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="banner">
+                <h3>Sample Preparation</h3>
+            </div>
+            <div class="belowbanner">
+              <div class="headernavigation" id="loading-message"><i>Loading...</i></div>
+              <div class="clear"></div>
+            </div>
+        </header>
+        
+  <script type="text/javascript">
+
+      if (isInternetExplorer) {
+          var loading = document.getElementById("loading-message");
+          loading.innerHTML = "Sorry. This calculator does not support Internet Explorer. Please use Chrome, Firefox or Safari.";
+      }
+
+  </script>
+
+    </div>
+    
+    <!-- templates for the print view -->
+    
+    <script type="text/template" id="print-view-template-top">
+    <div style="width:800px">
+        <div style="float:right;padding:0.4em;">
+            <table cellpadding=0 cellspacing=0 border=0 id="print-options">
+            <tr>
+                <td><span style="font-weight:bold;">Print Options:</span></td>
+                <td><input type="checkbox" name="page-break" checked="checked" /> Page Breaks</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="wider-columns" checked="checked" /> Wider Columns</td>
+                <td><input type="checkbox" name="show-instructions" checked="checked" /> Show Instructions</td>
+            </tr>
+            </table>
+        </div>
+    <h3>Sample Preparation</h3>
+    <p>{{= strings.CalculatorVersionPrint }}</p>
+    </div>
+
+    <h4 class="instructions">{{= strings.SampleInformationTitle }}</h4>
+    <p class="instructions">{{= strings.Step1 }}</p>
+
+    {{= section.SampleDetailsTable }}
+        
+    {{= section.Errors }}
+    </script>
+
+    <script type="text/template" id="print-view-details">
+
+        <h4>{{= strings.AnnealingTitle }}</h4>
+        <p class="instructions">{{= strings.Step2 }}</p>
+        {{= sections.AnnealingSequencingPrimerDilution }}
+        <p class="instructions">{{= strings.Step3 }}</p>
+        {{= sections.AnnealingRecipeTable }}
+        <p class="instructions">{{= strings.Step4 }}</p>
+        <p class="instructions">{{= strings.Step5 }}</p>
+
+        <div class="potential_page_break"></div>
+
+        <h4>{{= strings.DilutionsTitle }}</h4>
+        <p class="instructions">{{= strings.Step6 }}</p>
+        {{= sections.DilutionTable }}
+
+        <h4>{{= strings.BindingPolymeraseTitle }}</h4>
+        <p class="instructions">{{= strings.Step7 }}</p>
+        <p class="instructions">{{= strings.Step7_1 }}</p>
+        {{= sections.BindingPolymeraseTable }}
+        <p class="instructions">{{= strings.Step8 }}</p>
+ 
+        <!-- todo: only show if we are computing long term storage -->
+        {{ if (sections.showLongTermStorage) { }}
+            <h4>{{= strings.StorageTitle }}</h4>
+            {{= sections.LongTermStorage }}
+        {{ } }}
+        
+        <div class="potential_page_break"></div>
+        
+        <!-- todo: only show if we are computing titrations -->
+        {{ if (sections.showTitrations) { }}
+            <h4>Loading Titrations</h4>
+            <p>{{= sections.LoadingTitrationTable }}</p>
+        {{ } else { }}
+            <h4>{{= strings.BindingComplexTitle }}</h4>
+            {{= sections.UsingBoundComplexTable }}
+            <p class="instructions">{{= strings.Step9 }}</p>
+            {{= sections.PlateLayout }}
+        {{ } }}
+    </script>
+
+    <!-- template for a list of sample names -->
+    <script type="text/template" id="names-list-template">
+    <article>
+    <header>
+        <div class="banner">
+            <h3>Sample Calculator</h3>
+        </div>
+        <div class="belowbanner">
+          <div class="headerversion" style="margin-top:0.5em;">{{= strings.CalculatorVersion }}</div>
+          <div class="headernavigation" style="margin-top:0.5em;">Sample List</div>
+          <div class="headernavigation"><input type="button" class="new_button" value="New Sample" /></div>
+          <div class="clear"></div>
+        </div>
+    </header>
+
+    <section>
+    
+        <div class="footerlike">
+            <div style="margin-left:auto;margin-right:auto;width:200px;" id="loading-frame">
+                <div class="loading-status" style="margin-left:auto;margin-right:auto;text-align: center"></div>
+                <!--<div id="prbar"><div id="prpos"></div></div>-->
+            </div>
+            <div style="float:left;" class="top-buttons">
+                <input type="button" class="print_button" value="Print" />
+            </div>
+            <div style="float:right;" class="top-buttons">
+                <input type="button" class="delete_button" value="Delete" />
+            </div>
+            <div style="float:right;" class="top-buttons">
+                <div style="margin-top:0.35em;margin-right:2em;"><i>Click a sample name to edit</i></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    
+        <table id="ui-jqgrid"></table>
+        <div class="clear tail5"></div>
+    
+    </section>
+    
+    <footer>
+    <div>
+        <div style="float:left;">
+            <input type="button" class="print_button" value="Print" />
+            
+        </div>
+        <div style="float:right;">
+            <input type="button" class="delete_button" value="Delete" />
+        </div>
+        <div class="clear"></div>
+    </div>
+    </footer>
+    
+    <!-- oninstrument_begin -->
+    <footer>
+    <div>
+          To view pre-2.0 samples stored on this instrument: <a href="/ArchivedList">Obsoleted Samples</a>. Or <a href='/?signout=true'>sign out</a> to sign in as a different user.<br />
+          You may also <a href="/Calculator/Download">download a single-file version</a> of this calculator.
+    </div>
+    </footer>
+    <!-- oninstrument_end -->
+    
+    </article>
+    
+    </script>
+    
+    <script type="text/template" id="single-sample-template">
+    <article id="singlesample">
+    <header>
+        <div class="banner">
+            <h3>Sample Calculator</h3>
+        </div>
+        <div class="belowbanner">
+          <div class="headerversion" style="margin-top:0.5em;">{{= strings.CalculatorVersion }}</div>
+          <div class="headernavigation" style="margin-top:0.5em;"><a href="#list">Sample List</a></div>
+          <div class="headernavigation"><input type="button" class="new-button" value="New Sample" /></div>
+          <div class="clear"></div>
+        </div>
+    </header>
+    
+    <aside class="aside_error" style="display:none;">
+     <div>
+        <div class="global_error">
+            <!-- error now appears on left side so input area doesn't reflow -->
+        </div>
+     </div>
+    </aside>
+
+    <div id="sampleinfo">
+      <section>
+        <input type="button" id="delete-button" value="Delete" style="float:right;"/>
+        <h3 style="float:left;">Edit Sample</h3><div id="statusMessage"></div><div id="statusIcon"></div>
+        <div class="clear"></div>
+        <p>{{= strings.Step1Entry }}</p>
+
+        <div class="grid2 rightalign">Sample Name</div>
+        <input type="text" class="grid2" name="SampleName" id="calc-samplename" value="" />
+        <input type="hidden" name="OriginalSampleName" id="original-samplename" value="" />
+        <input type="hidden" name="SampleGuid" value="" />
+        <input type="hidden" name="Version" value="" />
+        <div class="clear"></div>
+
+        <h4>Compute</h4>
+
+        <div class="grid2"><span class="help-by-volume"><input type="radio" name="ComputeOption" value="Volume" {{= radios.ComputeOptionVolume }} id="radio-compute-volume" /> Volume to Use</span></div>
+        <input type="text" class="grid1" name="SampleVolumeToUseInAnnealing" id="calc-voltouse" value="" />
+        <div class="grid1 alpha top2">uL</div>
+        <div class="clear"></div>
+        
+        <div class="grid2"><span class="help-by-cells"><input type="radio" name="ComputeOption" value="Cells" {{= radios.ComputeOptionCells }} id="radio-compute-cells" /> # of SMRT Cells</span></div>
+        <input type="text" class="grid1" name="NumberOfCellsToUse" id="calc-smrtcells" value="" disabled='disabled' />
+        <div class="clear"></div>
+        
+        <div class="grid2"><span class="help-by-titration"><input type="radio" name="ComputeOption" value="Titration" {{= radios.ComputeOptionTitration }} id="radio-compute-titration" /> Loading Titration</span></div>
+        <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration1" id="calc-titration1" value="" disabled='disabled' />
+        <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration2" id="calc-titration2" value="" disabled='disabled' />
+        <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration3" id="calc-titration3" value="" disabled='disabled' />
+        <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration4" id="calc-titration4" value="" disabled='disabled' />
+        <div class="clear"></div>
+        
+        
+        <h4>Details</h4>
+        
+        <div class="grid2 rightalign top2"><span class="help-dna-concentration">DNA Concentration</span></div>
+        <input type="text" class="grid1 top1" name="StartingSampleConcentration" id="calc-concentration" value="" />
+        <div class="grid1 alpha top2">ng/uL</div>
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top2"><span>Insert Size</span></div>
+        <input type="text" class="grid1 top1" name="AnnealedBasePairLength" id="calc-basepairs" value="" />
+        <div class="grid1 alpha top2">bp</div>
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top5"><span class="help-mag-bead">Magnetic Beads</span></div>
+        <div class="grid2 top4"><span><input type="radio" name="MagBead" id="MagBead-Radio-Yes" value="True" {{= radios.MagBeadYes }} />Yes</span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" value="False" {{= radios.MagBeadNo }} />No</span></div>
+        <div class="clear"></div>  
+
+        <div class='global_ShowChemistryOption'>
+            <div class="grid2 rightalign top5"><span class="help-prep-protocol">Binding Kit</span></div>
+            <div class="grid2 top4"><span class="help-chemistry-v1"><input type="radio" name="Chemistry" id="Chemistry-Radio-V2" value="Version2" {{= radios.ChemistryV2 }} />{{= strings.ChemistryV2option }}</span></div>
+            <div class="clear"></div>
+        
+            <div class="grid2 push2 top1"><span class="help-chemistry-v25"><input type="radio" name="Chemistry" value="VersionXL" {{= radios.ChemistryXL }} />{{= strings.ChemistryXLoption }}</span></div>
+            <div class="clear"></div>
+        
+            <div class="grid2 push2 top1"><span class="help-chemistry-v25"><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
+            <div class="clear"></div>
+        </div>
+
+        <div class='global_ShowCellOption'>
+            <div class="grid2 rightalign top5"><span class="help-cell">SMRT Cell</span></div>
+            <div class="grid2 top4"><span class="help-cell-std"><input type="radio" name="Cell" id="Cell-Radio-Standard" value="CellVersion2" {{= radios.CellVersion2 }} />V2</span></div>
+            <div class="clear"></div>
+        	
+            <div class="grid2 push2 top1"><span class="help-cell-v3"><input type="radio" name="Cell" value="CellVersion3" {{= radios.CellVersion3 }} />V3</span></div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="grid2 rightalign top5"><span class="help-prep-protocol">Preparation Protocol</span></div>
+        <div class="grid2 top4"><span class="help-small-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Small" value="Small" {{= radios.PreparationSmall }} />Small scale</span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top5"><span class="help-spike-in-control">DNA Control Complex</span></div>
+        <div class="grid2 top4"><span><input type="radio" name="UseSpikeInControl" id="UseSpikeInControl-Radio-True" value="True" {{= radios.ControlYes }} />Yes</span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 push2 top1"><span><input type="radio" name="UseSpikeInControl" value="False" {{= radios.ControlNo }} />No</span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top5"><span>Complex Reuse</span></div>
+        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="True" {{= radios.ReuseYes }} id="ComplexReuse-Radio-Yes" />Yes</span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top5"><span class="help-low-amounts">Non-standard</span></div>
+        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />Yes</span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />No</span></div>
+        <div class="clear"></div>
+
+        <div class='global_AllowNonStandardReverseCalculations'>
+            <div class="clear"></div>
+            <div class="grid2 rightalign top5"><span class="help-available-volume">Available Volume</span></div>
+            <input type="text" class="grid1 top4" name="AvailableSampleVolume" id="calc-availablevolume" value="" disabled='disabled'/>
+            <div class="grid1 alpha top5">uL</div>
+            <div class="clear"></div>
+        </div>
+        
+        <h3>Optional</h3>
+        
+        <h4>Concentration On Plate</h4>
+
+        <div class="grid2"><input type="radio" name="ConcentrationOnPlateOption" value="Default" {{= radios.ConcentrationOnPlateDefault }} id="ConcentrationOnPlate-Radio-Default" /> Use Default</div>
+        <div class="grid1 top2"><span class="nM output_DefaultConcentrationOnPlate"></span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 help-optional-concentration-on-plate"><input type="radio" name="ConcentrationOnPlateOption" value="Custom" {{= radios.ConcentrationOnPlateCustom }} id="ConcentrationOnPlate-Radio-Custom" /> Custom</div>
+        <input type="text" class="grid1" name="CustomConcentrationOnPlate" disabled='disabled' id="CustomConcentrationOnPlate" value="" />
+        <div class="grid1 alpha top2">nM</div>
+        <div class="clear"></div>
+        
+        <h4>DNA Control Complex Ratio to Template</h4>
+
+        <div class="grid2"><input type="radio" name="SpikeInRatioOption" value="Default" {{= radios.ControlComplexRatioDefault }} id="SpikeInRatio-Radio-Default" /> Use Default</div>
+        <div class="grid1 top2"><span class="output_DefaultSpikeInRatioToTemplatePercent percent"></span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 help-optional-spike-in-to-template-ratio"><input type="radio" name="SpikeInRatioOption" value="Custom" {{= radios.ControlComplexRatioCustom }} id="SpikeInRatio-Radio-Custom" /> Custom</div>
+        <input type="text" class="grid1" name="CustomSpikeInRatioPercent" disabled='disabled' id="CustomSpikeInRatioPercent"  value=""/>
+        <div class="grid1 alpha top2">%</div>
+        <div class="clear"></div>
+        
+        <h4>Polymerase:Template Ratio</h4>
+
+        <div class="grid2"><input type="radio" name="PolymeraseTemplateRatioOption" value="Default" {{= radios.PolymeraseRatioDefault }} id="PolymeraseTemplateRatioOption-Radio-Default" /> Use Default</div>
+        <div class="grid1 top2"><span class="output_DefaultPolymeraseTemplateRatio"></span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 help-optional-polymerase-template-ratio"><input type="radio" name="PolymeraseTemplateRatioOption" value="Custom" {{= radios.PolymeraseRatioCustom }} id="PolymeraseTemplateRatio-Radio-Custom" /> Custom</div>
+        <input type="text" class="grid1" name="CustomPolymeraseTemplateRatio" id="CustomPolymeraseTemplateRatio" value="" disabled='disabled' />
+        <div class="clear"></div>
+
+      </section>
+      
+      
+        <!-- ------------------------------------------------------------------------------------------------
+        --
+        -- Annealing
+        --
+        -->
+
+      <section>
+        <header>
+          <h3>Annealing</h3>
+        </header>
+        <p>Step 2: Dilute the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
+        
+        <div class="grid2 rightalign top2">
+            <span class="output_TubeNameSequencingPrimer help-annealing-sequencingprimer"></span>
+        </div>
+        <div class="grid2 top2"><span class="output_StockPrimerAliquot uL"></span></div>
+        <div class="clear"></div>
+        <div class="grid2 rightalign top2">
+            <span class="help-annealing-elutionbuffer">Elution Buffer</span>
+        </div>
+        <div class="grid2 top2"><span class="output_ElutionBuffer uL"></span></div>
+        <div class="clear"></div>
+
+        <hr class="grid2 push1" />
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+        <div class="grid2 top2"><span class="output_TotalVolumeOfDilutedPrimer uL"></span></div>
+        <div class="clear"></div>
+        
+        <p class="top5">{{= strings.Step3 }}</p>
+        
+        <div class="grid2 rightalign top2"><span class="">Volume H2O</span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfWaterInAnnealingReaction uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="help-annealing-primerbuffer">10x Primer Buffer</span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfPbInAnnealingReaction uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Sample Volume</span></div>
+        <div class="grid2 top2"><span class="output_SampleVolumeInAnnealingReaction uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="help-annealing-dilutedsequencing">Diluted Sequencing Primer</span></div>
+        <div class="grid2 top2"><span class="output_PrimerVolumeInAnnealingReaction uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+        <div class="grid2 top2"><span class="output_TotalVolumeOfAnnealingReaction uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
+        <div class="grid2 top2"><span class="output_FinalAnnealedConcentration nM"></span></div>
+        <div class="clear"></div>
+        
+        <p class="top5">{{= strings.Step4 }}</p>
+        <p>{{= strings.Step5 }}</p>
+
+
+      </section>
+      
+      <!-- ------------------------------------------------------------------------------------------------
+      --
+      -- Dilutions
+      --
+      -->
+
+      <section>
+        <header>
+            <h3>{{= strings.DilutionsTitle }}</h3>
+        </header>
+        <p>{{= strings.Step6 }}</p>
+        
+        <div class='showV1SpikeInOutputs' style='display:none;'>
+        
+            <h4>Standard Control</h4>
+        
+            <div class="grid2 rightalign top2"><span class="output_TubeNameSpikeInControl help_found_in_kit"></span></div>
+            <div class="grid2 top2"><span class="output_SpikeInStockVolumeInFirstDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
+            <div class="grid2 top2"><span class="output_BindingBufferInFirstDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TotalVolumeOfFirstSpikeInDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
+            <div class="grid2 top2"><span class="output_SpikeInFirstDilutionConcentration nM"></span></div>
+            <div class="clear"></div>
+
+
+            <h4 class="top5"><span class="output_SpikeInTubeInsertSize"></span> Spike Dilution (<span class="output_SpikeInTubeLabel"></span>)</h4>
+        
+            <div class="grid2 rightalign top2">Initial DNA Control Dilution (<span class="output_SpikeInFirstDilutionConcentration nM"></span>)</div>
+            <div class="grid2 top2"><span class="output_DilutedSpikeInVolumeInSecondDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
+            <div class="grid2 top2"><span class="output_BindingBufferInSecondDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TotalVolumeOfSecondSpikeInDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
+            <div class="grid2 top2"><span class="output_SpikeInSecondDilutionConcentration nM"></span></div>
+            <div class="clear"></div>
+
+        </div>
+        
+        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution (<span class="output_PolymeraseTubeLabel"></span>)</h4>
+        
+        <div class="grid2 rightalign top2"><span class="output_TubeNamePolymerase"></span><br/>(<span class="output_PolymeraseStockConcentration nM"></span>)</div>
+        <div class="grid2 top2"><span class="output_PolymeraseStockVolumeInDilution uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
+        <div class="grid2 top2"><span class="output_BindingBufferInPolymeraseDilution uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+        <div class="grid2 top2"><span class="output_TotalVolumeOfPolymeraseDilution uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
+        <div class="grid2 top2"><span class="output_PolymeraseDilutionConcentration nM"></span></div>
+        <div class="clear"></div>
+
+      </section>
+      
+      <!-- ------------------------------------------------------------------------------------------------
+      --
+      -- Binding Polymerase to Templates
+      --
+      -->
+
+      <section>
+        <header>
+            <h3>{{= strings.BindingPolymeraseTitle }}</h3>
+        </header>
+        <p>{{= strings.Step7 }}</p>
+        <p>{{= strings.Step7_1 }}</p>
+
+        <h4 class="help-bindingpoly-volumetouse">Volume of Annealed Template</h4>
+
+        <div class="grid2">
+            <input type="radio" name="BindingPolymeraseOption" value="Volume" {{= radios.BindingPolymeraseAll }} id="BindingPolymeraseOption-Radio-All" />Total volume
+        </div>
+        <div class="grid1 top2"><span class="uL output_TotalVolumeOfAnnealingReaction"></span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2">
+            <input type="radio" name="BindingPolymeraseOption" value="Cells" {{= radios.BindingPolymeraseSome }} id="BindingPolymeraseOption-Radio-Some" /> # of SMRT Cells
+        </div>
+        <input type="text" class="grid1" name="NumberOfCellsInBinding" disabled='disabled' id="NumberOfCellsInBinding" value="" /><div></div>
+        <div class="clear"></div>
+
+        <hr class="grid2 push1" />
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top2"><span class="output_TubeNameNucleotides help-pnt-tube"></span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfAnalogsInBinding uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfDttInBinding uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
+        <div class="hiddenV1SpikeInOutputs" style='display:none;'>
+            <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
+        </div>
+        <div class="showV1SpikeInOutputs" style='display:none;'>
+            <div class="grid2 top2"><span class="help-notused-spikein-yes">Not used</span></div>
+        </div>
+        <div class="v2ChemistryShown">
+            <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
+        </div>
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top2"><span class="help-bindingpoly-annealed">Annealed Template</span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfAnnealingReactionInBinding uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="showV1SpikeInOutputs" style='display:none;'>
+            <div class="grid2 rightalign top2"><span class="help-tube-label-left">DNA Control Tube #</span></div>
+            <div class="grid2 top2"><span class="output_SpikeInTubeLabel help-tube-label-right"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="help-bindingpoly-control">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_VolumeOfSpikeInDilutionInBinding uL"></span></div>
+            <div class="clear"></div>
+
+        </div>
+        <div class="hiddenV1SpikeInOutputs" style='display:none;'>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilutions</span></div>
+            <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="grid2 rightalign top2"><span class="help-tube-label-left">Diluted Pol Tube #</span></div>
+        <div class="grid2 top2"><span class="output_PolymeraseTubeLabel"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="help-bindingpoly-poly">Diluted Polymerase</span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfPolymeraseDilutionInBinding uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+        <div class="grid2 top2"><span class="output_TotalVolumeOfBindingReaction uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
+        <div class="grid2 top2"><span class="output_FinalBindingConcentration nM"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class=""># of SMRT Cells</span></div>
+        <div class="grid2 top2"><span class="output_NumberOfCellsFromBinding"></span></div>
+        <div class="clear"></div>
+
+        <p class="top5">{{= strings.Step8 }}</p>
+      </section>
+      
+      <!-- ------------------------------------------------------------------------------------------------
+      --
+      -- Long Term Storage
+      --
+      -->
+
+      <section id="storage-section" style='display:none;'>
+        <header>
+          <h3>{{= strings.StorageTitle }}</h3>
+        </header>
+        <p>{{= strings.StorageStart }}</p>
+
+        <div class="grid2">
+            <input type="radio" name="StorageComplexOption" value="Default" {{= radios.StorageComplexDefault }} id="StorageComplexOption-Radio-Default" /> Total Volume
+        </div>
+        <div class="grid1 top2"><span class="uL output_DefaultVolumeOfBindingReactionInStorageComplex"></span></div>
+        <div class="clear"></div>
+        
+        <div class="grid2">
+            <input type="radio" name="StorageComplexOption" value="Custom" {{= radios.StorageComplexCustom }} id="StorageComplexOption-Radio-Custom" /> Custom
+        </div>
+        <input type="text" class="grid1" name="CustomVolumeOfBindingReactionInStorageComplex" disabled='disabled' id="StorageComplexOptionInput" /><div></div>
+        <div class="grid1 alpha top2">uL</div>
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfDttInStorageComplex uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="output_TubeNameComplexStorageBuffer help-cdb-tube"></span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfComplexDilutionBufferInStorageComplex uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="help-bindingcomplex-bindingcomplex">Binding Complex</span></div>
+        <div class="grid2 top2"><span class="output_VolumeOfBindingReactionInStorageComplex uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+        <div class="grid2 top2"><span class="output_TotalVolumeOfStorageComplex uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
+        <div class="grid2 top2"><span class="output_FinalStorageConcentration nM"></span></div>
+        <div class="clear"></div>
+
+      </section>
+      
+      <!-- ------------------------------------------------------------------------------------------------
+      --
+      -- Using Binding Complex for Sequencing
+      --
+      -->
+
+      <section id="binding-complex-section">
+        <header>
+          <h3>{{= strings.BindingComplexTitle }}</h3>
+        </header>
+        <p>{{= strings.BindingComplexStart }}</p>
+
+        <div class="grid2 rightalign top2"># of SMRT Cells</div>
+        <input type="text" class="grid1" name="BindingComplexNumberOfCellsRequested" id="BindingComplexNumberOfCellsRequested" value="" /><div></div>
+        <div class="clear"></div>
+
+        <div class="nonMagBeadSection">
+        
+            <div class="showV2SpikeInOutputs" style='display:none;'>
+
+                <h4>DNA Control Dilution</h4>
+        
+                <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+                <div class="grid2 top2"><span class="output_DttVolumeInSpikeInDilution uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+                <div class="grid2 top2"><span class="output_ComplexDilutionBufferVolumeInSpikeInDilution uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="help-tube-label-left">DNA Control Tube Label</span></div>
+                <div class="grid2 top2"><span class="output_SpikeInTubeLabel"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">DNA Control Complex</span></div>
+                <div class="grid2 top2"><span class="output_SpikeInControlContribution uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+                <div class="grid2 top2"><span class="output_SpikeInDilutionVolume uL"></span></div>
+                <div class="clear"></div>
+
+            </div>
+        
+            <h4>Complex Dilution</h4>
+        
+            <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+            <div class="grid2 top2"><span class="output_VolumeOfDttInComplexDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+            <div class="grid2 top2"><span class="output_VolumeOfComplexDilutionBufferInComplexDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="showV2SpikeInOutputs" style='display:none;'>
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="output_VolumeOfSpikeInDilutionInComplexDilution uL"></span></div>
+                <div class="clear"></div>
+            </div>
+            <div class="hiddenV2SpikeInOutputs" style='display:none;'>
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+                <div class="clear"></div>
+            </div>
+        
+            <div class="grid2 rightalign top2"><span class="output_BindingComplexBufferName"></span></div>
+            <div class="grid2 top2"><span class="output_VolumeOfBindingReactionInComplexDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TotalComplexDilutionVolume uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="help-bindingcomplex-totalcells"># of SMRT Cells</span></div>
+            <div class="grid2 top2"><span class="output_TotalComplexDilutionCells"></span></div>
+            <div class="clear"></div>
+
+        </div>
+
+        <div class="magBeadSection" style='display:none;'>
+        
+            <div class="showV2SpikeInOutputs" style='display:none;'>
+
+                <h4>DNA Control Dilution</h4>
+                <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Stock DNA Control</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfFirstStockSpikeIn uL"></span></div>
+                <div class="clear"></div>
+
+                <h4 style="padding-left:1em">2. Second DNA Control Dilution</h4>
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">First Dilution</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfFirstDilution uL"></span></div>
+                <div class="clear"></div>
+
+            </div>
+        
+            <h4>Complex Dilution</h4>
+            
+            <div class="showPrepLarge">
+                <h4 style="padding-left:1em">1. First Complex Dilution</h4>
+                
+                    <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                    <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
+                        <span class="addendum"></span></div>
+                    <div class="clear"></div>
+
+                    <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                    <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfFirstComplex uL"></span>
+                        <span class="addendum">mix well</span></div>
+                    <div class="clear"></div>
+                    
+                <h4 style="padding-left:1em">2. Second Complex Dilution</h4>
+            </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+                
+                <div class="showV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="hiddenV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Total</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeTotal uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+            <h4>Magnetic Beads</h4>
+
+            <h4 style="padding-left:1em">1. Wash Bead</h4>
+            
+                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+            <h4 style="padding-left:1em">2. Incubate Bead-Complex</h4>
+            
+                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 top2"><span class="output_ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="output_ComplexBeadIncubationVolumeOfComplex uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="clear"></div>
+
+            <h4 style="padding-left:1em">3. Wash Bead-Complex</h4>
+            
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>keep at 4 C until use</i></span></div>
+                <div class="clear"></div>
+
+        </div>
+        
+      <!-- ------------------------------------------------------------------------------------------------
+      --
+      -- Sample plate well helper
+      --
+      -->
+      
+        <p class="top5">{{= strings.Step9 }}</p>
+
+        <h4>Sample Plate Wells</h4>
+        
+        <div class="grid2 rightalign top2"><span class="help-bindingcomplex-fullwells"># of Max Volume Wells</span></div>
+        <div class="grid2 top2"><span class="output_NumberOfFullWells"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Volume / Well</span></div>
+        <div class="grid2 top2"><span class="output_MaxVolumePerWell uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="help-bindingcomplex-fullcells"># of SMRT Cells / Well</span></div>
+        <div class="grid2 top2"><span class="output_MaxNumberOfCellsPerWell"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 top2"><hr style="width:30px;" align="right" /></div>
+        <div class="clear"></div>
+        
+        <div class="grid2 rightalign top2"><span class="help-bindingcomplex-partialwells"># of Partial Wells</span></div>
+        <div class="grid2 top2"><span class="output_NumberOfPartialWells"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="">Volume / Well</span></div>
+        <div class="grid2 top2"><span class="output_VolumeFromPartialWells uL"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top2"><span class="help-bindingcomplex-partialcells"># of SMRT Cells / Well</span></div>
+        <div class="grid2 top2"><span class="output_NumberOfCellsFromPartialWells"></span></div>
+        <div class="clear"></div>
+
+      </section>
+      
+      <!-- ------------------------------------------------------------------------------------------------
+      --
+      -- Loading Titration
+      --
+      -->
+
+      <section id="titration-section" style='display:none;'>
+        <header>
+            <h3>{{= strings.TitrationTitle }}</h3>
+        </header>
+        
+          <!-- ------------------------------------------------------------------------------------------------
+          --
+          -- Mag Bead version, two stage spike-in dilution, and extensive bead wash for each titration step
+          --
+          -->
+
+        <div class="magBeadSection" style='display:none;'>
+
+            <div class="showV2SpikeInOutputs" style='display:none;'>
+
+                <h4>DNA Control Dilution</h4>
+                <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
+                
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Stock DNA Control</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfFirstStockSpikeIn uL"></span></div>
+                <div class="clear"></div>
+
+                <h4 style="padding-left:1em">2. Second DNA Control Dilution</h4>
+                
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">First Dilution</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfFirstDilution uL"></span></div>
+                <div class="clear"></div>
+                
+            </div>
+            
+              <!-- ------------------------------------------------------------------------------------------------
+              --
+              -- First Titration
+              --
+              -->
+
+            <h4>Titration at <span class="nM output_TitrationConcentration1"></span></h4>
+            
+                <div class="showPrepLarge">
+                    <h5 style="padding-left:2em">1. First Complex Dilution</h5>
+                    
+                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
+                            <span class="addendum"></span></div>
+                        <div class="clear"></div>
+
+                        <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                        <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfFirstComplex uL"></span>
+                            <span class="addendum">mix well</span></div>
+                        <div class="clear"></div>
+
+                    <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="showV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="hiddenV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Total</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeTotal uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+                
+                <h5 style="padding-left:2em">Wash Bead</h5>
+                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration1ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration1ComplexBeadIncubationVolumeOfComplex uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Wash Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>keep at 4 C until use</i></span></div>
+                <div class="clear"></div>
+            
+              <!-- ------------------------------------------------------------------------------------------------
+              --
+              -- Second Titration
+              --
+              -->
+
+            <h4>Titration at <span class="nM output_TitrationConcentration2"></span></h4>
+            
+                <div class="showPrepLarge">
+                    <h5 style="padding-left:2em">1. First Complex Dilution</h5>
+
+                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
+                            <span class="addendum"></span></div>
+                        <div class="clear"></div>
+
+                        <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                        <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfFirstComplex uL"></span>
+                            <span class="addendum">mix well</span></div>
+                        <div class="clear"></div>
+
+                    <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
+                </div>
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="showV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+
+                </div>
+                <div class="hiddenV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Total</span></div>
+                <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeTotal uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                
+                <h5 style="padding-left:2em">Wash Bead</h5>
+                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeads uL"></span><span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadWashBuffer uL"></span><span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration2ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration2ComplexBeadIncubationVolumeOfComplex uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Wash Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>keep at 4 C until use</i></span></div> <div class="clear"></div>
+                
+              <!-- ------------------------------------------------------------------------------------------------
+              --
+              -- Third Titration
+              --
+              -->
+
+            <h4>Titration at <span class="nM output_TitrationConcentration3"></span></h4>
+            
+                <div class="showPrepLarge">
+                    <h5 style="padding-left:2em">1. First Complex Dilution</h5>
+
+                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
+                            <span class="addendum"></span></div>
+                        <div class="clear"></div>
+
+                        <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                        <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfFirstComplex uL"></span>
+                            <span class="addendum">mix well</span></div>
+                        <div class="clear"></div>
+
+
+                    <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
+                </div>
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="showV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+
+                </div>
+                <div class="hiddenV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Total</span></div>
+                <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeTotal uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                
+                <h5 style="padding-left:2em">Wash Bead</h5>
+                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration3ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration3ComplexBeadIncubationVolumeOfComplex uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Wash Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>keep at 4 C until use</i></span></div>
+                <div class="clear"></div>
+                
+              <!-- ------------------------------------------------------------------------------------------------
+              --
+              -- Fourth Titration
+              --
+              -->
+
+            <h4>Titration at <span class="nM output_TitrationConcentration4"></span></h4>
+            
+                <div class="showPrepLarge">
+                    <h5 style="padding-left:2em">1. First Complex Dilution</h5>
+
+                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
+                            <span class="addendum"></span></div>
+                        <div class="clear"></div>
+
+                        <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                        <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfFirstComplex uL"></span>
+                            <span class="addendum">mix well</span></div>
+                        <div class="clear"></div>
+
+
+                    <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
+                </div>
+                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="showV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+
+                </div>
+                <div class="hiddenV2SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
+                    <div class="clear"></div>
+                </div>
+                
+                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Total</span></div>
+                <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeTotal uL"></span>
+                    <span class="addendum">mix well</span></div>
+                <div class="clear"></div>
+
+                
+                <h5 style="padding-left:2em">Wash Bead</h5>
+                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 top2"><span class="output_Titration4ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="output_Titration4ComplexBeadIncubationVolumeOfComplex uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="clear"></div>
+
+                <h5 style="padding-left:2em">Wash Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
+                    <span class="addendum"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
+                <div class="clear"></div>
+
+                <div class="grid2 rightalign top2"><span class=""></span></div>
+                <div class="grid2 top2"><span class=""><i>keep at 4 C until use</i></span></div>
+                <div class="clear"></div>
+                
+        </div>
+        
+            <!-- ------------------------------------------------------------------------------------------------
+            --
+            -- Standard version, one spike-in dilution, and simple dilution for each titration step
+            --
+            -->
+        
+        <div class="nonMagBeadSection">
+        <div class="showV2SpikeInOutputs" style='display:none;'>
+
+            <h4>DNA Control Dilution</h4>
+        
+            <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+            <div class="grid2 top2"><span class="output_DttVolumeInSpikeInDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+            <div class="grid2 top2"><span class="output_ComplexDilutionBufferVolumeInSpikeInDilution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="help-tube-label-left">DNA Control Tube Label</span></div>
+            <div class="grid2 top2"><span class="output_SpikeInTubeLabel"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">DNA Control</span></div>
+            <div class="grid2 top2"><span class="output_SpikeInControlContribution uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_SpikeInDilutionVolume uL"></span></div>
+            <div class="clear"></div>
+
+            
+            <div class="magBeadSection" style='display:none;'>
+                <h4>Magnetic Beads</h4>
+
+                <p> TBD </p>
+            </div>
+        </div>
+
+        <h4>Titration at <span class="nM output_TitrationConcentration1"></span></h4>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationDtt1 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer1 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="v2ChemistryShown">
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume1 uL"></span></div>
+                <div class="clear"></div>
+
+            </div>
+            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 top2"><span class="output_TitrationBindingComplex1 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TitrationTotal1 uL"></span></div>
+            <div class="clear"></div>
+
+
+        <h4>Titration at <span class="nM output_TitrationConcentration2"></span></h4>
+        
+            <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationDtt2 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer2 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="v2ChemistryShown">
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume2 uL"></span></div>
+                <div class="clear"></div>
+
+            </div>
+            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 top2"><span class="output_TitrationBindingComplex2 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TitrationTotal2 uL"></span></div><div class="clear"></div>
+
+
+        <h4>Titration at <span class="nM output_TitrationConcentration3"></span></h4>
+        
+            <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationDtt3 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer3 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="v2ChemistryShown">
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume3 uL"></span></div>
+                <div class="clear"></div>
+
+            </div>
+            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 top2"><span class="output_TitrationBindingComplex3 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TitrationTotal3 uL"></span></div>
+            <div class="clear"></div>
+
+
+        <h4>Titration at <span class="nM output_TitrationConcentration4"></span></h4>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameDtt help-dtt-tube"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationDtt4 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="output_TubeNameComplexDilutionBuffer"></span></div>
+            <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer4 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="v2ChemistryShown">
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume4 uL"></span></div>
+                <div class="clear"></div>
+
+            </div>
+            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 top2"><span class="output_TitrationBindingComplex4 uL"></span></div>
+            <div class="clear"></div>
+
+            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
+            <div class="grid2 top2"><span class="output_TitrationTotal4 uL"></span></div>
+            <div class="clear"></div>
+
+        </div>
+
+      </section>
+
+        
+    </div>
+    
+
+    <!-- ------------------------------------------------------------------------------------------------
+    --
+    -- Left sidebar
+    --
+    -->
+
+    <aside>
+    <div>
+        <h4>Conversion Calculator</h4>
+
+        <p><input type="text" name="cc-conc1" id="cc-conc1" class="cc-input" value="0.0" /> ng/uL at<br />
+        <input type="text" name="cc-bp1" id="cc-bp1" class="cc-input" value="2000" /> base pairs</p>
+        <p class="grid2">equals <span id="cc-nm1">0</span> nM</p>
+        <div class="clear"></div>
+
+        <p style="margin-top:3em;"><input type="text" name="cc-bp2" id="cc-bp2" class="cc-input" value="2000" /> base pairs at<br />
+        <input type="text" name="cc-nm2" id="cc-nm2" class="cc-input" value="0.0" /> nM</p>
+        <p class="grid2">equals <span id="cc-conc2">0</span> ng/uL</p>
+        <div class="clear"></div>
+
+    </div> 
+    </aside>
+
+    <footer>
+    <div><span>{{= strings.CalculatorVersion }}</span></div>
+    </footer>
+    
+    </article>
+    </script>
+    
+    <script type="text/javascript" src="jquery-1.9.1.min.js"></script> 
+    <script type="text/javascript" src="jquery.jqGrid-4.4.4.min.js"></script>
+    <script type="text/javascript" src="jquery.qtip-1.0.0-rc3.js"></script> <!-- version modified for msie test -->
+    <script type="text/javascript" src="jquery.cookie-1.3.1.js"></script>
+    <script type="text/javascript" src="underscore-1.4.4-min.js"></script>
+    <script type="text/javascript" src="backbone-0.9.10.js"></script> <!-- version modified for msie test -->
+    <script type="text/javascript" src="stickyticky.js"></script>
+    <script type="text/javascript" src="calculator.version.js"></script>
+    <script type="text/javascript" src="calculator.static.js"></script>
+    <script type="text/javascript" src="calculator.sync.js"></script>
+    <script type="text/javascript" src="calculator.model.sample.js"></script>
+    <script type="text/javascript" src="calculator.model.print.js"></script> 
+    <script type="text/javascript" src="calculator.view.single.js"></script>
+    <script type="text/javascript" src="calculator.view.list.js"></script> 
+    <script type="text/javascript" src="calculator.view.print.js"></script>
+
+    <script type="text/javascript">
+
+        //
+        // We get our version number from a single version file for easier
+        // comparison online or auto-generation, so take that string and add 
+        // it to the string constants as well.
+        //
+
+        // don't run our routes or compose anything on IE,
+        // we have a few features of more compliant browsers
+        // that we're using currently and few if any customers
+        // are using IE. We suggest they use Chrome or Firefox
+        // on this page above.
+
+        if (!isInternetExplorer) {
+
+            //
+            // Routes, Views, and Model
+            //
+
+            var Router = Backbone.Router.extend({
+                routes: {
+                    '': 'list',
+                    'new': 'new',
+                    'list': 'list',
+                    'sample/:name': 'sample',   // name is URI encoded to support trailing spaces, etc.
+                    'sample': 'sample',
+                    'print/:names': 'print'     // names are URI encoded but with & separators still
+                }
+            });
+
+            var router = new Router();
+            var constants = new Constants();
+            var samples = new SampleLocal({ constants: constants });
+
+            var sampleView = new SamplesView({ el: $('.page'), samples: samples, router: router, constants: constants });
+            var listView = new ListView({ el: $('.page'), samples: samples, router: router, constants: constants });
+
+            var printModel = new PrintModel({ samples: samples, constants: constants });
+            var printView = new PrintView({ el: $('.page'), model: printModel, constants: constants });
+
+            router.on('route:sample', function (name) {
+                if (name) {
+                    sampleView.samplename = decodeURIComponent(name);
+                }
+                else {
+                    // TODO: pick a sample from a stack of most recently visited (saved in localstorage even)
+                }
+                sampleView.render();
+            });
+            router.on('route:new', function () {
+                sampleView.render();
+                sampleView.newSample();
+            });
+            router.on('route:list', function () {
+                listView.render();
+            });
+            router.on('route:print', function (names) {
+                printView.render(names);
+            });
+
+            Backbone.history.start();
+        }
+        
+    </script>
+</body>
+</html>

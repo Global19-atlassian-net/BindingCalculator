@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -996,13 +995,12 @@ div#printview p
     .grid-search button.ui-state-default { top: 0px; }
 }
 */</style>    
-    
     <script type="text/javascript">
         var isInternetExplorer = false; // will be toggled below using conditional comments
 
         /*@cc_on
         /*@if (@_jscript_version >= 5)
-            isInternetExplorer = true;
+        isInternetExplorer = true;
         /*@end
         @*/
 
@@ -6869,9 +6867,11 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
   };
 
 }).call(this);
-</script><script type='text/javascript'>/** -------------------------------------------------- *
-* StickyTicky 1.0
-* Last Updated: 1/23/12
+</script><script type='text/javascript'>/** ------------------------------------------------ *
+* StickyTicky 1.0.1
+* Last Updated: 4/18/13
+*
+* version 1.0.1 - uses / explicitly for each cookie
 * -------------------------------------------------- *
 * Author: David Evans
 * URL: http://owlmonkey.com/
@@ -6910,7 +6910,7 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
 
             var expirationDate = new Date();
             expirationDate.setTime(expirationDate.getTime() + (theOptions.cookieExpires * 86400000));
-            var expires = '; expires=' + expirationDate.toGMTString();
+            var expires = '; expires=' + expirationDate.toGMTString() + "; path=/";
 
             document.cookie = escape(cookiename) + '=' + escape(state_string) + expires;
         }
@@ -6928,6 +6928,13 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
 
             //
             // read and setup defaults if a cookie already exists
+            //
+            // warning: if there are multiple cookies with this name (with different paths)
+            // then this will just return the first that matches. that's why above we set
+            // the path to / explicitly so we won't end up with more than that. For the
+            // 2.0.0.2 calculator I'm also changing the prefix to reset what is used while
+            // also now setting the cookie path to / explicitly. So the settings will differ
+            // from an RS deployed calculator with 2.0.0 but then they'll sync up for 2.0.1
             //
 
             var cookie = document.cookie.match(new RegExp('(^|;)\\s*' + escape(cookiename) + '=([^;\\s]*)'));
@@ -6952,6 +6959,13 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
         });
     };
 })(jQuery);</script><script type='text/javascript'>//
+// Sample Preparation Calculator
+// Version number
+//
+// (c) 2013 Pacific Biosciences
+//
+
+var CalculatorVersion = "2.0.0.2";</script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
 //
@@ -6989,8 +7003,8 @@ Constants.prototype.globals = {
 };
 
 Constants.prototype.strings = {
-    CalculatorVersion: "Version 2.0.0.1",
-    CalculatorVersionPrint: "Calculator Version 2.0.0.1",
+    CalculatorVersion: "Version " + CalculatorVersion,
+    CalculatorVersionPrint: "Calculator Version " + CalculatorVersion,
     SampleInformationTitle: "Sample Information",
     Step1Entry: "Step 1:  Enter sample information",
     Step1Display: "Step 1:  Review sample information",
@@ -7058,7 +7072,7 @@ Constants.prototype.errors = {
 	InvalidInsertSizeMagBeadNew: {
 		Coefficient: "AnnealedBasePairLength",
         ShortMessage: "Not supported",
-        LongMessage: "Calculations for Magnetic Bead Loading are not provided for insert sizes under 750 bp."
+        LongMessage: "Calculations for Magnetic Bead Loading are not provided for insert sizes under 1000 bp."
 	},
 	InvalidInsertSizeMagBead: {
 		Coefficient: "AnnealedBasePairLength",
@@ -10988,7 +11002,7 @@ var Sample = Backbone.Model.extend({
                 return gaussianRounding(value, (parseFloat(value) < 1) ? 4 : 1);
 
             case "volume":
-                return gaussianRounding(value, (parseFloat(value) < 1) ? 2 : 1);
+                return gaussianRounding(value, (parseFloat(value) < (this.unitTesting ? 10 : 1)) ? 2 : 1);
 
             case "input":
                 return gaussianRounding(value, 5);
@@ -11095,33 +11109,33 @@ var Sample = Backbone.Model.extend({
         calc.ComplexReuse = this.ComplexReuse;
         calc.LowConcentrationsAllowed = this.LowConcentrationsAllowed;
         calc.BindingComputation = this.BindingComputation;
-        calc.SampleVolumeToUseInAnnealing = this.SampleVolumeToUseInAnnealing;
-        calc.NumberOfCellsToUse = this.NumberOfCellsToUse;
-        calc.StartingSampleConcentration = this.StartingSampleConcentration;
-        calc.CustomNonStandardAnnealingConcentration = this.CustomNonStandardAnnealingConcentration;
-        calc.CustomNonStandardBindingConcentration = this.CustomNonStandardBindingConcentration;
-        calc.BindingComplexNumberOfCellsRequested = this.BindingComplexNumberOfCellsRequested;
-        calc.LoadingTitrationNumberOfCellsRequested = this.LoadingTitrationNumberOfCellsRequested;
-        calc.TitrationConcentration1 = this.TitrationConcentration1;
-        calc.TitrationConcentration2 = this.TitrationConcentration2;
-        calc.TitrationConcentration3 = this.TitrationConcentration3;
-        calc.TitrationConcentration4 = this.TitrationConcentration4;
-        calc.AvailableSampleVolume = this.AvailableSampleVolume;
+        calc.SampleVolumeToUseInAnnealing = parseFloat(this.SampleVolumeToUseInAnnealing);
+        calc.NumberOfCellsToUse = parseInt(this.NumberOfCellsToUse, 10);
+        calc.StartingSampleConcentration = parseFloat(this.StartingSampleConcentration);
+        calc.CustomNonStandardAnnealingConcentration = parseFloat(this.CustomNonStandardAnnealingConcentration);
+        calc.CustomNonStandardBindingConcentration = parseFloat(this.CustomNonStandardBindingConcentration);
+        calc.BindingComplexNumberOfCellsRequested = parseInt(this.BindingComplexNumberOfCellsRequested, 10);
+        calc.LoadingTitrationNumberOfCellsRequested = parseInt(this.LoadingTitrationNumberOfCellsRequested, 10);
+        calc.TitrationConcentration1 = parseFloat(this.TitrationConcentration1);
+        calc.TitrationConcentration2 = parseFloat(this.TitrationConcentration2);
+        calc.TitrationConcentration3 = parseFloat(this.TitrationConcentration3);
+        calc.TitrationConcentration4 = parseFloat(this.TitrationConcentration4);
+        calc.AvailableSampleVolume = parseFloat(this.AvailableSampleVolume);
         calc.CollectionProtocol = this.CollectionProtocol;
         calc.Chemistry = this.Chemistry;
         calc.Cell = this.Cell;
-        calc.AnnealedBasePairLength = this.AnnealedBasePairLength;
-        calc.CustomConcentrationOnPlate = this.CustomConcentrationOnPlate;
+        calc.AnnealedBasePairLength = parseInt(this.AnnealedBasePairLength, 10);
+        calc.CustomConcentrationOnPlate = parseFloat(this.CustomConcentrationOnPlate);
         calc.ConcentrationOnPlateOption = this.ConcentrationOnPlateOption;
         calc.NonStandardAnnealingConcentrationOption = this.NonStandardAnnealingConcentrationOption;
         calc.SpikeInRatioOption = this.SpikeInRatioOption;
-        calc.CustomSpikeInRatioPercent = this.CustomSpikeInRatioPercent;
-        calc.CustomPolymeraseTemplateRatio = this.CustomPolymeraseTemplateRatio;
+        calc.CustomSpikeInRatioPercent = parseFloat(this.CustomSpikeInRatioPercent);
+        calc.CustomPolymeraseTemplateRatio = parseFloat(this.CustomPolymeraseTemplateRatio);
         calc.PolymeraseTemplateRatioOption = this.PolymeraseTemplateRatioOption;
-        calc.NumberOfCellsInBinding = this.NumberOfCellsInBinding;
+        calc.NumberOfCellsInBinding = parseInt(this.NumberOfCellsInBinding, 10);
         calc.BindingPolymeraseOption = this.BindingPolymeraseOption;
         calc.StorageComplexOption = this.StorageComplexOption;
-        calc.CustomVolumeOfBindingReactionInStorageComplex = this.CustomVolumeOfBindingReactionInStorageComplex;
+        calc.CustomVolumeOfBindingReactionInStorageComplex = parseFloat(this.CustomVolumeOfBindingReactionInStorageComplex);
         calc.AllowNonStandardReverseCalculations = this.AllowNonStandardReverseCalculations;
 
         // then setup the bucket we're using
@@ -11168,6 +11182,14 @@ var Sample = Backbone.Model.extend({
 
             if (this.unitTesting && this.MagBead === "True" && this.AnnealedBasePairLength < 7500) {
                 this.errors.InvalidInsertSizeMagBead = this.constants.errors.InvalidInsertSizeMagBead;
+            }
+
+            //
+            // Bugzilla 23145 - changed cutoff from 750 bp (bucket based) to 1000 bp (explicit)
+            //
+
+            if (!this.unitTesting && this.MagBead === "True" && this.AnnealedBasePairLength < 1000) {
+                this.errors.InvalidInsertSizeMagBeadNew = this.constants.errors.InvalidInsertSizeMagBeadNew;
             }
         }
 
@@ -12038,7 +12060,8 @@ var SampleCalc = Backbone.Model.extend({
 			{bucket: this.bucket,                                           // Prep0
 			ComplexReuse: this.ComplexReuse,                                // Prep0
 			gaussianRounding: this.gaussianRounding                         // Prep0
-        }); 
+
+});
     },
 
     Prep6_MaxVolumePerWell: function () {
@@ -12057,11 +12080,11 @@ var SampleCalc = Backbone.Model.extend({
         return (sampleVolumeInAnnealingReaction + primerVolume) / 0.9;
     },
 
-    ComputeNonStandardPrimerVolumeInAnnealingReaction: function (sampleVolumeInAnnealing) {             // Result: Prep4
+    ComputeNonStandardPrimerVolumeInAnnealingReaction: function (sampleVolumeInAnnealing) {         // Result: Prep4
         var molesOfTemplate, molesOfPrimer;
         molesOfTemplate = (sampleVolumeInAnnealing * this.StartingSampleConcentrationInNanoMolar);  // Prep4
         molesOfPrimer = this.PrimerToTemplateRatio * molesOfTemplate;                               // Prep2
-        return molesOfPrimer / this.DilutedPrimerConcentration;                                         // Prep2
+        return molesOfPrimer / this.DilutedPrimerConcentration;                                     // Prep2
     },
 
     ComputeSampleVolumeInAnnealingReactionFromBindingVolume: function (bindingVolume, targetConcentrationInAnnealing) { // Result: Prep4
@@ -12416,15 +12439,16 @@ var SampleCalc = Backbone.Model.extend({
     Prep6_MaxAvailableAnnealingConcentration: function () {   // private
         var that = this;
         this.MaxAvailableAnnealingConcentration = (function () {                                // Result: Prep6
-            var result,
+            var result, primervolume, totalvolume,
                 available = that.AvailableSampleVolume;                                         // Prep0
             if (that.ComputeOption === "Volume") {                                              // Prep0
                 available = that.SampleVolumeToUseInAnnealing;                                  // Prep0
             }
 
-            result = available * that.StartingSampleConcentrationInNanoMolar /              // Prep4
-                        that.ComputeNonStandardTotalVolumeOfAnnealingReaction(available,        // Prep0
-                            that.ComputeNonStandardPrimerVolumeInAnnealingReaction(available)); // Prep4
+            primervolume = that.ComputeNonStandardPrimerVolumeInAnnealingReaction(available);   // Prep4
+            totalvolume = that.ComputeNonStandardTotalVolumeOfAnnealingReaction(available, primervolume); // Prep0
+
+            result = available * that.StartingSampleConcentrationInNanoMolar / totalvolume;     // Prep4
             return result;
         } ());
     },
@@ -12485,7 +12509,7 @@ var SampleCalc = Backbone.Model.extend({
     },
 
     Prep12_PolymeraseDilutionConcentration: function () {
-		this.PolymeraseDilutionConcentration =                          // Result: Prep12
+        this.PolymeraseDilutionConcentration =                          // Result: Prep12
 			this.SampleConcentrationInBinding *                         // Prep10
 			this.PolymeraseTemplateRatio * 10;                          // Prep4
     },
@@ -14822,6 +14846,7 @@ var ListView = Backbone.View.extend({
             datatype: "local",
             height: 'auto',
             autowidth: true,
+            rowNum: 9999999,
             colNames: ['Sample name', 'Volume', 'Cells', 'Conc', 'BP', 'Note', 'internalname'],
             colModel: [
                     { name: 'name', index: 'name', width: 150 },
@@ -14986,7 +15011,7 @@ var PrintView = Backbone.View.extend({
         // across sessions using a cookie
         //
 
-        $('input[type="checkbox"]').stickyticky();
+        $('input[type="checkbox"]').stickyticky({ cookiePrefix: "printview_" });
 
         $('input[name="page-break"]').each(function () { that.updatePageBreaks($(this)); });
         $('input[name="page-break"]').change(function () { that.updatePageBreaks($(this)); });
@@ -15236,7 +15261,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample.StartingSampleConcentration;
-        }, "Concentration", " nM", "", false, "input");
+        }, "Concentration", " ng/uL", "", false, "input");
 
         result += this.rowfromGetter(function (sample) {
             return sample.AnnealedBasePairLength;
@@ -15339,7 +15364,7 @@ var PrintView = Backbone.View.extend({
         for (index in samples) {
             if (samples.hasOwnProperty(index)) {
                 sample = samples[index];
-                if (bucket !== sample.BucketSize) {
+                if (parseInt(bucket, 10) !== sample.BucketSize) {
                     continue;
                 }
 
@@ -16061,12 +16086,18 @@ var PrintView = Backbone.View.extend({
 </script>
     <script type="text/javascript">
 
+        //
+        // We get our version number from a single version file for easier
+        // comparison online or auto-generation, so take that string and add 
+        // it to the string constants as well.
+        //
+
         // don't run our routes or compose anything on IE,
         // we have a few features of more compliant browsers
         // that we're using currently and few if any customers
         // are using IE. We suggest they use Chrome or Firefox
         // on this page above.
-        
+
         if (!isInternetExplorer) {
 
             //

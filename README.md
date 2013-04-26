@@ -9,6 +9,7 @@ for use in these sequencers.
 For more information, please refer to the calculator section in the
 Customer Training Slide set posted in the portal.
 
+
 Installation
 ------------
 To download this version of the sample preparation calculator, 
@@ -21,6 +22,7 @@ Calculator.html
 like your Desktop, Applications or your Documents folder. 
 2. Then double click
 on that file to launch the calculator in your browser.
+
 
 Browser Compatibility
 ---------------------

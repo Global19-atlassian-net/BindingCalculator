@@ -1,3 +1,8 @@
+Version 2.0.1.0
+- Update coefficients for the P4 binding kit
+- Correct polymerase tube label for samples using P4 (issue 23382)
+- Correct the diluted polymerase label in the print view (issue 23382)
+- Only display extra dilution step in "using binding complex" section with large preparations (issue 23382)
 
 Version 2.0.0.2
 - Switching a sample to non-standard will now recompute concentrations immediately (issue 23123)

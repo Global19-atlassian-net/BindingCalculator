@@ -647,7 +647,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample.VolumeOfPolymeraseDilutionInBinding;
-        }, "Annealed Template", " ul", "", false, "volume");
+        }, "Diluted Polymerase", " ul", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample.TotalVolumeOfBindingReaction;
@@ -893,7 +893,7 @@ var PrintView = Backbone.View.extend({
     magBeadPreparation: function (which) {
 
         var result = "";
-        if (this.anyLongTermStorage) {
+        if (this.anyLongTermStorage()) {
             result += this.rowfromGetter(function () { return ""; }, "<i>First Complex Dilution</i>", "", "", false, "string");
 
             result += this.rowfromGetter(function (sample) {

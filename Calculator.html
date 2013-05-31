@@ -6958,16 +6958,11 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
             });
         });
     };
-})(jQuery);</script><script type='text/javascript'>//
-// Sample Preparation Calculator
-// Version number
-//
-// (c) 2013 Pacific Biosciences
-//
-
-var CalculatorVersion = "2.0.0.2";</script><script type='text/javascript'>//
+})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.0.1.0";</script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
+//
+// This requires that you include calculator.version.js first
 //
 // (c) 2013 Pacific Biosciences
 //
@@ -7003,8 +6998,8 @@ Constants.prototype.globals = {
 };
 
 Constants.prototype.strings = {
-    CalculatorVersion: "Version " + CalculatorVersion,
-    CalculatorVersionPrint: "Calculator Version " + CalculatorVersion,
+    CalculatorVersion: "Version " + CalculatorVersion,                  // from calculator.version.js
+    CalculatorVersionPrint: "Calculator Version " + CalculatorVersion,  // from calculator.version.js
     SampleInformationTitle: "Sample Information",
     Step1Entry: "Step 1:  Enter sample information",
     Step1Display: "Step 1:  Review sample information",
@@ -7340,7 +7335,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "2",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL 1.0",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7388,7 +7383,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "2",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7436,7 +7431,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7461,7 +7456,7 @@ Constants.prototype.buckets = [
     "MaxVolumePerWellNoReuse": "77",
     "MaxVolumePerWellWithReuse": "77",
     "VolumePerChipNoReuse": "9",
-    "SampleConcentrationOnChipSmallScale": "0.075",
+    "SampleConcentrationOnChipSmallScale": "0.06",
     "SampleConcentrationOnChipLargeScale": "0.05",
     "SampleDilutionFactorOnInstrument": "0.33333",
     "SampleConcentrationInAnnealingSmallScale": "5",
@@ -7484,7 +7479,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "10",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7532,7 +7527,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7580,7 +7575,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7611,8 +7606,8 @@ Constants.prototype.buckets = [
     "MaxVolumePerWellNoReuse": "82",
     "MaxVolumePerWellWithReuse": "82",
     "VolumePerChipNoReuse": "9",
-    "SampleConcentrationOnChipSmallScale": "0.00275",
-    "SampleConcentrationOnChipLargeScale": "0.00275",
+    "SampleConcentrationOnChipSmallScale": "0.003",
+    "SampleConcentrationOnChipLargeScale": "0.003",
     "SampleDilutionFactorOnInstrument": "0.2",
     "SampleConcentrationInAnnealingSmallScale": "0.83333",
     "SampleConcentrationInAnnealingLargeScale": "50",
@@ -7634,7 +7629,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "10",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7658,8 +7653,8 @@ Constants.prototype.buckets = [
     "MaxVolumePerWellNoReuse": "82",
     "MaxVolumePerWellWithReuse": "82",
     "VolumePerChipNoReuse": "9",
-    "SampleConcentrationOnChipSmallScale": "0.00275",
-    "SampleConcentrationOnChipLargeScale": "0.00275",
+    "SampleConcentrationOnChipSmallScale": "0.003",
+    "SampleConcentrationOnChipLargeScale": "0.003",
     "SampleDilutionFactorOnInstrument": "0.2",
     "SampleConcentrationInAnnealingSmallScale": "0.83333",
     "SampleConcentrationInAnnealingLargeScale": "50",
@@ -7681,7 +7676,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "10",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7705,8 +7700,8 @@ Constants.prototype.buckets = [
     "MaxVolumePerWellNoReuse": "82",
     "MaxVolumePerWellWithReuse": "82",
     "VolumePerChipNoReuse": "9",
-    "SampleConcentrationOnChipSmallScale": "0.00338",
-    "SampleConcentrationOnChipLargeScale": "0.00338",
+    "SampleConcentrationOnChipSmallScale": "0.003",
+    "SampleConcentrationOnChipLargeScale": "0.003",
     "SampleDilutionFactorOnInstrument": "0.2",
     "SampleConcentrationInAnnealingSmallScale": "0.83333",
     "SampleConcentrationInAnnealingLargeScale": "50",
@@ -7728,7 +7723,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "10",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7752,8 +7747,8 @@ Constants.prototype.buckets = [
     "MaxVolumePerWellNoReuse": "82",
     "MaxVolumePerWellWithReuse": "82",
     "VolumePerChipNoReuse": "9",
-    "SampleConcentrationOnChipSmallScale": "0.00338",
-    "SampleConcentrationOnChipLargeScale": "0.00338",
+    "SampleConcentrationOnChipSmallScale": "0.003",
+    "SampleConcentrationOnChipLargeScale": "0.003",
     "SampleDilutionFactorOnInstrument": "0.2",
     "SampleConcentrationInAnnealingSmallScale": "0.83333",
     "SampleConcentrationInAnnealingLargeScale": "50",
@@ -7775,7 +7770,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "5",
     "DeadVolumePerWell": "10",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL",
+    "TubeNamePolymerase": "SA-DNA Polymerase P4",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -7996,7 +7991,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "2",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL 1.0",
+    "TubeNamePolymerase": "SA-DNA Polymerase XL",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -8971,7 +8966,7 @@ Constants.prototype.buckets = [
     "DefaultPrimerToTemplateRatioSmallScale": "20",
     "DefaultPrimerToTemplateRatioLargeScale": "2",
     "DeadVolumePerWell": "5",
-    "TubeNamePolymerase": "SA-DNA Polymerase XL 1.0",
+    "TubeNamePolymerase": "SA-DNA Polymerase XL",
     "TubeNameBindingBuffer": "Binding Buffer v2",
     "TubeNameDtt": "DTT",
     "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
@@ -15548,7 +15543,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample.VolumeOfPolymeraseDilutionInBinding;
-        }, "Annealed Template", " ul", "", false, "volume");
+        }, "Diluted Polymerase", " ul", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample.TotalVolumeOfBindingReaction;
@@ -15794,7 +15789,7 @@ var PrintView = Backbone.View.extend({
     magBeadPreparation: function (which) {
 
         var result = "";
-        if (this.anyLongTermStorage) {
+        if (this.anyLongTermStorage()) {
             result += this.rowfromGetter(function () { return ""; }, "<i>First Complex Dilution</i>", "", "", false, "string");
 
             result += this.rowfromGetter(function (sample) {

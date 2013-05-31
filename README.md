@@ -49,3 +49,14 @@ calculator by checking with Pacific Biosciences support.
 Older versions of this calculator may be downloaded by using 
 the branch tab. Select a tag for a desired release to download
 a ZIP folder with that release.
+
+
+Building
+--------
+The Calculator.html file provided is latest version. If you
+choose to modify the calculator sources located in the src
+directory you can use the build.py script provided to build
+your own single-file version including your changes. The
+script can be run like this:
+
+python build.py src/index.html src/ Calculator.html

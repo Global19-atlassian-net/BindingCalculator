@@ -802,7 +802,7 @@ var PrintView = Backbone.View.extend({
 
         spike = false;
         if (this.someSampleUsesSpike) {
-            spike = ((first.Chemistry === "Version2") || (first.Chemistry === "VersionXL"));
+            spike = (first.Chemistry !== "Version1");
         }
 
         if (spike) {
@@ -1025,7 +1025,7 @@ var PrintView = Backbone.View.extend({
 
         spike = false;
         if (this.someSampleUsesSpike) {
-            spike = ((first.Chemistry === "Version2") || (first.Chemistry === "VersionXL"));
+            spike = (first.Chemistry !== "Version1");
         }
 
         if (spike) {

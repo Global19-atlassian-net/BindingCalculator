@@ -1,3 +1,9 @@
+Version 2.0.1.1
+- Remove warning with standard/diffusion protocol when P4 binding kit selected (issue 23427)
+- Correct binding buffer calculations when P4 binding kit selected (issue 23428)
+- Change low binding volume error message and avoid showing erroneous calculations (issue 23450)
+- Show DNA Control dilution in print view when P4 binding kit selected (issue 23455)
+
 Version 2.0.1.0
 - Update coefficients for the P4 binding kit
 - Correct polymerase tube label for samples using P4 (issue 23382)

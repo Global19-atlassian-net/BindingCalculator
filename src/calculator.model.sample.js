@@ -1351,7 +1351,7 @@ var SampleCalc = Backbone.Model.extend({
 			ComplexReuse: this.ComplexReuse,                                // Prep0
 			gaussianRounding: this.gaussianRounding                         // Prep0
 
-});
+});
     },
 
     Prep6_MaxVolumePerWell: function () {
@@ -1903,7 +1903,12 @@ var SampleCalc = Backbone.Model.extend({
             rounded = that.gaussianRounding(result, 3);
             if ((that.LowConcentrationsAllowed === "False") &&                          // Prep0
 			   (rounded < that.MinimumVolumeOfBindingReaction)) {					    // Prep4
+
+                // we won't have enough annealed volume for binding, raise an error and prevent
+                // any downstream calculations so they won't accidentally proceed. bugzilla 23450
+                // TODO: include MinimumVolumeOfBindingReaction in error text to clarify what is needed
                 that.RaiseError("BindingVolumeLow");
+                return Number.NaN;
             }
 
             return Math.max(that.MinimumVolumeOfBindingReaction, result);               // Prep4
@@ -1913,7 +1918,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep24_VolumeOfSpikeInDilutionInBinding: function () {
         var that = this;
         this.VolumeOfSpikeInDilutionInBinding = (function () {                          // Result: Prep24
-            if ((that.Chemistry === "Version2") || (that.Chemistry === "VersionXL")) {  // Prop0
+            if (that.Chemistry !== "Version1") {                                        // Prop0
                 return Number.NaN;
             }
 
@@ -1954,7 +1959,7 @@ var SampleCalc = Backbone.Model.extend({
 			that.VolumeAvailableOfAnnealingReactionInBinding;   // Prep20
 
         this.BindingBufferInBinding =                           // Result: Prep26
-			((that.Chemistry === "Version2") || (that.Chemistry === "VersionXL")) ?
+			(that.Chemistry !== "Version1") ?
 			result :
 			result - that.VolumeOfSpikeInDilutionInBinding;     // Prep24
     },
@@ -2062,7 +2067,7 @@ var SampleCalc = Backbone.Model.extend({
 				targetConcentration /
 				that.FinalBindingConcentration;                                         // Prep24
 
-            if ((that.Chemistry === "Version2") || (that.Chemistry === "VersionXL")) {  // Prep0
+            if (that.Chemistry !== "Version1") {                                        // Prep0
                 boundTemplateRequired += that.Helper_SpikeInVolumeInDilution(targetConcentration, finalResultingVolumeForOneChip);  // Prep6
             }
 
@@ -2239,7 +2244,7 @@ var SampleCalc = Backbone.Model.extend({
 
     Helper_BufferNeeded: function (totalVolume, bindingVolume, spikeInVolume) { // Result: Prep0
         var result = totalVolume - bindingVolume;
-        result = (((this.Chemistry === "Version2") || (this.Chemistry === "VersionXL"))
+        result = ((this.Chemistry !== "Version1")
                 && (this.UseSpikeInControl === "True")) ? result - spikeInVolume : result;
         return result;
     },

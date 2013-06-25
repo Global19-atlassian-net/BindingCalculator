@@ -1209,6 +1209,7 @@ div#printview p
         <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration2" id="calc-titration2" value="" disabled='disabled' />
         <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration3" id="calc-titration3" value="" disabled='disabled' />
         <input type="text" class="grid1 highlight_TitrationConcentrations" name="TitrationConcentration4" id="calc-titration4" value="" disabled='disabled' />
+        <div class="grid1 alpha top2">nM</div>
         <div class="clear"></div>
         
         
@@ -6958,7 +6959,7 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
             });
         });
     };
-})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.0.1.0";</script><script type='text/javascript'>//
+})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.0.1.2";</script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
 //
@@ -7037,7 +7038,7 @@ Constants.prototype.errors = {
 	BindingVolumeLow: {
 		Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Warning: Your binding volume may be low."
+        LongMessage: "Error: Not enough binding volume. You may enable the non-standard option."
 	},
     DifficultPipetting: {
         Coefficient: "",
@@ -7344,8 +7345,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "7Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "7Pa"
     },
 
     { "Name": "p4-standard-500-cv3",
@@ -7392,8 +7392,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "8Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "8Pa"
     },
 
     { "Name": "p4-standard-1000-cv3",
@@ -7440,8 +7439,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "9Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "9Pa"
     },
 
     { "Name": "p4-standard-2000-cv3",
@@ -7488,8 +7486,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "10Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "10Pa"
     },
 
     { "Name": "p4-standard-5000-cv3",
@@ -7536,8 +7533,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (3kb bp to 10kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (3kb bp to 10kb)",
-    "PolymeraseTubeLabel": "11Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "11Pa"
     },
 
     { "Name": "p4-standard-10000-cv3",
@@ -7584,8 +7580,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (3kb bp to 10kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (3kb bp to 10kb)",
-    "PolymeraseTubeLabel": "12Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "12Pa"
     },
 
 
@@ -7617,7 +7612,7 @@ Constants.prototype.buckets = [
     "SpikeInPercentOfTemplateConcentration": "0.01",
     "TargetConcentrationOfFirstDilution": "100",
     "PolymeraseTemplateRatioSmallScale": "10",
-    "PolymeraseTemplateRatioLargeScale": "2",
+    "PolymeraseTemplateRatioLargeScale": "3",
     "MinimumSampleConcentrationSmallScale": "1.06",
     "MinimumSampleConcentrationLargeScale": "76.93",
     "SpikeInStockConcentration": "10",
@@ -7664,7 +7659,7 @@ Constants.prototype.buckets = [
     "SpikeInPercentOfTemplateConcentration": "0.01",
     "TargetConcentrationOfFirstDilution": "100",
     "PolymeraseTemplateRatioSmallScale": "10",
-    "PolymeraseTemplateRatioLargeScale": "2",
+    "PolymeraseTemplateRatioLargeScale": "3",
     "MinimumSampleConcentrationSmallScale": "1.06",
     "MinimumSampleConcentrationLargeScale": "76.93",
     "SpikeInStockConcentration": "10",
@@ -7711,7 +7706,7 @@ Constants.prototype.buckets = [
     "SpikeInPercentOfTemplateConcentration": "0.01",
     "TargetConcentrationOfFirstDilution": "100",
     "PolymeraseTemplateRatioSmallScale": "10",
-    "PolymeraseTemplateRatioLargeScale": "2",
+    "PolymeraseTemplateRatioLargeScale": "3",
     "MinimumSampleConcentrationSmallScale": "1.06",
     "MinimumSampleConcentrationLargeScale": "76.93",
     "SpikeInStockConcentration": "10",
@@ -7758,7 +7753,7 @@ Constants.prototype.buckets = [
     "SpikeInPercentOfTemplateConcentration": "0.01",
     "TargetConcentrationOfFirstDilution": "100",
     "PolymeraseTemplateRatioSmallScale": "10",
-    "PolymeraseTemplateRatioLargeScale": "2",
+    "PolymeraseTemplateRatioLargeScale": "3",
     "MinimumSampleConcentrationSmallScale": "1.06",
     "MinimumSampleConcentrationLargeScale": "76.93",
     "SpikeInStockConcentration": "10",
@@ -12056,6 +12051,7 @@ var SampleCalc = Backbone.Model.extend({
 			ComplexReuse: this.ComplexReuse,                                // Prep0
 			gaussianRounding: this.gaussianRounding                         // Prep0
 
+
 });
     },
 
@@ -12608,7 +12604,12 @@ var SampleCalc = Backbone.Model.extend({
             rounded = that.gaussianRounding(result, 3);
             if ((that.LowConcentrationsAllowed === "False") &&                          // Prep0
 			   (rounded < that.MinimumVolumeOfBindingReaction)) {					    // Prep4
+
+                // we won't have enough annealed volume for binding, raise an error and prevent
+                // any downstream calculations so they won't accidentally proceed. bugzilla 23450
+                // TODO: include MinimumVolumeOfBindingReaction in error text to clarify what is needed
                 that.RaiseError("BindingVolumeLow");
+                return Number.NaN;
             }
 
             return Math.max(that.MinimumVolumeOfBindingReaction, result);               // Prep4
@@ -12618,7 +12619,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep24_VolumeOfSpikeInDilutionInBinding: function () {
         var that = this;
         this.VolumeOfSpikeInDilutionInBinding = (function () {                          // Result: Prep24
-            if ((that.Chemistry === "Version2") || (that.Chemistry === "VersionXL")) {  // Prop0
+            if (that.Chemistry !== "Version1") {                                        // Prop0
                 return Number.NaN;
             }
 
@@ -12659,7 +12660,7 @@ var SampleCalc = Backbone.Model.extend({
 			that.VolumeAvailableOfAnnealingReactionInBinding;   // Prep20
 
         this.BindingBufferInBinding =                           // Result: Prep26
-			((that.Chemistry === "Version2") || (that.Chemistry === "VersionXL")) ?
+			(that.Chemistry !== "Version1") ?
 			result :
 			result - that.VolumeOfSpikeInDilutionInBinding;     // Prep24
     },
@@ -12767,7 +12768,7 @@ var SampleCalc = Backbone.Model.extend({
 				targetConcentration /
 				that.FinalBindingConcentration;                                         // Prep24
 
-            if ((that.Chemistry === "Version2") || (that.Chemistry === "VersionXL")) {  // Prep0
+            if (that.Chemistry !== "Version1") {                                        // Prep0
                 boundTemplateRequired += that.Helper_SpikeInVolumeInDilution(targetConcentration, finalResultingVolumeForOneChip);  // Prep6
             }
 
@@ -12944,7 +12945,7 @@ var SampleCalc = Backbone.Model.extend({
 
     Helper_BufferNeeded: function (totalVolume, bindingVolume, spikeInVolume) { // Result: Prep0
         var result = totalVolume - bindingVolume;
-        result = (((this.Chemistry === "Version2") || (this.Chemistry === "VersionXL"))
+        result = ((this.Chemistry !== "Version1")
                 && (this.UseSpikeInControl === "True")) ? result - spikeInVolume : result;
         return result;
     },
@@ -15698,7 +15699,7 @@ var PrintView = Backbone.View.extend({
 
         spike = false;
         if (this.someSampleUsesSpike) {
-            spike = ((first.Chemistry === "Version2") || (first.Chemistry === "VersionXL"));
+            spike = (first.Chemistry !== "Version1");
         }
 
         if (spike) {
@@ -15921,7 +15922,7 @@ var PrintView = Backbone.View.extend({
 
         spike = false;
         if (this.someSampleUsesSpike) {
-            spike = ((first.Chemistry === "Version2") || (first.Chemistry === "VersionXL"));
+            spike = (first.Chemistry !== "Version1");
         }
 
         if (spike) {

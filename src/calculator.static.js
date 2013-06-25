@@ -77,7 +77,7 @@ Constants.prototype.errors = {
 	BindingVolumeLow: {
 		Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Warning: Your binding volume may be low."
+        LongMessage: "Error: Not enough binding volume. You may enable the non-standard option."
 	},
     DifficultPipetting: {
         Coefficient: "",
@@ -384,8 +384,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "7Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "7Pa"
     },
 
     { "Name": "p4-standard-500-cv3",
@@ -432,8 +431,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "8Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "8Pa"
     },
 
     { "Name": "p4-standard-1000-cv3",
@@ -480,8 +478,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "9Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "9Pa"
     },
 
     { "Name": "p4-standard-2000-cv3",
@@ -528,8 +525,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (250 bp to 3kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (250 bp to 3kb)",
-    "PolymeraseTubeLabel": "10Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "10Pa"
     },
 
     { "Name": "p4-standard-5000-cv3",
@@ -576,8 +572,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (3kb bp to 10kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (3kb bp to 10kb)",
-    "PolymeraseTubeLabel": "11Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "11Pa"
     },
 
     { "Name": "p4-standard-10000-cv3",
@@ -624,8 +619,7 @@ Constants.prototype.buckets = [
     "TubeNameNucleotides": "dNTP",
     "TubeNameSpikeInControl": "DNA Control Complex 2.0 (3kb bp to 10kb)",
     "SpikeInTubeLabel": "DNA Control Complex 2.0 (3kb bp to 10kb)",
-    "PolymeraseTubeLabel": "12Pa",
-    "WarningMessage": "The P4 binding kit has not been optimized for use without magnetic beads"
+    "PolymeraseTubeLabel": "12Pa"
     },
 
 

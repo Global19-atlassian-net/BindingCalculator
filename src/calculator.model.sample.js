@@ -1351,7 +1351,8 @@ var SampleCalc = Backbone.Model.extend({
 			ComplexReuse: this.ComplexReuse,                                // Prep0
 			gaussianRounding: this.gaussianRounding                         // Prep0
 
-});
+
+});
     },
 
     Prep6_MaxVolumePerWell: function () {

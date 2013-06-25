@@ -1,8 +1,13 @@
-Version 2.0.1.1
+Version 2.0.1.2
+- Changed polymerase ratio from 2 to 3 for large-scale magbead when P4 binding kit selected (issue 23482)
+
+Version 2.0.1.1 
+ (released with PacBio RS version 2.0.2 Software)
 - Remove warning with standard/diffusion protocol when P4 binding kit selected (issue 23427)
 - Correct binding buffer calculations when P4 binding kit selected (issue 23428)
 - Change low binding volume error message and avoid showing erroneous calculations (issue 23450)
 - Show DNA Control dilution in print view when P4 binding kit selected (issue 23455)
+- Added nM units to the titration input concentrations (issue 23478)
 
 Version 2.0.1.0
 - Update coefficients for the P4 binding kit

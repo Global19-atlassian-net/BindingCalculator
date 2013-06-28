@@ -59,3 +59,13 @@ directory use the build.py script provided to build an updated
 single-file version including your changes, like this:
 
 python build.py src/index.html src/ Calculator.html
+
+
+
+
+
+
+
+
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/104b77caac44b82e52bce19ad64c9c0b "githalytics.com")](http://githalytics.com/github.com/PacificBiosciences)

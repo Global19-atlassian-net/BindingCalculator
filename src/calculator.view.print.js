@@ -159,11 +159,13 @@ var PrintView = Backbone.View.extend({
             standardness = first.LowConcentrationsAllowed,
             chemistry = first.Chemistry,
             preparation = first.PreparationProtocol,
+            storage = first.LongTermStorage,
             magbead = first.MagBead,
             titration = (first.ComputeOption === "Titration"),
             sameStandardness = true,
             sameChemistry = true,
             sameSize = true,
+            sameStorage = true,
             sameMagBead = true,
             similarCompute = true;
 
@@ -180,6 +182,10 @@ var PrintView = Backbone.View.extend({
 
             if (sample.PreparationProtocol !== preparation) {
                 sameSize = false;
+            }
+
+            if (sample.LongTermStorage !== storage) {
+                sameStorage = false;
             }
 
             if (sample.MagBead !== magbead) {
@@ -205,6 +211,9 @@ var PrintView = Backbone.View.extend({
         }
         if (!sameSize) {
             errors += "are large-scale preparations; ";
+        }
+        if (!sameStorage) {
+            errors += "use long term storage; ";
         }
         if (!sameMagBead) {
             errors += "use magnetic beads; ";
@@ -381,6 +390,14 @@ var PrintView = Backbone.View.extend({
         result += this.rowfromGetter(function (sample) {
             return sample.PreparationProtocol;
         }, "Preparation", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            // if Large prep protocol, then we always use long term storage
+            // just display it as such. True is converted to Yes automatically.
+            if (sample.PreparationProtocol === "Large")
+                return "True";
+            return sample.LongTermStorage;
+        }, "Long Term Storage", "", "", false, "string");
 
         // strobe option deprecated and removed, was here
 
@@ -674,6 +691,9 @@ var PrintView = Backbone.View.extend({
             if ("Large" === sample.PreparationProtocol) {
                 return true;
             }
+            if ("True" === sample.LongTermStorage) {
+                return true;
+            }
         }
         return false;
     },
@@ -908,6 +928,10 @@ var PrintView = Backbone.View.extend({
         }
 
         result += this.rowfromGetter(function (sample) {
+            return sample[which].MagBeadComplexDilutionVolumeOfSaltBuffer;
+        }, "Bead Wash Buffer", " uL", "", false, "volume");
+
+        result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
         }, "Bead Binding Buffer", " uL", "", false, "volume");
 
@@ -1050,7 +1074,7 @@ var PrintView = Backbone.View.extend({
             }, first.TubeNameComplexDilutionBuffer, " uL", "", false, "volume");
 
 
-            if ((first.Chemistry === "Version2") || (first.Chemistry === "VersionXL")) {
+            if (spike) {
                 result += this.rowfromGetter(function (sample) {
                     return sample.VolumeOfSpikeInDilutionInComplexDilution;
                 }, "DNA Control Dilution", " uL", "", false, "volume");

@@ -121,6 +121,7 @@ var Sample = Backbone.Model.extend({
     ComputeOption: "Volume",
     MagBead: "True",
     PreparationProtocol: "Small",
+    LongTermStorage: "False",
     UseSpikeInControl: "True",
     ComplexReuse: "False",
     LowConcentrationsAllowed: "False",
@@ -169,6 +170,7 @@ var Sample = Backbone.Model.extend({
         this.ComputeOption = json.ComputeOption;
         this.MagBead = json.MagBead;
         this.PreparationProtocol = json.PreparationProtocol;
+        this.LongTermStorage = json.LongTermStorage;
         this.UseSpikeInControl = json.UseSpikeInControl;
         this.ComplexReuse = json.ComplexReuse;
         this.LowConcentrationsAllowed = json.LowConcentrationsAllowed;
@@ -219,6 +221,7 @@ var Sample = Backbone.Model.extend({
         output.ComputeOption = this.ComputeOption;
         output.MagBead = this.MagBead;
         output.PreparationProtocol = this.PreparationProtocol;
+        output.LongTermStorage = this.LongTermStorage;
         output.UseSpikeInControl = this.UseSpikeInControl;
         output.ComplexReuse = this.ComplexReuse;
         output.LowConcentrationsAllowed = this.LowConcentrationsAllowed;
@@ -395,6 +398,7 @@ var Sample = Backbone.Model.extend({
         calc.ComputeOption = this.ComputeOption;
         calc.MagBead = this.MagBead;
         calc.PreparationProtocol = this.PreparationProtocol;
+        calc.LongTermStorage = this.LongTermStorage;
         calc.UseSpikeInControl = this.UseSpikeInControl;
         calc.ComplexReuse = this.ComplexReuse;
         calc.LowConcentrationsAllowed = this.LowConcentrationsAllowed;
@@ -811,7 +815,7 @@ var MagBeadCalc = Backbone.Model.extend({
 
     MagBeadStockSpikeInConcentration: 10.000,           // Spike in dilution for mag bead. Assumes 10000 pM stock concentration which we dilute
     MagBeadIntermediateSpikeInConcentration: 0.500,     // in two steps
-    MagBeadFinalSpikeInConcentration: 0.010,            // down to 10 pM to use in complex delution
+    MagBeadFinalSpikeInConcentration: 0.010,            // down to 10 pM to use in complex dilution
 
     initialize: function (options) {
         this.bucket = options.bucket;
@@ -819,6 +823,7 @@ var MagBeadCalc = Backbone.Model.extend({
         this.gaussianRounding = options.gaussianRounding;
 
         this.PreparationProtocol = options.PreparationProtocol;
+        this.LongTermStorage = options.LongTermStorage;
         this.UseSpikeInControl = options.UseSpikeInControl;
         this.ComplexReuse = options.ComplexReuse;
         this.LowConcentrationsAllowed = options.LowConcentrationsAllowed;
@@ -834,6 +839,9 @@ var MagBeadCalc = Backbone.Model.extend({
         });
 
         this.MagneticBeadSluffFactor = this.globals.MagneticBeadSluffFactor;
+
+        // bug 24078 - support raising errors here as well
+        this.Errors = [];
 
         //
         // Call all "Prep" functions in our prototype in index order
@@ -887,8 +895,8 @@ var MagBeadCalc = Backbone.Model.extend({
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }            // MagPrep0
             if (that.MagBeadComplexDilutionVolumeOfSpikeInDilution * 0.01 >= 1) {   // MagPrep6
 
-                return (that.MagBeadComplexDilutionVolumeOfSpikeInDilution *        // MagPrep6
-                    that.MagneticBeadSluffFactor) *                                 // MagPrep0
+                return (that.MagBeadComplexDilutionVolumeOfSpikeInDilution) *        // MagPrep6
+                    /*that.MagneticBeadSluffFactor *   removed for 2.1.0.0  */     // MagPrep0
                 (1.0 -
                     (that.MagBeadFinalSpikeInConcentration /                        // MagPrep0
                         that.MagBeadIntermediateSpikeInConcentration));             // MagPrep0
@@ -903,8 +911,8 @@ var MagBeadCalc = Backbone.Model.extend({
         this.MagBeadSpikeInDilutionVolumeOfFirstDilution = (function () {        // Result: MagPrep8
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }        // MagPrep0
             if (that.MagBeadComplexDilutionVolumeOfSpikeInDilution * 0.01 >= 1){ // MagPrep6
-                return (that.MagBeadComplexDilutionVolumeOfSpikeInDilution *    // MagPrep6
-						that.MagneticBeadSluffFactor) *                         // MagPrep0
+                return (that.MagBeadComplexDilutionVolumeOfSpikeInDilution) *    // MagPrep6
+						/*that.MagneticBeadSluffFactor * removed for 2.1.0.0 */ // MagPrep0
                         (that.MagBeadFinalSpikeInConcentration /                // MagPrep0
                          that.MagBeadIntermediateSpikeInConcentration);         // MagPrep0
             }
@@ -927,18 +935,19 @@ var MagBeadCalc = Backbone.Model.extend({
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }    // MagPrep0
             if (0 === that.TotalComplexDilutionCells) { return 0.0; }       // MagPrep0
 
-            if (that.PreparationProtocol === "Small")                       // MagPrep0
+            if (that.PreparationProtocol === "Small" && that.LongTermStorage !== "True") // MagPrep0
             { return 0.0; }
 
             var ratio = that.MagBeadIntermediateDilutionConcentration /     // MagPrep2
                            that.MagBeadOriginalBoundSampleConcentration,    // MagPrep2
                 test = ratio *
-				    that.MagneticBeadSluffFactor *                          // MagPrep0
+				    /* that.MagneticBeadSluffFactor * removed 2.1.0.0  */   // MagPrep0
 				    that.MagBeadComplexDilutionVolumeOfSecondComplex;       // MagPrep6
 
             if (test >= 1) {
                 return that.MagBeadComplexDilutionVolumeOfSecondComplex *   // MagPrep6
-					   that.MagneticBeadSluffFactor * (1 - ratio);          // MagPrep0
+					   /* that.MagneticBeadSluffFactor * removed 2.1.0.0 */ // MagPrep0
+                    (1 - ratio);
             }
 
             return that.MagBeadOriginalBoundSampleConcentration /           // MagPrep2
@@ -967,13 +976,13 @@ var MagBeadCalc = Backbone.Model.extend({
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }     // MagPrep0
             if (0 === that.TotalComplexDilutionCells) { return 0.0; }        // MagPrep0
 
-            if (that.PreparationProtocol === "Small") {                      // MagPrep0
+            if (that.PreparationProtocol === "Small" && that.LongTermStorage !== "True") { // MagPrep0
                 return 1.0;
             }
 
             var result =
 				that.MagBeadComplexDilutionVolumeOfSecondComplex *          // MagPrep6
-				that.MagneticBeadSluffFactor *                              // MagPrep0
+				/* that.MagneticBeadSluffFactor *  removed for 2.1.0.0  */  // MagPrep0
 				(that.MagBeadIntermediateDilutionConcentration /            // MagPrep2
                     that.MagBeadOriginalBoundSampleConcentration);          // MagPrep2
 
@@ -989,7 +998,65 @@ var MagBeadCalc = Backbone.Model.extend({
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.MagBeadComplexDilutionVolumeTotal -                            // MagPrep4
         this.MagBeadComplexDilutionVolumeOfSpikeInDilution -                // MagPrep6
-		this.MagBeadComplexDilutionVolumeOfSecondComplex;                   // MagPrep6
+		this.MagBeadComplexDilutionVolumeOfSecondComplex -                  // MagPrep6
+        this.MagBeadComplexDilutionVolumeOfSaltBuffer;                      // MagPrep7
+
+        // bug 24078 - if salt adjustment would cause BBB to go negative, then omit
+        // this calculation and instead make all of the BBB to instead appear here
+        // as BWB (to get you a little more salt even if it is not enough). So we need
+        // to calculate total - spike-in - complex here to see if we're going negative
+
+        var aliquotSoFar = this.MagBeadComplexDilutionVolumeTotal -           // MagPrep4
+            this.MagBeadComplexDilutionVolumeOfSpikeInDilution -              // MagPrep6
+            this.MagBeadComplexDilutionVolumeOfSecondComplex;                 // MagPrep6
+        if (aliquotSoFar < 0.0)
+        {
+            // error case, the requested concentration on plate/chip is SO HIGH
+            // that we just can't get there from here. Error out
+
+            this.MagBeadComplexDilutionVolumeOfSaltBuffer = Number.NaN;
+            this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer = Number.NaN;
+
+            this.Errors.push((this.MagBeadComplexDilutionVolumeOfSpikeInDilution > 0.0) ?
+                "ConcentrationOnPlateTooHighWithControl" :      // suggest they try without control
+                "ConcentrationOnPlateTooHighWithoutControl");   // otherwise they're dead
+        }
+        if (aliquotSoFar - this.MagBeadComplexDilutionVolumeOfSaltBuffer - 1.0 < 0.0)
+        {
+            // we have enough concentration, but not with the salt adjustment
+            // so instead of using salt adjustment, use BWB entirely instead
+            // and also take this case if BBB would be < 1.0 for difficult pipetting
+            this.MagBeadComplexDilutionVolumeOfSaltBuffer = aliquotSoFar;
+            this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer = 0.0;
+        }
+    },
+
+    //
+    // Added for 2.1.0.0 to adjust for low concentration samples / size selected libraries
+    //
+    // BWBVolume = ComplexVolumeInBeading *
+    //            (BBBSaltConcentration - BindingSaltConcentration) / (BWBSaltConcentration - BBBSaltConcentration)
+    // Where:
+    //   BBBSaltConcentration = 100
+    //   BWBSaltConcentration = 400
+    //   BindingSaltConcentration = 10 or 55 nM in the storage case, because the complex was diluted in the
+    //      first dilution step 50:50 with BBB which has 100 nM salt. So the resulting salt concentration
+    //      when there is extra dilution is 55 nM instead of 10 nM. NOT with large scale prep though. (bug 24078)
+    //
+    Prep7_MagBeadComplexDilutionVolumeOfSaltBuffer: function () {
+        var BBBSaltConcentration = 100;
+        var BWBSaltConcentration = 400;
+        var BindingSaltConcentration = (this.PreparationProtocol === "Small" && this.LongTermStorage === "True") ? 55 : 10;
+        var amount =
+        (0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+        (this.MagBeadComplexDilutionVolumeOfSecondComplex *                 // MagPrep6
+        (BBBSaltConcentration - BindingSaltConcentration)) / (BWBSaltConcentration - BBBSaltConcentration);
+
+        // only add BWB if the amount to add is more than 1 uL
+        this.MagBeadComplexDilutionVolumeOfSaltBuffer = (amount < 1.0) ? 0.0 : amount;
+
+        // bug 24078 - this resulting value may be CHANGED above by computation of the
+        // VolumeOfSecondBindingBuffer if needed. So this is not the only place we mutate it
     },
 
     Prep6_MagBeadComplexDilutionVolumeOfSpikeInDilution: function () {
@@ -1010,7 +1077,7 @@ var MagBeadCalc = Backbone.Model.extend({
 
     Prep6_MagBeadComplexDilutionVolumeOfSecondComplex: function () {
         this.MagBeadComplexDilutionVolumeOfSecondComplex =                  // Result: MagPrep6
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		    (this.FinalBeadedSampleConcentration /                          // MagPrep2
 		     this.MagBeadIntermediateDilutionConcentration) *               // MagPrep2
              this.MagBeadComplexDilutionVolumeTotal;                        // MagPrep4
@@ -1019,15 +1086,15 @@ var MagBeadCalc = Backbone.Model.extend({
     Prep4_MagBeadComplexDilutionVolumeTotal: function () {
         this.MagBeadComplexDilutionVolumeTotal =                            // Result: MagPrep4
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfComplex *                         // MagPrep2
-		this.MagneticBeadSluffFactor;                                       // MagPrep0
+		this.ComplexBeadIncubationVolumeOfComplex; /* *                        // MagPrep2
+		this.MagneticBeadSluffFactor;  removed for 2.1.0.0    */                        // MagPrep0
     },
 
     Prep6_BeadWashVolumeOfBeads: function () {
         this.BeadWashVolumeOfBeads =                                        // Result: MagPrep6
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
 		this.ComplexBeadIncubationVolumeOfWashedBeads *                     // MagPrep4
-		this.MagneticBeadSluffFactor;
+		this.MagneticBeadSluffFactor;   // leave this in for 2.1.0.0, used for wash beads only now
     },
 
     Prep8_BeadWashVolumeOfBeadWashBuffer: function () {
@@ -1231,11 +1298,12 @@ var SampleCalc = Backbone.Model.extend({
     },
     Prep2_SampleConcentrationInAnnealingReaction: function () {
         this.SampleConcentrationInAnnealingReaction = parseFloat((this.PreparationProtocol === "Small") ?     // Result: Prep2
-            this.bucket.SampleConcentrationInAnnealingSmallScale :
+            (this.LongTermStorage === "True") ? this.bucket.SampleConcentrationInAnnealingSmallStorage :
+                this.bucket.SampleConcentrationInAnnealingSmallScale :
             this.bucket.SampleConcentrationInAnnealingLargeScale);
     },
     Prep2_DilutedPrimerConcentration: function () {
-        this.DilutedPrimerConcentration = parseFloat((this.PreparationProtocol === "Small") ?           // Result: Prep2
+        this.DilutedPrimerConcentration = parseFloat((this.PreparationProtocol === "Small" && this.LongTermStorage === "False") ?           // Result: Prep2
             this.bucket.DilutedPrimerConcentrationSmallScale :
             this.bucket.DilutedPrimerConcentrationLargeScale);
     },
@@ -1396,6 +1464,7 @@ var SampleCalc = Backbone.Model.extend({
         //          (this.FinalAnnealedConcentration * 0.6) : 
         //          this.SampleConcentrationInBinding)));
 
+        /* removed for 2.1.0.0 - no more sluff factor for magbead complex dilution (just bead wash)
         if (this.MagBead === "True") {
             volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                      // Prep0
 
@@ -1404,6 +1473,7 @@ var SampleCalc = Backbone.Model.extend({
                 volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                  // Prep0
             }
         }
+        */
 
         totalVolumeOfBindingReacton = Math.max(
           this.MinimumVolumeOfBindingReaction, volumeOnPlate *                                          // Prep4
@@ -1497,18 +1567,27 @@ var SampleCalc = Backbone.Model.extend({
                 //
 
                 totalVolumeOfBindingReaction = 0.0;
+                volumeNeededPerChip = parseFloat(that.VolumePerChipNoReuse) + 	 // prep2
+                					  parseFloat(that.DeadVolumePerWell); 		 // prep2
+
+                /* removed for 2.1.0.0
+            	if (that.MagBead === "True")                                     // Prep0
+            	{
+            		// for magbead = 9 uL plus 10 uL of deadvolumeperwell * 1.1 sluff factor = 20.9 uL currently
+                	volumeNeededPerChip *= that.globals.MagneticBeadSluffFactor; // Prep0
+                }*/
 
                 if (that.TitrationConcentration1 > 0) {
-                    totalVolumeOfBindingReaction += 14.0 * (that.TitrationConcentration1 / concentrationInBinding);
+                    totalVolumeOfBindingReaction += volumeNeededPerChip * (that.TitrationConcentration1 / concentrationInBinding);
                 }
                 if (that.TitrationConcentration2 > 0) {
-                    totalVolumeOfBindingReaction += 14.0 * (that.TitrationConcentration2 / concentrationInBinding);
+                    totalVolumeOfBindingReaction += volumeNeededPerChip * (that.TitrationConcentration2 / concentrationInBinding);
                 }
                 if (that.TitrationConcentration3 > 0) {
-                    totalVolumeOfBindingReaction += 14.0 * (that.TitrationConcentration3 / concentrationInBinding);
+                    totalVolumeOfBindingReaction += volumeNeededPerChip * (that.TitrationConcentration3 / concentrationInBinding);
                 }
                 if (that.TitrationConcentration4 > 0) {
-                    totalVolumeOfBindingReaction += 14.0 * (that.TitrationConcentration4 / concentrationInBinding);
+                    totalVolumeOfBindingReaction += volumeNeededPerChip * (that.TitrationConcentration4 / concentrationInBinding);
                 }
                 totalVolumeOfBindingReaction = Math.max(that.MinimumVolumeOfBindingReaction, 1.1 * totalVolumeOfBindingReaction);   // Prep4
                 result = that.ComputeSampleVolumeInAnnealingReactionFromBindingVolume(0.6 * totalVolumeOfBindingReaction,       // Prep4
@@ -1753,8 +1832,15 @@ var SampleCalc = Backbone.Model.extend({
     Prep2_SpikeInFirstDilutionConcentration: function () {
         this.SpikeInFirstDilutionConcentration =                        // Result: Prep2
             (this.PreparationProtocol === "Small") ?                     // Prep0
-            this.globals.SpikeInFirstDilutionConcentrationSmallScale :  // Prep0
-            this.globals.SpikeInFirstDilutionConcentrationLargeScale;   // Prep0
+                this.globals.SpikeInFirstDilutionConcentrationSmallScale :  // Prep0
+                this.globals.SpikeInFirstDilutionConcentrationLargeScale;   // Prep0
+    },
+
+    Prep2_StorageComplexConcentration: function () {
+        this.StorageComplexConcentration =                               // Result: Prep2
+            (this.PreparationProtocol === "Small") ?                     // Prep0
+                this.globals.StorageComplexConcentrationSmallScale :     // Prep0
+                this.globals.StorageComplexConcentrationLargeScale;      // Prep0
     },
 
     Prep6_ConcentrationOnPlate: function () {
@@ -1994,8 +2080,18 @@ var SampleCalc = Backbone.Model.extend({
     },
 
     Prep26_NumberOfCellsFromBinding: function () {
+        var selectedBindingVolume = this.TotalVolumeOfBindingReaction;                                       // Prep22
+        this.NumberOfCellsFromBinding = this.ComputeNumberOfCellsFromBindingVolume(selectedBindingVolume);   // Prep26*
+    },
+
+    Prep26_MaxNumberOfCellsFromBinding: function () {
+        var maxBindingVolume = this.TotalVolumeOfAnnealingReaction / 0.6;                                    // Prep9
+        this.MaxNumberOfCellsFromBinding = this.ComputeNumberOfCellsFromBindingVolume(maxBindingVolume);     // Prep26*
+    },
+
+    ComputeNumberOfCellsFromBindingVolume: function (volume) {
         var that = this;
-        this.NumberOfCellsFromBinding = (function () {			    // Result: Prep26
+        var resultCells = (function () {			    // Result: Prep26
             //
             // Uses the same math as in ComplexDilution basically to determine the volume that would occur in complex dilution
             // if we used the TotalVolumeOfBindingReaction amount. Then uses the reverse math to determine the number of cells
@@ -2004,11 +2100,11 @@ var SampleCalc = Backbone.Model.extend({
 
             var targetConcentration, boundTemplateRequired, finalResultingVolumeForOneChip, concentrationTooLow,
                 fullWells, cellsFromFullWells, partialVolume, cellsFromPartialWell, result,
-                maxVolume = that.TotalVolumeOfBindingReaction *     // Prep22
+                maxVolume = volume *
 						    that.FinalBindingConcentration /        // Prep24
 							that.ConcentrationOnPlate;              // Prep6
 
-            // dont use StorageComplexConcentration, that's what we end up with after the final long term storage dilution, but then we
+            // Don't use StorageComplexConcentration, that's what we end up with after the final long term storage dilution, but then we
             // end up with that much more volume to get to that concentration!
 
             if (_.isNaN(maxVolume)) {
@@ -2024,17 +2120,18 @@ var SampleCalc = Backbone.Model.extend({
             // If mag bead, we adjust by Ravi's MagBeadSluffFactor
             //
 
+            /* removed for 2.1.0.0
             if (that.MagBead === "True")                                     // Prep0
             {
                 maxVolume /= that.globals.MagneticBeadSluffFactor;          // Prep0
 
                 // for large scale mag bead, we need twice the sluff factor since we have an extra complex dilution step (from storage)
 
-                if (that.PreparationProtocol === "Large")                    // Prep0
+                if (that.PreparationProtocol === "Large" || if small and storage case)                    // Prep0
                 {
                     maxVolume /= that.globals.MagneticBeadSluffFactor;      // Prep0
                 }
-            }
+            }*/
 
             // #19588 we're already including the spike in volume now TotalVolumeOfBindingReaction
             //if (Chemistry.Equals(BucketConstants.ChemistryV2))
@@ -2057,7 +2154,7 @@ var SampleCalc = Backbone.Model.extend({
 
             targetConcentration = that.ConcentrationOnPlate;                        // Prep6
             if (that.ComputeOption === "Titration") {                               // Prep0
-                // for titrations, use the maximum titration to test if we will have enough instead of the standard ConcentrationOnPlate
+                // for titration, use the maximum titration to test if we will have enough instead of the standard ConcentrationOnPlate
                 targetConcentration = Math.max(Math.max(that.TitrationConcentration1, that.TitrationConcentration2),    // Prep0
                                       Math.max(that.TitrationConcentration3, that.TitrationConcentration4));   // Prep0
             }
@@ -2085,7 +2182,7 @@ var SampleCalc = Backbone.Model.extend({
 
             //
             // Compute how many cells given the maximum volume
-            // Round the volume up to something pipettable to handle edge conditions
+            // Round the volume up to something pipette-able to handle edge conditions
             //
 
             fullWells = parseInt(maxVolume / that.MaxVolumePerWellFromBucket, 10);      // Prep2
@@ -2109,6 +2206,8 @@ var SampleCalc = Backbone.Model.extend({
 
             return result;
         } ());
+
+        return resultCells;
     },
 
     //
@@ -2278,7 +2377,7 @@ var SampleCalc = Backbone.Model.extend({
 			(this.ConcentrationOnPlate *                        // Prep6
 				this.TotalComplexDilutionVolume) /              // Prep6
 	            (this.PreparationProtocol === "Large" ?         // Prep0
-					this.globals.StorageComplexConcentration :  // Prep0
+					this.StorageComplexConcentration :          // Prep2
 					this.FinalBindingConcentration);            // Prep24
     },
 
@@ -2295,6 +2394,7 @@ var SampleCalc = Backbone.Model.extend({
             gaussianRounding: this.gaussianRounding,
 
             PreparationProtocol: this.PreparationProtocol,                      // Prep0
+            LongTermStorage: this.LongTermStorage,
             UseSpikeInControl: this.UseSpikeInControl,                          // Prep0
             ComplexReuse: this.ComplexReuse,                                    // Prep0
             LowConcentrationsAllowed: this.LowConcentrationsAllowed,            // Prep0
@@ -2348,9 +2448,11 @@ var SampleCalc = Backbone.Model.extend({
             var details = "";
             details += (that.ComputeOption === "Titration") ? "Titration, " : "";
             details += (that.MagBead === "True") ? "Mag bead, " : "";
-            details += (that.Chemistry === "VersionXL") ? "XL, " : "";
-            details += (that.Chemistry === "VersionP4") ? "P4, " : "";
+            details += ((that.Chemistry.length == 8) ?
+                         "C" + that.Chemistry.substring(7) :
+                         that.Chemistry.substring(7)) + ", ";
             details += (that.PreparationProtocol === "Small") ? "Small" : "Large";
+            details += (that.LongTermStorage === "True" || that.PreparationProtocol !== "Small") ? ", Storage" : "";
             details += (that.LowConcentrationsAllowed === "True") ? ", Non-standard" : "";
             details += (that.UseSpikeInControl === "True") ? ", Control" : "";
             details += (that.ComplexReuse === "True") ? ", Reuse" : "";
@@ -2415,7 +2517,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep26_VolumeOfBindingReactionInStorageComplex: function () {
         var that = this;
         this.VolumeOfBindingReactionInStorageComplex = (function () {       // Result: Prep26
-            if (that.PreparationProtocol === "Small") {                     // Prep0
+            if (that.PreparationProtocol === "Small" && that.LongTermStorage !== "True") {                     // Prep0
                 return 0;
             }
 
@@ -2447,7 +2549,7 @@ var SampleCalc = Backbone.Model.extend({
         this.TotalVolumeOfStorageComplex =                          // Result: Prep28
 			this.VolumeOfBindingReactionInStorageComplex *          // Prep26
 			this.SampleConcentrationInBinding /                     // Prep10
-			this.globals.StorageComplexConcentration;               // Prep0
+			this.StorageComplexConcentration;                       // Prep2
     },
 
     Prep30_FinalStorageConcentration: function () {
@@ -2471,6 +2573,16 @@ var SampleCalc = Backbone.Model.extend({
 
         if (this.PreparationProtocol === "Large" && this.nonStandard) {
             this.RaiseError((this.unitTesting) ? "NonStandardLargeScale" : "NonStandardLargeScaleNew");
+        }
+
+        // issue 24062 - error when using small/storage and non-storage, often not enough concentration
+        if (this.PreparationProtocol === "Small" && this.LongTermStorage === "True" && this.nonStandard) {
+            this.RaiseError("NonStandardSmallStorageNotSupported");
+        }
+
+        // issue 24100 - control with 20kb bucket is unsupported in 2.1.0.0
+        if (this.UseSpikeInControl === "True" && this.AnnealedBasePairLength > 15000) {
+            this.RaiseError("UntestedControlWithLongInsertSize");
         }
 
         //
@@ -2541,6 +2653,15 @@ var SampleCalc = Backbone.Model.extend({
             this.TitrationTotal4 = this.Titration4.TitrationTotal;
         }
 
+        var that = this;
+        var RaiseAnyErrors = function(errorArray)
+        {
+            if (errorArray.length == 0) return;
+            for(var i=0; i < errorArray.length; i++) {
+                that.RaiseError(errorArray[i]);
+            }
+        }
+
         var calc = this.MagBeadCalculations;
         if (calc) {
             this.MagBeadSpikeInDilutionVolumeOfFirstStockSpikeIn = calc.MagBeadSpikeInDilutionVolumeOfFirstStockSpikeIn;
@@ -2550,6 +2671,7 @@ var SampleCalc = Backbone.Model.extend({
 
             this.MagBeadComplexDilutionVolumeOfFirstBindingBuffer = calc.MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
             this.MagBeadComplexDilutionVolumeOfFirstComplex = calc.MagBeadComplexDilutionVolumeOfFirstComplex;
+            this.MagBeadComplexDilutionVolumeOfSaltBuffer = calc.MagBeadComplexDilutionVolumeOfSaltBuffer;
             this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer = calc.MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
             this.MagBeadComplexDilutionVolumeOfSpikeInDilution = calc.MagBeadComplexDilutionVolumeOfSpikeInDilution;
             this.MagBeadComplexDilutionVolumeOfSecondComplex = calc.MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -2564,6 +2686,7 @@ var SampleCalc = Backbone.Model.extend({
             this.ComplexBeadWashVolumeOfFirstBindingBuffer = calc.ComplexBeadWashVolumeOfFirstBindingBuffer;
             this.ComplexBeadWashVolumeOfBeadWashBuffer = calc.ComplexBeadWashVolumeOfBeadWashBuffer;
             this.ComplexBeadWashVolumeOfSecondBindingBuffer = calc.ComplexBeadWashVolumeOfSecondBindingBuffer;
+            RaiseAnyErrors(calc.Errors);
         }
 
         calc = this.MagBeadTitration1;
@@ -2575,6 +2698,7 @@ var SampleCalc = Backbone.Model.extend({
 
             this.Titration1MagBeadComplexDilutionVolumeOfFirstBindingBuffer = calc.MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
             this.Titration1MagBeadComplexDilutionVolumeOfFirstComplex = calc.MagBeadComplexDilutionVolumeOfFirstComplex;
+            this.Titration1MagBeadComplexDilutionVolumeOfSaltBuffer = calc.MagBeadComplexDilutionVolumeOfSaltBuffer;
             this.Titration1MagBeadComplexDilutionVolumeOfSecondBindingBuffer = calc.MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
             this.Titration1MagBeadComplexDilutionVolumeOfSpikeInDilution = calc.MagBeadComplexDilutionVolumeOfSpikeInDilution;
             this.Titration1MagBeadComplexDilutionVolumeOfSecondComplex = calc.MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -2589,6 +2713,7 @@ var SampleCalc = Backbone.Model.extend({
             this.Titration1ComplexBeadWashVolumeOfFirstBindingBuffer = calc.ComplexBeadWashVolumeOfFirstBindingBuffer;
             this.Titration1ComplexBeadWashVolumeOfBeadWashBuffer = calc.ComplexBeadWashVolumeOfBeadWashBuffer;
             this.Titration1ComplexBeadWashVolumeOfSecondBindingBuffer = calc.ComplexBeadWashVolumeOfSecondBindingBuffer;
+            RaiseAnyErrors(calc.Errors);
         }
 
         calc = this.MagBeadTitration2;
@@ -2600,6 +2725,7 @@ var SampleCalc = Backbone.Model.extend({
 
             this.Titration2MagBeadComplexDilutionVolumeOfFirstBindingBuffer = calc.MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
             this.Titration2MagBeadComplexDilutionVolumeOfFirstComplex = calc.MagBeadComplexDilutionVolumeOfFirstComplex;
+            this.Titration2MagBeadComplexDilutionVolumeOfSaltBuffer = calc.MagBeadComplexDilutionVolumeOfSaltBuffer;
             this.Titration2MagBeadComplexDilutionVolumeOfSecondBindingBuffer = calc.MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
             this.Titration2MagBeadComplexDilutionVolumeOfSpikeInDilution = calc.MagBeadComplexDilutionVolumeOfSpikeInDilution;
             this.Titration2MagBeadComplexDilutionVolumeOfSecondComplex = calc.MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -2614,6 +2740,7 @@ var SampleCalc = Backbone.Model.extend({
             this.Titration2ComplexBeadWashVolumeOfFirstBindingBuffer = calc.ComplexBeadWashVolumeOfFirstBindingBuffer;
             this.Titration2ComplexBeadWashVolumeOfBeadWashBuffer = calc.ComplexBeadWashVolumeOfBeadWashBuffer;
             this.Titration2ComplexBeadWashVolumeOfSecondBindingBuffer = calc.ComplexBeadWashVolumeOfSecondBindingBuffer;
+            RaiseAnyErrors(calc.Errors);
         }
 
         calc = this.MagBeadTitration3;
@@ -2625,6 +2752,7 @@ var SampleCalc = Backbone.Model.extend({
 
             this.Titration3MagBeadComplexDilutionVolumeOfFirstBindingBuffer = calc.MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
             this.Titration3MagBeadComplexDilutionVolumeOfFirstComplex = calc.MagBeadComplexDilutionVolumeOfFirstComplex;
+            this.Titration3MagBeadComplexDilutionVolumeOfSaltBuffer = calc.MagBeadComplexDilutionVolumeOfSaltBuffer;
             this.Titration3MagBeadComplexDilutionVolumeOfSecondBindingBuffer = calc.MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
             this.Titration3MagBeadComplexDilutionVolumeOfSpikeInDilution = calc.MagBeadComplexDilutionVolumeOfSpikeInDilution;
             this.Titration3MagBeadComplexDilutionVolumeOfSecondComplex = calc.MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -2639,6 +2767,7 @@ var SampleCalc = Backbone.Model.extend({
             this.Titration3ComplexBeadWashVolumeOfFirstBindingBuffer = calc.ComplexBeadWashVolumeOfFirstBindingBuffer;
             this.Titration3ComplexBeadWashVolumeOfBeadWashBuffer = calc.ComplexBeadWashVolumeOfBeadWashBuffer;
             this.Titration3ComplexBeadWashVolumeOfSecondBindingBuffer = calc.ComplexBeadWashVolumeOfSecondBindingBuffer;
+            RaiseAnyErrors(calc.Errors);
         }
 
         calc = this.MagBeadTitration4;
@@ -2650,6 +2779,7 @@ var SampleCalc = Backbone.Model.extend({
 
             this.Titration4MagBeadComplexDilutionVolumeOfFirstBindingBuffer = calc.MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
             this.Titration4MagBeadComplexDilutionVolumeOfFirstComplex = calc.MagBeadComplexDilutionVolumeOfFirstComplex;
+            this.Titration4MagBeadComplexDilutionVolumeOfSaltBuffer = calc.MagBeadComplexDilutionVolumeOfSaltBuffer;
             this.Titration4MagBeadComplexDilutionVolumeOfSecondBindingBuffer = calc.MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
             this.Titration4MagBeadComplexDilutionVolumeOfSpikeInDilution = calc.MagBeadComplexDilutionVolumeOfSpikeInDilution;
             this.Titration4MagBeadComplexDilutionVolumeOfSecondComplex = calc.MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -2664,6 +2794,7 @@ var SampleCalc = Backbone.Model.extend({
             this.Titration4ComplexBeadWashVolumeOfFirstBindingBuffer = calc.ComplexBeadWashVolumeOfFirstBindingBuffer;
             this.Titration4ComplexBeadWashVolumeOfBeadWashBuffer = calc.ComplexBeadWashVolumeOfBeadWashBuffer;
             this.Titration4ComplexBeadWashVolumeOfSecondBindingBuffer = calc.ComplexBeadWashVolumeOfSecondBindingBuffer;
+            RaiseAnyErrors(calc.Errors);
         }
     }
 

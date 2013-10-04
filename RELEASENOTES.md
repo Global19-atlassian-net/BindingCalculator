@@ -1,5 +1,15 @@
+Version 2.1.0.0
+- Support for the P5 binding kit
+- Support for long term storage with small preparation protocols
+- Support for 20kb insert sizes with size selection with P4 and P5 binding kits (issue 24054)
+- Added short summary in the sidebar, which stays on screen when scrolled (issue 23476)
+- Correct volume needed when using titration and magbead (issue 23737)
+- Name changed to Binding Calculator to match documentation (issue 23646)
+- Update warning using magnetic bead loading between 750 and 999 bp (issue 23437)
+- Print view now shows control volume aliquot in diffusion case with P4 or P5 chemistry (issue 24047)
+
 Version 2.0.1.2
-- Changed polymerase ratio from 2 to 3 for large-scale magbead when P4 binding kit selected (issue 23482)
+- Changed polymerase ratio from 2 to 3 for large-scale, magnetic bead loading when the P4 binding kit is selected (issue 23482)
 
 Version 2.0.1.1 
  (released with PacBio RS version 2.0.2 Software)
@@ -28,4 +38,4 @@ Version 2.0.0.1
 - Only rounds volumes to two digits of precision when less than 1 uL
 
 Version 2.0.0
-- First release of stand-alone Sample Prep Calculator
+- First release of stand-alone Binding Calculator

@@ -1,7 +1,7 @@
-SamplePrepCalculator
+BindingCalculator (aka SamplePrepCalculator)
 ====================
 
-This folder contains a version of the sample preparation calculator
+This folder contains a version of the binding calculator
 used with the PacBio RS and PacBio RS II sequencers. It is used to
 calculate binding and annealing reactions and to prepare DNA samples
 for use in these sequencers.
@@ -12,7 +12,7 @@ Customer Training Slide set posted in the portal.
 
 Installation
 ------------
-To download this version of the sample preparation calculator, 
+To download this version of the binding calculator,
 use the ZIP button to download a zip file containing this README 
 file, a RELEASENOTES file describing changes between versions, 
 as well as a single-file version of the calculator named
@@ -26,7 +26,7 @@ on that file to launch the calculator in your browser.
 
 Browser Compatibility
 ---------------------
-The recommended web browsers to use with the Sample Calculator 
+The recommended web browsers to use with the Binding Calculator
 are Firefox browser and Chrome browser.  Safari browser, including 
 mobile Safari, will also work although we have not tested it as 
 extensively.
@@ -68,4 +68,4 @@ python build.py src/index.html src/ Calculator.html
 
 
 
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1e07cf2392b62fcc7a3c46eeb7323884 "githalytics.com")](http://githalytics.com/PacificBiosciences/SamplePrepCalculator)
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1e07cf2392b62fcc7a3c46eeb7323884 "githalytics.com")](http://githalytics.com/PacificBiosciences/BindingCalculator)

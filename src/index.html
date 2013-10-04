@@ -23,7 +23,7 @@
     <div class="page">
         <header>
             <div class="banner">
-                <h3>Sample Preparation</h3>
+                <h3>Binding Calculator</h3>
             </div>
             <div class="belowbanner">
               <div class="headernavigation" id="loading-message"><i>Loading...</i></div>
@@ -58,7 +58,7 @@
             </tr>
             </table>
         </div>
-    <h3>Sample Preparation</h3>
+    <h3>Binding Calculator</h3>
     <p>{{= strings.CalculatorVersionPrint }}</p>
     </div>
 
@@ -117,7 +117,7 @@
     <article>
     <header>
         <div class="banner">
-            <h3>Sample Calculator</h3>
+            <h3>Binding Calculator</h3>
         </div>
         <div class="belowbanner">
           <div class="headerversion" style="margin-top:0.5em;">{{= strings.CalculatorVersion }}</div>
@@ -164,15 +164,6 @@
     </div>
     </footer>
     
-    <!-- oninstrument_begin -->
-    <footer>
-    <div>
-          To view pre-2.0 samples stored on this instrument: <a href="/ArchivedList">Obsoleted Samples</a>. Or <a href='/?signout=true'>sign out</a> to sign in as a different user.<br />
-          You may also <a href="/Calculator/Download">download a single-file version</a> of this calculator.
-    </div>
-    </footer>
-    <!-- oninstrument_end -->
-    
     </article>
     
     </script>
@@ -181,7 +172,7 @@
     <article id="singlesample">
     <header>
         <div class="banner">
-            <h3>Sample Calculator</h3>
+            <h3>Binding Calculator</h3>
         </div>
         <div class="belowbanner">
           <div class="headerversion" style="margin-top:0.5em;">{{= strings.CalculatorVersion }}</div>
@@ -191,9 +182,20 @@
         </div>
     </header>
     
-    <aside class="aside_error" style="display:none;">
-     <div>
-        <div class="global_error">
+    <aside class="aside_notice" style="">
+     <div id="sample-summary">
+         <h4>Summary</h4>
+         <div class="top5 sidebar_container">
+            <p><i><span class="output_SampleName"></span></i><br />
+                <span class="output_AnnealedBasePairLength"></span>&nbsp;bp,&nbsp;
+                <span class="output_StartingSampleConcentration"></span>&nbsp;ng/uL,&nbsp;
+                    <br />
+                <span class="output_ShortDescription"></span><br /><hr />
+                <span>Max # of SMRT Cells:</span>&nbsp;<span class="output_MaxNumberOfCellsFromBinding"></span>
+            </p>
+         </div>
+
+        <div class="top5 global_error">
             <!-- error now appears on left side so input area doesn't reflow -->
         </div>
      </div>
@@ -259,9 +261,15 @@
         
             <div class="grid2 push2 top1"><span class="help-chemistry-v25"><input type="radio" name="Chemistry" value="VersionXL" {{= radios.ChemistryXL }} />{{= strings.ChemistryXLoption }}</span></div>
             <div class="clear"></div>
-        
-            <div class="grid2 push2 top1"><span class="help-chemistry-v25"><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
+
+            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
             <div class="clear"></div>
+
+            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
+            <div class="clear"></div>
+
+            <!--<div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
+            <div class="clear"></div>-->
         </div>
 
         <div class='global_ShowCellOption'>
@@ -278,6 +286,13 @@
         <div class="clear"></div>
         
         <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 rightalign top5"><span class="help-prep-protocol">Long Term Storage</span></div>
+        <div class="grid2 top4"><span class="help-storage-yet"><input type="radio" name="LongTermStorage" id="LongTermStorage-Radio-True" value="True" {{= radios.LongTermStorageYes }} />Yes</span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 push2 top1"><span class="help-storage-no"><input type="radio" name="LongTermStorage" id="LongTermStorage-Radio-False" value="False" {{= radios.LongTermStorageNo }} />No</span></div>
         <div class="clear"></div>
         
         <div class="grid2 rightalign top5"><span class="help-spike-in-control">DNA Control Complex</span></div>
@@ -308,8 +323,12 @@
             <div class="grid1 alpha top5">uL</div>
             <div class="clear"></div>
         </div>
+
+        <div class="grid2 rightalign top5"><span class="">Max # of SMRT Cells</span></div>
+        <div class="grid2 top5"><span class="output_MaxNumberOfCellsFromBinding"></span></div>
+        <div class="clear"></div>
         
-        <h3>Optional</h3>
+        <h3 style="margin-top:0.7em;">Optional</h3>
         
         <h4>Concentration On Plate</h4>
 
@@ -725,7 +744,7 @@
         
             <h4>Complex Dilution</h4>
             
-            <div class="showPrepLarge">
+            <div class="showLongTermStorage">
                 <h4 style="padding-left:1em">1. First Complex Dilution</h4>
                 
                     <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
@@ -740,6 +759,10 @@
                     
                 <h4 style="padding-left:1em">2. Second Complex Dilution</h4>
             </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
+                <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
@@ -935,7 +958,7 @@
 
             <h4>Titration at <span class="nM output_TitrationConcentration1"></span></h4>
             
-                <div class="showPrepLarge">
+                <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
                     
                         <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
@@ -950,6 +973,10 @@
 
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
+                <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
@@ -1051,7 +1078,7 @@
 
             <h4>Titration at <span class="nM output_TitrationConcentration2"></span></h4>
             
-                <div class="showPrepLarge">
+                <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
                         <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
@@ -1066,6 +1093,11 @@
 
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
+                <div class="clear"></div>
+
                 <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
@@ -1167,7 +1199,7 @@
 
             <h4>Titration at <span class="nM output_TitrationConcentration3"></span></h4>
             
-                <div class="showPrepLarge">
+                <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
                         <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
@@ -1183,6 +1215,11 @@
 
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
+                <div class="clear"></div>
+
                 <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
@@ -1291,7 +1328,7 @@
 
             <h4>Titration at <span class="nM output_TitrationConcentration4"></span></h4>
             
-                <div class="showPrepLarge">
+                <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
                         <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
@@ -1307,6 +1344,11 @@
 
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
+
+                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
+                <div class="clear"></div>
+
                 <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
@@ -1557,7 +1599,7 @@
     -->
 
     <aside>
-    <div>
+    <div id="converstion-calculator">
         <h4>Conversion Calculator</h4>
 
         <p><input type="text" name="cc-conc1" id="cc-conc1" class="cc-input" value="0.0" /> ng/uL at<br />
@@ -1572,6 +1614,17 @@
 
     </div> 
     </aside>
+
+<!--
+    <aside>
+        <div>
+            <h4>Recent Samples</h4>
+            <p class="top5"><a href="#sample">Testing One</a></p>
+            <p class="top5"><a href="#sample">Testing Two</a></p>
+            <p class="top5"><a href="#sample">Testing Three</a></p>
+        </div>
+    </aside>
+-->
 
     <footer>
     <div><span>{{= strings.CalculatorVersion }}</span></div>

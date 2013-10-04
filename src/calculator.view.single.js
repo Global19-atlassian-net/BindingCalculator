@@ -481,14 +481,38 @@ var SamplesView = Backbone.View.extend({
             }
         });
 
-        $('input[name="PreparationProtocol"]').bind('change', function () {
-            if ($('#PreparationProtocol-Radio-Small').is(':checked')) {
-                $('#storage-section').hide();
-                $('.showPrepLarge').hide();
-            } else {
+        // adjusts visibility of sections related to long term storage
+        // whenever changing large prep or explicit with small prep
+        var longTermStorageVisibility = function() {
+            if ($('#LongTermStorage-Radio-True').is(':checked') ||
+                !$('#PreparationProtocol-Radio-Small').is(':checked')) {
                 $('#storage-section').show();
-                $('.showPrepLarge').show();
+                $('.showLongTermStorage').show();
+            } else {
+                $('#storage-section').hide();
+                $('.showLongTermStorage').hide();
             }
+        }
+
+        $('input[name="PreparationProtocol"]').bind('change', function () {
+
+            longTermStorageVisibility();
+
+            // if user has selected Large preparation, then set storage to true
+            // and disable the option. otherwise enable the option
+
+            if ($('#PreparationProtocol-Radio-Small').is(':checked')) {
+                // enable long term storage option
+                $('#LongTermStorage-Radio-True').removeAttr('disabled');
+                $('#LongTermStorage-Radio-False').removeAttr('disabled');
+            } else {
+                $('#LongTermStorage-Radio-False').attr('disabled', true);
+                $('#LongTermStorage-Radio-True').attr('disabled', true).attr('checked', true);
+            }
+        });
+
+        $('input[name="LongTermStorage"]').bind('change', function () {
+            longTermStorageVisibility();
         });
 
         $('input[name="MagBead"]').bind('change', function () {
@@ -845,7 +869,10 @@ var SamplesView = Backbone.View.extend({
 
             newname = $('#calc-samplename').val();
             $('#original-samplename').val(newname);
-            console.log("original samplename changed to " + newname);
+            //console.log("original samplename changed to " + newname);
+
+            // make sure the sidebar is positioned properly if it grew/shrunk
+            this.sidebarPositioning();
 
             if (update) {
                 this.statusClear("Saved");
@@ -949,6 +976,26 @@ var SamplesView = Backbone.View.extend({
         });
     },
 
+    // location of the 'top' of the summary after the page is laid out
+    // used to determine when to fix it while scrolling or let it float
+    originalSummaryTop: 0,
+
+    // call this to adjust sidebar positioning after scrolling, window
+    // resizing, or whenever the sample changes
+    sidebarPositioning: function() {
+        var windowTop = $(window).scrollTop(); // returns number
+
+        if ((this.originalSummaryTop < windowTop) && ($(window).width() > 767) ) {
+            $('#sample-summary').css({ position: 'fixed', top: 6 });
+            var height = $('#sample-summary').innerHeight()
+            $('#converstion-calculator').css({ position: 'fixed', top: 16 + height });
+        }
+        else {
+            $('#sample-summary').css('position','static');
+            $('#converstion-calculator').css('position','static');
+        }
+    },
+
     initialize: function (options) {
         var that = this;
 
@@ -1029,6 +1076,12 @@ var SamplesView = Backbone.View.extend({
             that.updateAllValues(data, true);
         });
 
+        this.samples.on('renamed', function (data) {
+            // update the output_SampleName in the Summary specifically
+            // new name is in data.SampleName
+            $('.output_SampleName').text(data.SampleName);
+        });
+
         //
         // Renaming
         // Update the name in the list of samples (except if an empty string)
@@ -1104,10 +1157,13 @@ var SamplesView = Backbone.View.extend({
         radios.ChemistryV2 = "";
         radios.ChemistryXL = "";
         radios.ChemistryP4 = "checked='checked'";
+        radios.ChemistryP5 = "";
         radios.CellVersion2 = "";
         radios.CellVersion3 = "checked='checked'";
         radios.PreparationSmall = "checked='checked'";
         radios.PreparationLarge = "";
+        radios.StorageYes = "";
+        radios.StorageNo = "checked='checked'";
         radios.ControlYes = "checked='checked'";
         radios.ControlNo = "";
         radios.ReuseYes = "";
@@ -1144,6 +1200,29 @@ var SamplesView = Backbone.View.extend({
         this.constants.ShowHideOptionalSections();
         this.WireUpAndTriggerEvents();
         this.$el.show();
+
+/*        var stickyCalculator = $('#converstion-calculator').offset().top;
+
+        // TODO: if screen width changes and window reflows, recalculate positions/delta
+
+        var sidebarPositioning = function() {
+            var windowTop = $(window).scrollTop(); // returns number
+
+            if ((stickyTopSummary < windowTop) && ($(window).width() > 767) ) {
+                $('#sample-summary').css({ position: 'fixed', top: 6 });
+                var height = $('#sample-summary').innerHeight()
+                $('#converstion-calculator').css({ position: 'fixed', top: 16 + height });
+            }
+            else {
+                $('#sample-summary').css('position','static');
+                $('#converstion-calculator').css('position','static');
+            }
+        }
+*/
+        var that = this;
+        this.originalSummaryTop = $('#sample-summary').offset().top;
+        $(window).scroll(function() { that.sidebarPositioning() });
+        $(window).resize(function() { that.sidebarPositioning() }); // or trigger scroll on resize events
 
         //
         // Now that the page is displayed, set the 'selected' sample in the model which

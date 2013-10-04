@@ -47,6 +47,7 @@ article > footer > div,
 article > aside > div {
     background: rgb(243,243,243);
     padding: 12px;
+    min-width: 204px;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
@@ -343,7 +344,7 @@ article > aside > div > h4
 {  
     margin: 1em;
     padding: 1em;
-    max-width: 400px;
+    max-width: 154px;
     font-weight: bolder;
     color: rgb(222,119,40);
     border: 1px solid rgb(222,119,40);
@@ -375,6 +376,12 @@ article > aside > div > h4
 
 .global_aside .global_error {
 	max-width: 240px;
+}
+
+.sidebar_container {
+    max-width: 154px;
+    text-align:left;
+    margin-left:13px;
 }
 
 /*

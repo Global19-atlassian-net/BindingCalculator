@@ -1,3 +1,6 @@
+Version 2.1.0.1
+- Correct label of sequencing primer with C3 chemistry (issue 24121)
+
 Version 2.1.0.0
 - Support for the P5 binding kit
 - Support for long term storage with small preparation protocols

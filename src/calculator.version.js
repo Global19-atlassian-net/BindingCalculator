@@ -1,1 +1,1 @@
-var CalculatorVersion = "2.1.0.0";
+var CalculatorVersion = "2.1.0.1";

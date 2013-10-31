@@ -1,3 +1,6 @@
+Version 2.1.0.2
+- Show DTT contribution in titration with diffusion loading (issue 24193)
+
 Version 2.1.0.1
 - Correct label of sequencing primer with C3 chemistry (issue 24121)
 

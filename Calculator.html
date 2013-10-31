@@ -7027,7 +7027,7 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
             });
         });
     };
-})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.1.0.1";
+})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.1.0.2";
 </script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
@@ -16673,7 +16673,7 @@ var PrintView = Backbone.View.extend({
 
         var result = "";
         result += this.rowfromGetter(function (sample) {
-            return sample[which].TitrationDtt;
+            return sample[which].Dtt;
         }, first.TubeNameDtt, " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {

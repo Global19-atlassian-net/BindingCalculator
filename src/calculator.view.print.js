@@ -880,7 +880,7 @@ var PrintView = Backbone.View.extend({
 
         var result = "";
         result += this.rowfromGetter(function (sample) {
-            return sample[which].TitrationDtt;
+            return sample[which].Dtt;
         }, first.TubeNameDtt, " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {

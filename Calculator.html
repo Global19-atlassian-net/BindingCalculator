@@ -1077,11 +1077,12 @@ div#printview p
 
         <div class="potential_page_break"></div>
 
+        <h4>{{= strings.BindingPolymeraseTitle }}</h4>
+
         <h4>{{= strings.DilutionsTitle }}</h4>
         <p class="instructions">{{= strings.Step6 }}</p>
         {{= sections.DilutionTable }}
 
-        <h4>{{= strings.BindingPolymeraseTitle }}</h4>
         <p class="instructions">{{= strings.Step7 }}</p>
         <p class="instructions">{{= strings.Step7_1 }}</p>
         {{= sections.BindingPolymeraseTable }}
@@ -1132,6 +1133,9 @@ div#printview p
             <div style="float:left;" class="top-buttons">
                 <input type="button" class="print_button" value="Print" />
             </div>
+            <div style="float:left;" class="top-buttons">
+                <div style="margin-left:2em;"><i>Import:</i><input type="file" class="import_button" name="files[]" /></div>
+            </div>
             <div style="float:right;" class="top-buttons">
                 <input type="button" class="delete_button" value="Delete" />
             </div>
@@ -1173,6 +1177,7 @@ div#printview p
           <div class="headerversion" style="margin-top:0.5em;">{{= strings.CalculatorVersion }}</div>
           <div class="headernavigation" style="margin-top:0.5em;"><a href="#list">Sample List</a></div>
           <div class="headernavigation"><input type="button" class="new-button" value="New Sample" /></div>
+          <div class="headernavigation"><input type="button" class="print-button" value="Print" /></div>
           <div class="clear"></div>
         </div>
     </header>
@@ -1304,11 +1309,11 @@ div#printview p
         <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 rightalign top5"><span class="help-low-amounts">Non-standard</span></div>
-        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />Yes</span></div>
+        <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard</span></div>
+        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />Yes</span></div>
         <div class="clear"></div>
         
-        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />No</span></div>
+        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />No</span></div>
         <div class="clear"></div>
 
         <div class='global_AllowNonStandardReverseCalculations'>
@@ -1323,7 +1328,7 @@ div#printview p
         <div class="grid2 top5"><span class="output_MaxNumberOfCellsFromBinding"></span></div>
         <div class="clear"></div>
         
-        <h3 style="margin-top:0.7em;">Optional</h3>
+        <h3 style="margin-top:0.7em;">Custom Parameters</h3>
         
         <h4>Concentration On Plate</h4>
 
@@ -1368,9 +1373,9 @@ div#printview p
 
       <section>
         <header>
-          <h3>Annealing</h3>
+          <h3>Sequencing Primer Annealing</h3>
         </header>
-        <p>Step 2: Dilute the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
+        <p>Step 1: Dilute the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
         
         <div class="grid2 rightalign top2">
             <span class="output_TubeNameSequencingPrimer help-annealing-sequencingprimer"></span>
@@ -1429,8 +1434,12 @@ div#printview p
       -->
 
       <section>
+      <header>
+          <h3>{{= strings.BindingPolymeraseTitle }}</h3>
+      </header>
+
         <header>
-            <h3>{{= strings.DilutionsTitle }}</h3>
+            <h4>{{= strings.DilutionsTitle }}</h4>
         </header>
         <p>{{= strings.Step6 }}</p>
         
@@ -1475,7 +1484,7 @@ div#printview p
 
         </div>
         
-        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution (<span class="output_PolymeraseTubeLabel"></span>)</h4>
+        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution</h4>
         
         <div class="grid2 rightalign top2"><span class="output_TubeNamePolymerase"></span><br/>(<span class="output_PolymeraseStockConcentration nM"></span>)</div>
         <div class="grid2 top2"><span class="output_PolymeraseStockVolumeInDilution uL"></span></div>
@@ -1502,9 +1511,6 @@ div#printview p
       -->
 
       <section>
-        <header>
-            <h3>{{= strings.BindingPolymeraseTitle }}</h3>
-        </header>
         <p>{{= strings.Step7 }}</p>
         <p>{{= strings.Step7_1 }}</p>
 
@@ -1564,10 +1570,11 @@ div#printview p
             <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
             <div class="clear"></div>
         </div>
-        
+
+        <!-- the tube label suggestion was confusing to folks, skip displaying that from 2.1.0.3 onward
         <div class="grid2 rightalign top2"><span class="help-tube-label-left">Diluted Pol Tube #</span></div>
         <div class="grid2 top2"><span class="output_PolymeraseTubeLabel"></span></div>
-        <div class="clear"></div>
+        <div class="clear"></div>-->
 
         <div class="grid2 rightalign top2"><span class="help-bindingpoly-poly">Diluted Polymerase</span></div>
         <div class="grid2 top2"><span class="output_VolumeOfPolymeraseDilutionInBinding uL"></span></div>
@@ -1720,7 +1727,7 @@ div#printview p
 
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer uL"></span></div>
                 <div class="clear"></div>
                 <div class="grid2 rightalign top2"><span class="">Stock DNA Control</span></div>
@@ -1728,7 +1735,7 @@ div#printview p
                 <div class="clear"></div>
 
                 <h4 style="padding-left:1em">2. Second DNA Control Dilution</h4>
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
                 <div class="grid2 rightalign top2"><span class="">First Dilution</span></div>
@@ -1742,7 +1749,7 @@ div#printview p
             <div class="showLongTermStorage">
                 <h4 style="padding-left:1em">1. First Complex Dilution</h4>
                 
-                    <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                    <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                     <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                         <span class="addendum"></span></div>
                     <div class="clear"></div>
@@ -1755,11 +1762,11 @@ div#printview p
                 <h4 style="padding-left:1em">2. Second Complex Dilution</h4>
             </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
                 
@@ -1788,71 +1795,72 @@ div#printview p
 
             <h4 style="padding-left:1em">1. Wash Bead</h4>
             
-                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBeads to empty tube</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-            <h4 style="padding-left:1em">2. Incubate Bead-Complex</h4>
+            <h4 style="padding-left:1em;">2. Incubate Bead-Complex</h4>
             
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
             <h4 style="padding-left:1em">3. Wash Bead-Complex</h4>
             
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1925,7 +1933,7 @@ div#printview p
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
                 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1935,7 +1943,7 @@ div#printview p
 
                 <h4 style="padding-left:1em">2. Second DNA Control Dilution</h4>
                 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1956,7 +1964,7 @@ div#printview p
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
                     
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -1969,11 +1977,11 @@ div#printview p
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1988,7 +1996,7 @@ div#printview p
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -1999,65 +2007,66 @@ div#printview p
                 <div class="clear"></div>
                 
                 <h5 style="padding-left:2em">Wash Bead</h5>
-                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBeads to empty tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2076,7 +2085,7 @@ div#printview p
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -2089,11 +2098,11 @@ div#printview p
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2109,7 +2118,7 @@ div#printview p
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -2126,60 +2135,61 @@ div#printview p
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadWashBuffer uL"></span><span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2197,7 +2207,7 @@ div#printview p
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -2211,11 +2221,11 @@ div#printview p
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2231,7 +2241,7 @@ div#printview p
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -2249,65 +2259,66 @@ div#printview p
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2326,7 +2337,7 @@ div#printview p
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -2340,11 +2351,11 @@ div#printview p
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2360,7 +2371,7 @@ div#printview p
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -2378,61 +2389,62 @@ div#printview p
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2497,7 +2509,7 @@ div#printview p
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex1 uL"></span></div>
             <div class="clear"></div>
 
@@ -2522,7 +2534,7 @@ div#printview p
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex2 uL"></span></div>
             <div class="clear"></div>
 
@@ -2546,7 +2558,7 @@ div#printview p
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex3 uL"></span></div>
             <div class="clear"></div>
 
@@ -2571,7 +2583,7 @@ div#printview p
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex4 uL"></span></div>
             <div class="clear"></div>
 
@@ -7027,7 +7039,7 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
             });
         });
     };
-})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.1.0.2";
+})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.1.0.3";
 </script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
@@ -7072,24 +7084,24 @@ Constants.prototype.strings = {
     CalculatorVersion: "Version " + CalculatorVersion,                  // from calculator.version.js
     CalculatorVersionPrint: "Calculator Version " + CalculatorVersion,  // from calculator.version.js
     SampleInformationTitle: "Sample Information",
-    Step1Entry: "Step 1:  Enter sample information",
-    Step1Display: "Step 1:  Review sample information",
-    AnnealingTitle: "Annealing",
-    Step2: "Step 2: Dilute the Sequencing Primer in Elution Buffer",
-    Step3: "Step 3: In 0.2mL tubes, add the appropriate amount of reagents in the order listed below",
-    Step4: "Step 4: Incubate @ 80C for 2 minutes then ramp temperature to 25C at a rate of 0.1C/second",
-    Step5: "Step 5: Transfer to 4C location for immediate use or store at -20C",
+    Step1Entry: "Enter sample information",
+    Step1Display: "Review sample information",
+    AnnealingTitle: "Sequencing Primer Annealing",
+    Step2: "Step 1: Dilute the Sequencing Primer in Elution Buffer",
+    Step3: "Step 2: In 0.2mL tubes, add the appropriate amount of reagents in the order listed below",
+    Step4: "Step 3: Incubate @ 80C for 2 minutes then ramp temperature to 25C at a rate of 0.1C/second",
+    Step5: "Step 4: Transfer to 4C location for immediate use or store at -20C",
     DilutionsTitle: "Dilutions",
-    Step6: "Step6: Prepare dilutions of polymerase",
+    Step6: "Step 5: Prepare dilution(s) of polymerase",
     BindingPolymeraseTitle: "Binding Polymerase to Templates",
-    Step7: "Step 7: In a new 0.5mL tube, add the components in the order shown below",
+    Step7: "Step 6: In a new 0.5mL tube, add the components in the order shown below",
     Step7_1: "After adding each component, mix the tube contents",
-    Step8: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
+    Step8: "Step 7: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
         "For MagBead preparations only, after the 30 C incubation, heat to 37 C for 30 min. " +
         "Finish all preparations with a hold at 4 C",
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
-    Step9: "Step 9: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
+    Step9: "Step 8: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
     TitrationTitle: "Loading Titration",
     StorageTitle: "Long Term Storage",
     StorageStart: "Glycerol preparation for storage",
@@ -7104,12 +7116,12 @@ Constants.prototype.errors = {
 	SampleConcentrationLow: {
 		Coefficient: "StartingSampleConcentration",
         ShortMessage: "Too Low",
-        LongMessage: "Your concentration is too low for these settings. You may enable the non-standard option."
+        LongMessage: "Your concentration is too low for these settings. You may disable the Standard option."
 	},
 	BindingVolumeLow: {
 		Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Error: Not enough binding volume. You may enable the non-standard option."
+        LongMessage: "Error: Not enough binding volume. You may disable the Standard option."
 	},
     DifficultPipetting: {
         Coefficient: "",
@@ -7129,12 +7141,12 @@ Constants.prototype.errors = {
 	InvalidInsertSizeStandard: {
 		Coefficient: "AnnealedBasePairLength",
         ShortMessage: "Not supported",
-        LongMessage: "Your insert size is not supported for standard collections"
+        LongMessage: "Your insert size is not supported for standard collections."
 	},
 	InvalidInsertSizeStrobe: {
 		Coefficient: "AnnealedBasePairLength",
         ShortMessage: "Not supported",
-        LongMessage: "Your insert size is not supported for strobe collections"
+        LongMessage: "Your insert size is not supported for strobe collections."
 	},
 	InvalidInsertSizeMagBeadNew: {
 		Coefficient: "AnnealedBasePairLength",
@@ -7151,22 +7163,22 @@ Constants.prototype.errors = {
 	NonStandardLargeScaleNew: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations with the non-standard option are not supported"
+        LongMessage: "Large scale preparations require the Standard option."
 	},
 	NonStandardLargeScale: {    // deprecated, included just for comparison unit tests against C# version
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations with the non-standard option is not supported"
+        LongMessage: "Large scale preparations require the Standard option."
 	},
 	NonStandardTitration: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Titrations with the non-standard option are not supported"
+        LongMessage: "Titrations require the Standard option."
 	},
 	NonStandardByCells: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Computing by # of SMRTCells with the non-standard option is not supported"
+        LongMessage: "Computing by # of SMRTCells require the Standard option."
 	},
 	ReuseRequiredWithStrobe: {
 		Coefficient: "ComplexReuse",
@@ -7187,23 +7199,23 @@ Constants.prototype.errors = {
 		Coefficient: "BindingComplexNumberOfCellsRequested",
         ShortMessage: "See above",
         LongMessage: "Either use the binding complex directly on the sample plate or " +
-            "select an optional concentration on plate less than the final binding concentration."
+            "select a custom parameter concentration on plate less than the final binding concentration."
 	},
 	BindingConcentrationTooLowForReverseCalculation: {
 		Coefficient: "StartingSampleConcentration",
         ShortMessage: "Too Low",
-        LongMessage: "Concentration was too low on plate, select an optional " +
+        LongMessage: "Concentration was too low on plate, select a custom parameter " +
             "concentration on plate somewhat less than the final binding concentration."
 	},
 	TitrationConcentrationTooHigh: {
 		Coefficient: "TitrationConcentration4",
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample. You may enable the non-standard option."
+        LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard option."
 	},
 	TitrationConcentrationTooHighNonStandard: {
 		Coefficient: "TitrationConcentration4",		// C# had TitrationConcentrations
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample even with the non-standard option. Try a lower value."
+        LongMessage: "A requested titration concentration is too high for the sample even without the Standard option. Try a lower value."
 	},
 	NotEnoughAvailableVolume: {
 		Coefficient: "AvailableSampleVolume",
@@ -7225,13 +7237,13 @@ Constants.prototype.errors = {
     ConcentrationOnPlateTooHighWithControl: {
         Coefficient: "CustomConcentrationOnPlate",
         ShortMessage: "Too High",
-        LongMessage: "Optional concentration on plate is too high. Try disabling " +
+        LongMessage: "The custom parameter concentration on plate is too high. Try disabling " +
             "DNA Control Complex to allow for a higher concentration."
     },
     ConcentrationOnPlateTooHighWithoutControl: {
         Coefficient: "CustomConcentrationOnPlate",
         ShortMessage: "Too High",
-        LongMessage: "Optional concentration on plate is too high for the resulting binding concentration."
+        LongMessage: "The custom parameter concentration on plate is too high for the resulting binding concentration."
     },
     UntestedControlWithLongInsertSize: {
         Coefficient: "",
@@ -7242,7 +7254,7 @@ Constants.prototype.errors = {
     NonStandardSmallStorageNotSupported: {
         Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Small scale preparation using long term storage with the non-standard option is not supported."
+        LongMessage: "Small scale preparation using long term storage require the Standard option."
     }
 };
 
@@ -10985,6 +10997,11 @@ var SampleLocal = Backbone.Model.extend({
 
         sample = new Sample(this.options);
         sample.SampleName = name;
+        this.addNewSample(sample);
+    },
+
+    addNewSample: function(sample) {
+        var name = sample.SampleName;
 
         sample.Calculate();
 
@@ -10997,6 +11014,92 @@ var SampleLocal = Backbone.Model.extend({
 
         // then let everyone know that we have a new sample to display now
         this.trigger('new', sample);
+    },
+
+    isSampleNameTaken: function (name) {
+        var test, duplicate = false;
+        for (i = 0; i < this.names.length; i += 1) {
+            test = this.names[i];
+            if (this.samples[test].SampleName === name) {
+                duplicate = true;
+            }
+        }
+        return duplicate;
+    },
+
+    isSampleGuidTaken: function (guid) {
+        var test, duplicate = false;
+        for (i = 0; i < this.names.length; i += 1) {
+            test = this.names[i];
+            if (this.samples[test].SampleGuid === guid) {
+                duplicate = true;
+            }
+        }
+        return duplicate;
+    },
+
+    importSample: function (data) {
+        //
+        // Design decision: if we import a sample with the same GUID of a sample
+        // that already exists in our sample list, does that replace the sample
+        // information (an update semantic) or do we generate a new guid and
+        // append a new version of that sample with a new GUID? The former is the
+        // intent of the GUID for syncing between computers. But if someone reuses
+        // a sample instead of creating new ones, the behavior will be unexpected.
+        // We could ask a question, ala "another sample appears to have the same
+        // identity of this. would you like to update that sample?" But the user
+        // never sees the GUID only the sample name, so would more likely expect
+        // to see this behavior based upon the sample name not a GUID. Further,
+        // we don't allow two samples locally to have the same name. So then
+        // performing an update if the name matches instead would more fit the
+        // users mental model of naming samples. Still a confirmation would be
+        // wise ala "A sample with the same name already exists, would you like
+        // to update that sample with the imported information?"
+        //
+        // So based on that train of though, we will check for matching names
+        // and also check if a new GUID needs to be generated, since this is not
+        // syncing so much as archiving/restoring.
+        //
+
+        var name, sample, index, testName, changedName;
+
+        sample = new Sample(this.options);
+        sample.ReadFromJson(data);
+
+        if (this.isSampleGuidTaken(data.SampleGuid)) {
+            //
+            // make a new guid, for imports we always want
+            // to succeed and we're not trying to sync fully
+            //
+
+            sample.SampleGuid = sample.guid();
+        }
+
+        changedName = this.isSampleNameTaken(data.SampleName);
+        if (changedName) {
+            //
+            // Find a new name. Try appending "(import n)" if the name until we find one that we didn't already have
+            //
+            index = 1;
+            do {
+                testName = data.SampleName + " (import " + index + ")";
+                index += 1;
+            } while (this.isSampleNameTaken(testName));
+            sample.SampleName = testName;
+        }
+
+        //alert("Asked to import a sample named \"" + data.SampleName + "\" with GUID " + data.SampleGuid
+        //    + " and named it \"" + sample.SampleName + "\" with guid " + sample.SampleGuid);
+
+        this.addNewSample(sample);
+
+        if (changedName) {
+            alert("Imported sample as '" + sample.SampleName
+                + "' because another sample with the name '"
+                + data.SampleName + "' already exists.");
+        } else {
+            alert("Imported sample named '" + sample.SampleName + "'");
+        }
     },
 
     lastNewName: "",
@@ -11479,7 +11582,10 @@ var Sample = Backbone.Model.extend({
 
         this.constants = options.constants;
         this.samplecalc = new SampleCalc({ globals: options.constants.globals, errors: options.constants.errors, unitTesting: this.unitTesting });
+        this.SampleGuid = this.guid();
+    },
 
+    guid: function() {
         //
         // make a guid for new samples using simple random numbers, per
         // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
@@ -11487,16 +11593,12 @@ var Sample = Backbone.Model.extend({
 
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
-                     .toString(16)
-                     .substring(1);
+                .toString(16)
+                .substring(1);
         }
 
-        function guid() {
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                 s4() + '-' + s4() + s4() + s4();
-        }
-
-        this.SampleGuid = guid();
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
     },
 
     //
@@ -11505,7 +11607,7 @@ var Sample = Backbone.Model.extend({
 
     SampleName: "Untitled",
     ComputeOption: "Volume",
-    MagBead: "True",
+    MagBead: "True",            // For 2.3, default to MagBead === "OneCellPerWell"
     PreparationProtocol: "Small",
     LongTermStorage: "False",
     UseSpikeInControl: "True",
@@ -11820,7 +11922,7 @@ var Sample = Backbone.Model.extend({
 
         // then setup the bucket we're using
         type = this.CollectionProtocol;
-        if (this.MagBead === "True") { type = "MagBead"; }
+        if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") { type = "MagBead"; }
         calc.bucket = this.constants.FindBucket(this.AnnealedBasePairLength, type, this.Chemistry, this.Cell);
 
         // we're about to recalculate, clear old errors so we'll get a fresh set
@@ -11832,7 +11934,7 @@ var Sample = Backbone.Model.extend({
         this.errors = {};
         if (undefined === calc.bucket) {
 
-            if (this.MagBead === "True") {
+            if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") {
                 if (!this.unitTesting) {
                     this.errors.InvalidInsertSizeMagBeadNew = this.constants.errors.InvalidInsertSizeMagBeadNew;
                 } else {
@@ -11860,7 +11962,9 @@ var Sample = Backbone.Model.extend({
             // For unitTesting, compared to C#, disallow magbead less than 7500
             //
 
-            if (this.unitTesting && this.MagBead === "True" && this.AnnealedBasePairLength < 7500) {
+            if (this.unitTesting
+                && (this.MagBead === "True" || this.MagBead === "OneCellPerWell")
+                && this.AnnealedBasePairLength < 7500) {
                 this.errors.InvalidInsertSizeMagBead = this.constants.errors.InvalidInsertSizeMagBead;
             }
 
@@ -11868,7 +11972,9 @@ var Sample = Backbone.Model.extend({
             // Bugzilla 23145 - changed cutoff from 750 bp (bucket based) to 1000 bp (explicit)
             //
 
-            if (!this.unitTesting && this.MagBead === "True" && this.AnnealedBasePairLength < 1000) {
+            if (!this.unitTesting
+                && (this.MagBead === "True" || this.MagBead === "OneCellPerWell")
+                && this.AnnealedBasePairLength < 1000) {
                 this.errors.InvalidInsertSizeMagBeadNew = this.constants.errors.InvalidInsertSizeMagBeadNew;
             }
         }
@@ -12578,11 +12684,11 @@ var SampleCalc = Backbone.Model.extend({
     },
 
     ComputeOption: "Volume",
-    MagBead: "Yes",
+    MagBead: "True",
     PreparationProtocol: "Small",
-    UseSpikeInControl: "Yes",
-    ComplexReuse: "No",
-    LowConcentrationsAllowed: "No",
+    UseSpikeInControl: "True",
+    ComplexReuse: "False",
+    LowConcentrationsAllowed: "False",
     BindingComputation: "Volume",           // deprecated
     SampleVolumeToUseInAnnealing: 0,
     NumberOfCellsToUse: 0,
@@ -12734,7 +12840,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep2_ControlTubeNameInKit: function () {
         var that = this;
         this.ControlTubeNameInKit = (function () {                                           // Result: Prep2
-            if (that.MagBead === "True") {
+            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") {
                 return "DNA Control Tube";
             }
             if (that.CollectionProtocol === "Standard") {
@@ -12851,7 +12957,7 @@ var SampleCalc = Backbone.Model.extend({
         //          this.SampleConcentrationInBinding)));
 
         /* removed for 2.1.0.0 - no more sluff factor for magbead complex dilution (just bead wash)
-        if (this.MagBead === "True") {
+        if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") {
             volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                      // Prep0
 
             // In large scale mag bead we have two sluff factors, one for the additional dilution step from storage complex
@@ -12957,7 +13063,7 @@ var SampleCalc = Backbone.Model.extend({
                 					  parseFloat(that.DeadVolumePerWell); 		 // prep2
 
                 /* removed for 2.1.0.0
-            	if (that.MagBead === "True")                                     // Prep0
+            	if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
             	{
             		// for magbead = 9 uL plus 10 uL of deadvolumeperwell * 1.1 sluff factor = 20.9 uL currently
                 	volumeNeededPerChip *= that.globals.MagneticBeadSluffFactor; // Prep0
@@ -13507,7 +13613,7 @@ var SampleCalc = Backbone.Model.extend({
             //
 
             /* removed for 2.1.0.0
-            if (that.MagBead === "True")                                     // Prep0
+            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
             {
                 maxVolume /= that.globals.MagneticBeadSluffFactor;          // Prep0
 
@@ -13627,7 +13733,7 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep8_SpikeInControlVolumeInDilution: function () {
         this.SpikeInControlVolumeInDilution =               // Result: Prep8
-			(this.MagBead === "True") ?                      // Prep0
+			(this.MagBead === "True" || this.MagBead === "OneCellPerWell") ?  // Prep0
 			Number.NaN :
 			this.Helper_SpikeInVolumeInDilution(            // Prep6
 				this.ConcentrationOnPlate,                  // Prep6
@@ -13638,7 +13744,7 @@ var SampleCalc = Backbone.Model.extend({
         var that = this;
         this.SpikeInDilutionVolume = (function () {                     // Result: Prep10
             if (that.UseSpikeInControl === "False") { return 0.0; }     // Prep0
-            if (that.MagBead === "True") { return Number.NaN; }         // Prep0
+            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") { return Number.NaN; }  // Prep0
 
             var basic = 1.1 * that.SpikeInControlVolumeInDilution,      // Prep8
                 minimum = that.bucket.MinimumSpikeInDilutionVolume;     // Prep0
@@ -13759,7 +13865,8 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep26_VolumeOfBindingReactionInComplexDilution: function () {
         this.VolumeOfBindingReactionInComplexDilution =         // Result: Prep26
-			(this.MagBead === "True") ? Number.NaN :            // Prep0
+			(this.MagBead === "True" || this.MagBead === "OneCellPerWell") ?
+                Number.NaN :                                    // Prep0
 			(this.ConcentrationOnPlate *                        // Prep6
 				this.TotalComplexDilutionVolume) /              // Prep6
 	            (this.PreparationProtocol === "Large" ?         // Prep0
@@ -13833,13 +13940,13 @@ var SampleCalc = Backbone.Model.extend({
         this.ShortDescription = (function () {
             var details = "";
             details += (that.ComputeOption === "Titration") ? "Titration, " : "";
-            details += (that.MagBead === "True") ? "Mag bead, " : "";
+            details += (that.MagBead === "True" || that.MagBead === "OneCellPerWell") ? "Mag bead, " : "";
             details += ((that.Chemistry.length == 8) ?
                          "C" + that.Chemistry.substring(7) :
                          that.Chemistry.substring(7)) + ", ";
             details += (that.PreparationProtocol === "Small") ? "Small" : "Large";
             details += (that.LongTermStorage === "True" || that.PreparationProtocol !== "Small") ? ", Storage" : "";
-            details += (that.LowConcentrationsAllowed === "True") ? ", Non-standard" : "";
+            details += (that.LowConcentrationsAllowed === "True") ? ", Not Standard" : "";
             details += (that.UseSpikeInControl === "True") ? ", Control" : "";
             details += (that.ComplexReuse === "True") ? ", Reuse" : "";
             return details;
@@ -14833,7 +14940,7 @@ var SamplesView = Backbone.View.extend({
         });
 
         $('input[name="MagBead"]').bind('change', function () {
-            if ($('#MagBead-Radio-Yes').is(':checked')) {
+            if ($('#MagBead-Radio-Yes').is(':checked') || $('#MagBead-Radio-One').is(':checked') ) {
                 $('.magBeadSection').show();
                 $('.nonMagBeadSection').hide();
                 // also mark complex reuse as false: not allowed with magbead in 1.3.2
@@ -14949,6 +15056,10 @@ var SamplesView = Backbone.View.extend({
 
         $('.new-button').bind('click', function () {
             that.newSample();
+        });
+
+        $('.print-button').bind('click', function () {
+            that.printSample();
         });
     },
 
@@ -15293,6 +15404,13 @@ var SamplesView = Backbone.View.extend({
         });
     },
 
+    printSample: function() {
+        var querystring = "#print/";
+        var inputlist = this.buildInputList();
+        querystring += encodeURIComponent(inputlist.SampleName);
+        window.location = querystring;
+    },
+
     // location of the 'top' of the summary after the page is laid out
     // used to determine when to fix it while scrolling or let it float
     originalSummaryTop: 0,
@@ -15471,6 +15589,7 @@ var SamplesView = Backbone.View.extend({
         radios.ComputeOptionTitration = "";
         radios.MagBeadYes = "checked='checked'";
         radios.MagBeadNo = "";
+        radios.MagBeadOne = "";
         radios.ChemistryV2 = "";
         radios.ChemistryXL = "";
         radios.ChemistryP4 = "checked='checked'";
@@ -15684,6 +15803,53 @@ var ListView = Backbone.View.extend({
 
             // this triggers 'delete' events which we should watch and then remove them from our grid
         });
+
+        String.prototype.endsWith = function(suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+
+        var importButton = $('.import_button');
+
+        $('.import_button').change(function (evt) {
+            if (window.File && window.FileReader && window.FileList && window.Blob) {
+                var files = evt.target.files; // FileList object, we're only allowing 1 input at a time to start
+                var f = files[0];
+                var name = encodeURIComponent(f.name);
+                if (f.name.endsWith(".sample")) {     // uses endsWith extension above
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+
+                        //
+                        // Use the SampleLocal class to add a new sample with the json, instead of sample.ReadFromJson
+                        // potentially. Make sure the check the GUID against existing samples and error if already
+                        // loaded. The SampleLocal class is our this.samples property. Have that property trigger
+                        // a 'new' event at the end of the import, and then our UI should update correctly.
+                        //
+
+                        var text = reader.result;
+                        var json = JSON.parse(text);
+
+                        // Make sure we have essential components
+
+                        if (json.hasOwnProperty("SampleName") && json.hasOwnProperty("SampleGuid")) {
+                            that.samples.importSample(json);
+                        } else {
+                            // TODO: move these error messages with replacement tokens to static.js and look up
+                            alert("Sorry, the file '"+ name + "' does not appear to contain sample information or is corrupted. Please contact Pacific Biosciences for assistance.")
+                        }
+
+                    }
+                    reader.readAsText(f);
+                } else {
+                    alert("Sorry, the file '"+ name + "' does not have the file extension 'sample'");
+                }
+
+            } else {
+                alert("This browser does not support importing samples, please upgrade to a more recent version.");
+            }
+
+            importButton.replaceWith( importButton = importButton.clone( true ) );
+        });
     },
 
     computeListWidth: function () {
@@ -15711,6 +15877,18 @@ var ListView = Backbone.View.extend({
         row.cells = sampledeets.Cells;
         row.conc = sampledeets.StartingSampleConcentration;
         row.bp = sampledeets.AnnealedBasePairLength;
+
+        //
+        // get just the sample input data to persist to the file, and use a simple
+        // filename encoding by replacing anything nonstandard with _, internally
+        // the name is still saved as utf-8 when it is reimported. Filename conflicts
+        // or renaming could occur when downloading though...
+        //
+
+        var data = "text/json;charset=utf-8," + encodeURIComponent(sampledeets.ToJson());
+        var filename = sampledeets.SampleName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".sample";
+
+        row.export = "<a href='data:" + data + "' download='" + filename + "'>export</a>";
         row.note = sampledeets.ShortDescription;
 
         $("#ui-jqgrid").jqGrid('addRowData', rowNumber, row);
@@ -15739,16 +15917,17 @@ var ListView = Backbone.View.extend({
             height: 'auto',
             autowidth: true,
             rowNum: 9999999,
-            colNames: ['Sample name', 'Volume', 'Cells', 'Conc', 'BP', 'Note', 'internalname'],
+            colNames: ['Sample name', 'Vol', 'Cells', 'Conc', 'BP', 'Exp', 'Note', 'internalname'],
             colModel: [
-                    { name: 'name', index: 'name', width: 150 },
-                    { name: 'volume', index: 'volume', width: 46, align: "right", sorttype: "float" },
-                    { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
-                    { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
-                    { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
-                    { name: 'note', index: 'note', width: 220, sortable: false },
-                    { name: 'internalname', index: "internalname", width: 0, hidden: true }
-                    ],
+                { name: 'name', index: 'name', width: 150 },
+                { name: 'volume', index: 'volume', width: 30, align: "right", sorttype: "float" },
+                { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
+                { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
+                { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
+                { name: 'export', index: 'export', width: 30, align: "right", sortable: false },
+                { name: 'note', index: 'note', width: 220, sortable: false },
+                { name: 'internalname', index: "internalname", width: 0, hidden: true }
+            ],
             multiselect: true,
             caption: "Samples"
         });
@@ -15997,7 +16176,7 @@ var PrintView = Backbone.View.extend({
 
         errors = "";
         if (!sameStandardness) {
-            errors += "are non-standard; ";
+            errors += "are standard; ";
         }
         if (!sameChemistry) {
             errors += "use different versions of chemistry; ";
@@ -16009,7 +16188,7 @@ var PrintView = Backbone.View.extend({
             errors += "use long term storage; ";
         }
         if (!sameMagBead) {
-            errors += "use magnetic beads; ";
+            errors += "use different magnetic bead protocols; ";
         }
         if (!similarCompute) {
             errors += "are titrations; ";
@@ -16203,8 +16382,29 @@ var PrintView = Backbone.View.extend({
         }, "Complex Reuse", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.LowConcentrationsAllowed;
-        }, "Non-standard", "", "", false, "string");
+            // return the opposite of LowConcentrationsAllowed for "Standard"
+            return ("True" === sample.LowConcentrationsAllowed) ? "False" : "True";
+        }, "Standard", "", "", false, "string");
+
+        // include Optional information so the print view is a complete archive of sample inputs (bugzilla 25310)'
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.ConcentrationOnPlateOption)
+                return "Default (" + sample.DefaultConcentrationOnPlate + " nM)";
+            return "Custom (" + sample.CustomConcentrationOnPlate + " nM)";
+        }, "Concentration on Plate", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.SpikeInRatioOption)
+                return "Default (" + sample.DefaultSpikeInRatioToTemplatePercent + "%)";
+            return "Custom (" + sample.CustomSpikeInRatioPercent + "%)";
+        }, "Control To Template", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.PolymeraseTemplateRatioOption)
+                return "Default (" + sample.DefaultPolymeraseTemplateRatio + ")";
+            return "Custom (" + sample.CustomPolymeraseTemplateRatio + ")";
+        }, "Polymerase:Template Ratio", "", "", false, "string");
 
         result += "</table>";
 
@@ -16266,6 +16466,7 @@ var PrintView = Backbone.View.extend({
             polyTotal = 0,
             polyBinding = 0,
             usingControl = false,
+            specificBucket = parseInt(bucket, 10),
             lastfound,
             i = 0,
             index;
@@ -16273,7 +16474,9 @@ var PrintView = Backbone.View.extend({
         for (index in samples) {
             if (samples.hasOwnProperty(index)) {
                 sample = samples[index];
-                if (parseInt(bucket, 10) !== sample.BucketSize) {
+
+                // if we want specific buckets, filter those here
+                if ((0 < specificBucket) && (specificBucket !== sample.BucketSize)) {
                     continue;
                 }
 
@@ -16300,7 +16503,6 @@ var PrintView = Backbone.View.extend({
 
         spikeTubeLabel = lastfound.SpikeInTubeLabel;
         spikeTubeSize = lastfound.SpikeInTubeInsertSize;
-        polyTubeLabel = lastfound.PolymeraseTubeLabel;
         polyTubeSize = lastfound.PolymeraseTubeInsertSize;
         spikeConcentration = lastfound.SpikeInSecondDilutionConcentration;
         polyConcentration = lastfound.PolymeraseDilutionConcentration;
@@ -16317,10 +16519,12 @@ var PrintView = Backbone.View.extend({
                 "</td><td class='topbar'>" + i + "</td></tr>";
         }
 
-        result += "<tr><td class='rowheader'>#" + polyTubeLabel + " " + polyTubeSize + " Polymerase Dilution</td><td>" +
-            lastfound.TubeNamePolymerase + "</td><td>" + lastfound.PolymeraseStockConcentration + " nM</td><td>" +
-            this.sanitize(polyVolume, "volume") + "</td><td>" + this.sanitize(polyBinding, "volume") + "</td><td>" +
-            this.sanitize(polyTotal, "volume") + "</td><td>" + this.sanitize(polyConcentration, "concentration") + "</td><td>" + i + "</td></tr>";
+        result += "<tr><td class='rowheader'>"
+            + ((0 < specificBucket) ? polyTubeSize + " " : "")
+            + "Polymerase Dilution</td><td>"
+            + lastfound.TubeNamePolymerase + "</td><td>" + lastfound.PolymeraseStockConcentration + " nM</td><td>"
+            + this.sanitize(polyVolume, "volume") + "</td><td>" + this.sanitize(polyBinding, "volume") + "</td><td>"
+            + this.sanitize(polyTotal, "volume") + "</td><td>" + this.sanitize(polyConcentration, "concentration") + "</td><td>" + i + "</td></tr>";
 
         return result;
     },
@@ -16334,7 +16538,7 @@ var PrintView = Backbone.View.extend({
     //
     dilutionTable: function () {
         var first, result, masterMixedDilutions,
-            ratio, i, foundsample, buckets, size,
+            ratio, annealingCon, i, foundsample, buckets, size,
             index;
 
         // standard case
@@ -16346,11 +16550,20 @@ var PrintView = Backbone.View.extend({
             masterMixedDilutions = true;
         }
 
-        // check to see if our samples all have the same pol:temp ratio as well
+        // check to see if our samples all have the same pol:temp ratio
+        // and SampleConcentrationInAnnealingReaction therefore the
+        // polymerase concentrations will match and we can master mix them
+        // all into one preparation
+
         ratio = first.PolymeraseTemplateRatio;
+        annealingCon = first.SampleConcentrationInAnnealingReaction;
+
         for (i = 1; i < this.model.fetched.length; i += 1) {
             foundsample = this.model.fetched[i];
             if (ratio !== foundsample.PolymeraseTemplateRatio) {
+                masterMixedDilutions = false;
+            }
+            if (annealingCon != foundsample.SampleConcentrationInAnnealingReaction) {
                 masterMixedDilutions = false;
             }
         }
@@ -16365,13 +16578,16 @@ var PrintView = Backbone.View.extend({
             // deprecated: only show spike in dilutions with V1 chemistry
             //result += this.dilutionTableInitialControl(true);
 
+            result += this.dilutionTableDoubleRow(0, true);
+
+            /* no longer mixing by bucket, we make sure concentrations match
             buckets = this.constants.BucketSizes(first.Chemistry);
             for (index in buckets) {
                 if (buckets.hasOwnProperty(index)) {
                     size = buckets[index];
                     result += this.dilutionTableDoubleRow(size, true);
                 }
-            }
+            }*/
 
             // deprecated: strobe dilutionTableDoubleRows. if we ever support that again
             // you'll need a separate set of rows for strobe again
@@ -16387,9 +16603,6 @@ var PrintView = Backbone.View.extend({
 
         result = "<table class='DilutionTable'>";
         result += this.columnHeader();
-        result += this.rowfromGetter(function (sample) {
-            return "#" + sample.PolymeraseTubeLabel + " " + sample.PolymeraseTubeInsertSize + "<br/>Polymerase Dilution";
-        }, "Final Reagent", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample.TubeNamePolymerase;
@@ -16451,13 +16664,14 @@ var PrintView = Backbone.View.extend({
             }, "DNA Control Dilution", " ul", "", false, "volume");
         }
 
-        result += this.rowfromGetter(function (sample) {
-            return sample.PolymeraseTubeLabel;
-        }, "Diluted Pol Tube #", "", "lineabove", false, "string");
+        // master mix is across all buckets now, no longer needed
+        //result += this.rowfromGetter(function (sample) {
+        //    return sample.PolymeraseTubeInsertSize + " Polymerase";
+        //}, "Dilution", "", "lineabove", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample.VolumeOfPolymeraseDilutionInBinding;
-        }, "Diluted Polymerase", " ul", "", false, "volume");
+        }, "Polymerase Dilution", " ul", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample.TotalVolumeOfBindingReaction;
@@ -16542,7 +16756,7 @@ var PrintView = Backbone.View.extend({
         var result, first, magbead;
         result = "";
         first = this.model.fetched[0];
-        magbead = (first.MagBead === "True");
+        magbead = (first.MagBead === "True" || first.MagBead === "OneCellPerWell");
 
         if (magbead) {
 
@@ -16550,7 +16764,7 @@ var PrintView = Backbone.View.extend({
             result += this.columnHeader();
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer;
-            }, "Bead Binding Buffer", " uL", "", false, "volume");
+            }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfFirstStockSpikeIn;
@@ -16561,7 +16775,7 @@ var PrintView = Backbone.View.extend({
             result += "<p>2. Second Dilution</p><table class='SpikeInForBoundComplexTable'>";
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer;
-            }, "Bead Binding Buffer", " uL", "", false, "volume");
+            }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfFirstDilution;
@@ -16606,7 +16820,7 @@ var PrintView = Backbone.View.extend({
 
         result = "";
         first = this.model.fetched[0];
-        magbead = (first.MagBead === "True");
+        magbead = (first.MagBead === "True" || first.MagBead === "OneCellPerWell");
 
         titration = (first.ComputeOption === "Titration");
         if (!titration) {
@@ -16711,7 +16925,7 @@ var PrintView = Backbone.View.extend({
 
             result += this.rowfromGetter(function (sample) {
                 return sample[which].MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
-            }, "Bead Binding Buffer", " uL", "", false, "volume");
+            }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
             result += this.rowfromGetter(function (sample) {
                 return sample[which].MagBeadComplexDilutionVolumeOfFirstComplex;
@@ -16722,11 +16936,11 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSaltBuffer;
-        }, "Bead Wash Buffer", " uL", "", false, "volume");
+        }, "MagBead Wash Buffer", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
-        }, "Bead Binding Buffer", " uL", "", false, "volume");
+        }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
@@ -16734,94 +16948,97 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondComplex;
-        }, "Complex", " uL", "", false, "volume");
+        }, "Sample Complex", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeTotal;
         }, "Total Volume", " uL", "lineabove", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.ConcentrationOnPlate;
+            return sample[which].SampleConcentrationOnPlate;
         }, "Concentration on Plate", " nM", "", false, "concentration");
 
         // mag bead preps
 
-        result += "</table><h5>Magnetic Beads</h5>";
-        result += "<p>Part 1. Bead Wash. <span class='instructions'>Start by adding stock magnetic beads " +
-            "to an empty tube. Wash once and add Bead Binding Buffer.</span></p><table " +
+        result += "</table><h5>Magnetic Beads (Keep cold)</h5>";
+        result += "<p>MagBead Step 1. Wash.</p><table " +
             "class='UsingBoundComplexMagBeadSections'>";
 
         result += this.columnHeader();
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeads;
-        }, "Add beads to empty tube", " uL", "", false, "volume");
+        }, "Add MagBeads to empty tube", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeadWashBuffer;
-        }, "Add Bead Wash Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Wash Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeadBindingBuffer;
-        }, "Add Bead Binding Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
 
-        result += "</table><p>Part 2. Incubate Bead-Complex. <span class='instructions'>Place the indicated " +
-             "amount of washed beads to a new tube and add diluted complex. Mix well. Incubate at 4C for 20 " +
-             "minutes.</span></p><table class='UsingBoundComplexMagBeadSections'>";
+        result += "</table><p>MagBead Step 2. Incubate Bead-Complex. <span class='instructions'>Place the indicated " +
+             "amount of washed beads to a new tube and add diluted complex. Mix well." +
+             "</span></p><table class='UsingBoundComplexMagBeadSections'>";
 
         result += this.columnHeader();
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadIncubationVolumeOfWashedBeads;
-        }, "Washed beads to tube", " uL", "", false, "volume");
+        }, "Washed beads to new tube", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadIncubationVolumeOfComplex;
-        }, "Add diluted complex", " uL", "", false, "volume");
+        }, "Add diluted sample complex from previous step.", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>incubate at 4C for 20 min</i>";
-        }, "", "", "", false, "string");
+            return "";
+        }, "And mix well", "", "", false, "string");
 
 
-        result += "</table><p>Part 3. Wash Bead-Complex. <span class='instructions'>Wash Complex-bound beads " +
-             "twice and store in Bead Binding Buffer.</span></p><table class='UsingBoundComplexMagBeadSections'>";
+        result += "</table><p>MagBead Step 3. Incubate in a rotator <span class='instructions'>at 4C "+
+            "for 20 minutes (up to 2 hours).</span></p>";
+
+        result += "</table><p>MagBead Step 4. Wash Bead-Complex. <span class='instructions'>Wash " +
+            "MagBead complex as follows:</span></p><table class='UsingBoundComplexMagBeadSections'>";
 
         result += this.columnHeader();
         result += this.rowfromGetter(function () {
-            return "<i>magnet and save 5 uL</i>";
+            return "Collect beads. Remove supernatant and discard. " +
+                "<span class='instructions'><i>Optional:</i> save 5 uL of supernatant for QC purposes</span>";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfFirstBindingBuffer;
-        }, "Add Bead Binding Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfBeadWashBuffer;
-        }, "Add Bead Wash Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Wash Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfSecondBindingBuffer;
-        }, "Add Bead Binding Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
             return "<i>keep at 4C until use</i>";
@@ -16833,11 +17050,11 @@ var PrintView = Backbone.View.extend({
     },
 
     usingBoundComplexTable: function () {
-        var first, magbead, result, spike;
+        var first, magbead, result, spike, titration;
 
         first = this.model.fetched[0];
-        magbead = (first.MagBead === "True");
-
+        magbead = (first.MagBead === "True" || first.MagBead === "OneCellPerWell");
+        titration = (first.ComputeOption === "Titration");
         result = "";
 
         spike = false;
@@ -16893,7 +17110,8 @@ var PrintView = Backbone.View.extend({
 
         } else {
             // magbead case is shared with the titration case
-            result += this.magBeadPreparation("MagBeadCalculations");
+            if (!titration)
+                result += this.magBeadPreparation("MagBeadCalculations");
         }
 
         return result;

@@ -516,7 +516,7 @@ var SamplesView = Backbone.View.extend({
         });
 
         $('input[name="MagBead"]').bind('change', function () {
-            if ($('#MagBead-Radio-Yes').is(':checked')) {
+            if ($('#MagBead-Radio-Yes').is(':checked') || $('#MagBead-Radio-One').is(':checked') ) {
                 $('.magBeadSection').show();
                 $('.nonMagBeadSection').hide();
                 // also mark complex reuse as false: not allowed with magbead in 1.3.2
@@ -632,6 +632,10 @@ var SamplesView = Backbone.View.extend({
 
         $('.new-button').bind('click', function () {
             that.newSample();
+        });
+
+        $('.print-button').bind('click', function () {
+            that.printSample();
         });
     },
 
@@ -976,6 +980,13 @@ var SamplesView = Backbone.View.extend({
         });
     },
 
+    printSample: function() {
+        var querystring = "#print/";
+        var inputlist = this.buildInputList();
+        querystring += encodeURIComponent(inputlist.SampleName);
+        window.location = querystring;
+    },
+
     // location of the 'top' of the summary after the page is laid out
     // used to determine when to fix it while scrolling or let it float
     originalSummaryTop: 0,
@@ -1154,6 +1165,7 @@ var SamplesView = Backbone.View.extend({
         radios.ComputeOptionTitration = "";
         radios.MagBeadYes = "checked='checked'";
         radios.MagBeadNo = "";
+        radios.MagBeadOne = "";
         radios.ChemistryV2 = "";
         radios.ChemistryXL = "";
         radios.ChemistryP4 = "checked='checked'";

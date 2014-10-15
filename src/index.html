@@ -82,11 +82,12 @@
 
         <div class="potential_page_break"></div>
 
+        <h4>{{= strings.BindingPolymeraseTitle }}</h4>
+
         <h4>{{= strings.DilutionsTitle }}</h4>
         <p class="instructions">{{= strings.Step6 }}</p>
         {{= sections.DilutionTable }}
 
-        <h4>{{= strings.BindingPolymeraseTitle }}</h4>
         <p class="instructions">{{= strings.Step7 }}</p>
         <p class="instructions">{{= strings.Step7_1 }}</p>
         {{= sections.BindingPolymeraseTable }}
@@ -137,6 +138,9 @@
             <div style="float:left;" class="top-buttons">
                 <input type="button" class="print_button" value="Print" />
             </div>
+            <div style="float:left;" class="top-buttons">
+                <div style="margin-left:2em;"><i>Import:</i><input type="file" class="import_button" name="files[]" /></div>
+            </div>
             <div style="float:right;" class="top-buttons">
                 <input type="button" class="delete_button" value="Delete" />
             </div>
@@ -178,6 +182,7 @@
           <div class="headerversion" style="margin-top:0.5em;">{{= strings.CalculatorVersion }}</div>
           <div class="headernavigation" style="margin-top:0.5em;"><a href="#list">Sample List</a></div>
           <div class="headernavigation"><input type="button" class="new-button" value="New Sample" /></div>
+          <div class="headernavigation"><input type="button" class="print-button" value="Print" /></div>
           <div class="clear"></div>
         </div>
     </header>
@@ -309,11 +314,11 @@
         <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 rightalign top5"><span class="help-low-amounts">Non-standard</span></div>
-        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />Yes</span></div>
+        <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard</span></div>
+        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />Yes</span></div>
         <div class="clear"></div>
         
-        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />No</span></div>
+        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />No</span></div>
         <div class="clear"></div>
 
         <div class='global_AllowNonStandardReverseCalculations'>
@@ -328,7 +333,7 @@
         <div class="grid2 top5"><span class="output_MaxNumberOfCellsFromBinding"></span></div>
         <div class="clear"></div>
         
-        <h3 style="margin-top:0.7em;">Optional</h3>
+        <h3 style="margin-top:0.7em;">Custom Parameters</h3>
         
         <h4>Concentration On Plate</h4>
 
@@ -373,9 +378,9 @@
 
       <section>
         <header>
-          <h3>Annealing</h3>
+          <h3>Sequencing Primer Annealing</h3>
         </header>
-        <p>Step 2: Dilute the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
+        <p>Step 1: Dilute the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
         
         <div class="grid2 rightalign top2">
             <span class="output_TubeNameSequencingPrimer help-annealing-sequencingprimer"></span>
@@ -434,8 +439,12 @@
       -->
 
       <section>
+      <header>
+          <h3>{{= strings.BindingPolymeraseTitle }}</h3>
+      </header>
+
         <header>
-            <h3>{{= strings.DilutionsTitle }}</h3>
+            <h4>{{= strings.DilutionsTitle }}</h4>
         </header>
         <p>{{= strings.Step6 }}</p>
         
@@ -480,7 +489,7 @@
 
         </div>
         
-        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution (<span class="output_PolymeraseTubeLabel"></span>)</h4>
+        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution</h4>
         
         <div class="grid2 rightalign top2"><span class="output_TubeNamePolymerase"></span><br/>(<span class="output_PolymeraseStockConcentration nM"></span>)</div>
         <div class="grid2 top2"><span class="output_PolymeraseStockVolumeInDilution uL"></span></div>
@@ -507,9 +516,6 @@
       -->
 
       <section>
-        <header>
-            <h3>{{= strings.BindingPolymeraseTitle }}</h3>
-        </header>
         <p>{{= strings.Step7 }}</p>
         <p>{{= strings.Step7_1 }}</p>
 
@@ -569,10 +575,11 @@
             <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
             <div class="clear"></div>
         </div>
-        
+
+        <!-- the tube label suggestion was confusing to folks, skip displaying that from 2.1.0.3 onward
         <div class="grid2 rightalign top2"><span class="help-tube-label-left">Diluted Pol Tube #</span></div>
         <div class="grid2 top2"><span class="output_PolymeraseTubeLabel"></span></div>
-        <div class="clear"></div>
+        <div class="clear"></div>-->
 
         <div class="grid2 rightalign top2"><span class="help-bindingpoly-poly">Diluted Polymerase</span></div>
         <div class="grid2 top2"><span class="output_VolumeOfPolymeraseDilutionInBinding uL"></span></div>
@@ -725,7 +732,7 @@
 
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer uL"></span></div>
                 <div class="clear"></div>
                 <div class="grid2 rightalign top2"><span class="">Stock DNA Control</span></div>
@@ -733,7 +740,7 @@
                 <div class="clear"></div>
 
                 <h4 style="padding-left:1em">2. Second DNA Control Dilution</h4>
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
                 <div class="grid2 rightalign top2"><span class="">First Dilution</span></div>
@@ -747,7 +754,7 @@
             <div class="showLongTermStorage">
                 <h4 style="padding-left:1em">1. First Complex Dilution</h4>
                 
-                    <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                    <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                     <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                         <span class="addendum"></span></div>
                     <div class="clear"></div>
@@ -760,11 +767,11 @@
                 <h4 style="padding-left:1em">2. Second Complex Dilution</h4>
             </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
                 
@@ -793,71 +800,72 @@
 
             <h4 style="padding-left:1em">1. Wash Bead</h4>
             
-                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBeads to empty tube</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-            <h4 style="padding-left:1em">2. Incubate Bead-Complex</h4>
+            <h4 style="padding-left:1em;">2. Incubate Bead-Complex</h4>
             
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
             <h4 style="padding-left:1em">3. Wash Bead-Complex</h4>
             
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -930,7 +938,7 @@
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
                 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -940,7 +948,7 @@
 
                 <h4 style="padding-left:1em">2. Second DNA Control Dilution</h4>
                 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -961,7 +969,7 @@
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
                     
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -974,11 +982,11 @@
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -993,7 +1001,7 @@
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -1004,65 +1012,66 @@
                 <div class="clear"></div>
                 
                 <h5 style="padding-left:2em">Wash Bead</h5>
-                <div class="grid2 rightalign top2"><span class="">Add beads to empty tube</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBeads to empty tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1081,7 +1090,7 @@
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -1094,11 +1103,11 @@
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1114,7 +1123,7 @@
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -1131,60 +1140,61 @@
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadWashBuffer uL"></span><span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1202,7 +1212,7 @@
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -1216,11 +1226,11 @@
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1236,7 +1246,7 @@
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -1254,65 +1264,66 @@
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1331,7 +1342,7 @@
                 <div class="showLongTermStorage">
                     <h5 style="padding-left:2em">1. First Complex Dilution</h5>
 
-                        <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                        <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                         <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfFirstBindingBuffer uL"></span>
                             <span class="addendum"></span></div>
                         <div class="clear"></div>
@@ -1345,11 +1356,11 @@
                     <h5 style="padding-left:2em">2. Second Complex Dilution</h5>
                 </div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Wash Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSaltBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">MagBead Binding Buffer</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1365,7 +1376,7 @@
                     <div class="clear"></div>
                 </div>
                 
-                <div class="grid2 rightalign top2"><span class="">Complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
                 <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSecondComplex uL"></span>
                     <span class="addendum">mix well</span></div>
                 <div class="clear"></div>
@@ -1383,61 +1394,62 @@
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
-                <h5 style="padding-left:2em">Incubate Bead-Complex</h5>
-                <div class="grid2 rightalign top2"><span class="">Washed beads to tube</span></div>
+                <h5 style="padding-left:2em;padding-top:1em">Incubate Bead-Complex</h5>
+                <div class="grid2 rightalign top2"><span class="">Washed beads to new tube</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadIncubationVolumeOfWashedBeads uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add diluted complex</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add diluted complex from previous step</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadIncubationVolumeOfComplex uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>mix and incubate</i></span></div>
+                <div class="grid2 top2"><span class="">Mix well and incubate in a rotator</span></div>
                 <div class="clear"></div>
 
                 <h5 style="padding-left:2em">Wash Bead-Complex</h5>
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>magnet and save 5 uL</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
+                    save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Wash Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Wash Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfBeadWashBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
-                <div class="grid2 top2"><span class=""><i>remove supernatant</i></span></div>
+                <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add Bead Binding Buffer</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1502,7 +1514,7 @@
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex1 uL"></span></div>
             <div class="clear"></div>
 
@@ -1527,7 +1539,7 @@
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex2 uL"></span></div>
             <div class="clear"></div>
 
@@ -1551,7 +1563,7 @@
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex3 uL"></span></div>
             <div class="clear"></div>
 
@@ -1576,7 +1588,7 @@
                 <div class="clear"></div>
 
             </div>
-            <div class="grid2 rightalign top2"><span class="">Binding Complex</span></div>
+            <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex4 uL"></span></div>
             <div class="clear"></div>
 

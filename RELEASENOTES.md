@@ -1,3 +1,21 @@
+Version 2.1.0.3
+- Add export and import of samples in the list page. 
+    - Samples are saved as files with a ".sample" filename
+    - Exported sample files may then be imported using the Import: Choose button in the list view 
+- Now displays if a sample is "Standard" or not, instead of "Non-Standard" or not to avoid the double negative (issue 25354)
+    - Previous stored samples which showed as "Non-Standard" before will now show as not "Standard", and vis versa
+- Display optional Custom Parameters in the print view so the print view is a complete archive of inputs (issue 25310)
+- Added a Print button on the single sample edit page, to print just that sample conveniently (issue 25663)
+- Changes to calculator wording for clarity (issue 25355)
+    - Renamed Annealing to Sequencing Primer Annealing
+    - Re-numbered "steps" in output to start with diluting sequencing primer
+    - Moved the "Binding Polymerase to Templates" section to include preparing the polyerase dilution
+    - Removed the suggested polymerase tube label
+    - Matched bead binding and wash buffer labels to kit names
+    - Clarified magnetic bead step labels and instructions
+- Display correct sample concentration on plate in magbead titration print view (issue 24462)
+- Correct an error that prevented display of certain magbead titrations (issue 24464)
+
 Version 2.1.0.2
 - Show DTT contribution in titration with diffusion loading (issue 24193)
 

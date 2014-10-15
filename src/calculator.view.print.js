@@ -204,7 +204,7 @@ var PrintView = Backbone.View.extend({
 
         errors = "";
         if (!sameStandardness) {
-            errors += "are non-standard; ";
+            errors += "are standard; ";
         }
         if (!sameChemistry) {
             errors += "use different versions of chemistry; ";
@@ -216,7 +216,7 @@ var PrintView = Backbone.View.extend({
             errors += "use long term storage; ";
         }
         if (!sameMagBead) {
-            errors += "use magnetic beads; ";
+            errors += "use different magnetic bead protocols; ";
         }
         if (!similarCompute) {
             errors += "are titrations; ";
@@ -410,8 +410,29 @@ var PrintView = Backbone.View.extend({
         }, "Complex Reuse", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.LowConcentrationsAllowed;
-        }, "Non-standard", "", "", false, "string");
+            // return the opposite of LowConcentrationsAllowed for "Standard"
+            return ("True" === sample.LowConcentrationsAllowed) ? "False" : "True";
+        }, "Standard", "", "", false, "string");
+
+        // include Optional information so the print view is a complete archive of sample inputs (bugzilla 25310)'
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.ConcentrationOnPlateOption)
+                return "Default (" + sample.DefaultConcentrationOnPlate + " nM)";
+            return "Custom (" + sample.CustomConcentrationOnPlate + " nM)";
+        }, "Concentration on Plate", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.SpikeInRatioOption)
+                return "Default (" + sample.DefaultSpikeInRatioToTemplatePercent + "%)";
+            return "Custom (" + sample.CustomSpikeInRatioPercent + "%)";
+        }, "Control To Template", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.PolymeraseTemplateRatioOption)
+                return "Default (" + sample.DefaultPolymeraseTemplateRatio + ")";
+            return "Custom (" + sample.CustomPolymeraseTemplateRatio + ")";
+        }, "Polymerase:Template Ratio", "", "", false, "string");
 
         result += "</table>";
 
@@ -473,6 +494,7 @@ var PrintView = Backbone.View.extend({
             polyTotal = 0,
             polyBinding = 0,
             usingControl = false,
+            specificBucket = parseInt(bucket, 10),
             lastfound,
             i = 0,
             index;
@@ -480,7 +502,9 @@ var PrintView = Backbone.View.extend({
         for (index in samples) {
             if (samples.hasOwnProperty(index)) {
                 sample = samples[index];
-                if (parseInt(bucket, 10) !== sample.BucketSize) {
+
+                // if we want specific buckets, filter those here
+                if ((0 < specificBucket) && (specificBucket !== sample.BucketSize)) {
                     continue;
                 }
 
@@ -507,7 +531,6 @@ var PrintView = Backbone.View.extend({
 
         spikeTubeLabel = lastfound.SpikeInTubeLabel;
         spikeTubeSize = lastfound.SpikeInTubeInsertSize;
-        polyTubeLabel = lastfound.PolymeraseTubeLabel;
         polyTubeSize = lastfound.PolymeraseTubeInsertSize;
         spikeConcentration = lastfound.SpikeInSecondDilutionConcentration;
         polyConcentration = lastfound.PolymeraseDilutionConcentration;
@@ -524,10 +547,12 @@ var PrintView = Backbone.View.extend({
                 "</td><td class='topbar'>" + i + "</td></tr>";
         }
 
-        result += "<tr><td class='rowheader'>#" + polyTubeLabel + " " + polyTubeSize + " Polymerase Dilution</td><td>" +
-            lastfound.TubeNamePolymerase + "</td><td>" + lastfound.PolymeraseStockConcentration + " nM</td><td>" +
-            this.sanitize(polyVolume, "volume") + "</td><td>" + this.sanitize(polyBinding, "volume") + "</td><td>" +
-            this.sanitize(polyTotal, "volume") + "</td><td>" + this.sanitize(polyConcentration, "concentration") + "</td><td>" + i + "</td></tr>";
+        result += "<tr><td class='rowheader'>"
+            + ((0 < specificBucket) ? polyTubeSize + " " : "")
+            + "Polymerase Dilution</td><td>"
+            + lastfound.TubeNamePolymerase + "</td><td>" + lastfound.PolymeraseStockConcentration + " nM</td><td>"
+            + this.sanitize(polyVolume, "volume") + "</td><td>" + this.sanitize(polyBinding, "volume") + "</td><td>"
+            + this.sanitize(polyTotal, "volume") + "</td><td>" + this.sanitize(polyConcentration, "concentration") + "</td><td>" + i + "</td></tr>";
 
         return result;
     },
@@ -541,7 +566,7 @@ var PrintView = Backbone.View.extend({
     //
     dilutionTable: function () {
         var first, result, masterMixedDilutions,
-            ratio, i, foundsample, buckets, size,
+            ratio, annealingCon, i, foundsample, buckets, size,
             index;
 
         // standard case
@@ -553,11 +578,20 @@ var PrintView = Backbone.View.extend({
             masterMixedDilutions = true;
         }
 
-        // check to see if our samples all have the same pol:temp ratio as well
+        // check to see if our samples all have the same pol:temp ratio
+        // and SampleConcentrationInAnnealingReaction therefore the
+        // polymerase concentrations will match and we can master mix them
+        // all into one preparation
+
         ratio = first.PolymeraseTemplateRatio;
+        annealingCon = first.SampleConcentrationInAnnealingReaction;
+
         for (i = 1; i < this.model.fetched.length; i += 1) {
             foundsample = this.model.fetched[i];
             if (ratio !== foundsample.PolymeraseTemplateRatio) {
+                masterMixedDilutions = false;
+            }
+            if (annealingCon != foundsample.SampleConcentrationInAnnealingReaction) {
                 masterMixedDilutions = false;
             }
         }
@@ -572,13 +606,16 @@ var PrintView = Backbone.View.extend({
             // deprecated: only show spike in dilutions with V1 chemistry
             //result += this.dilutionTableInitialControl(true);
 
+            result += this.dilutionTableDoubleRow(0, true);
+
+            /* no longer mixing by bucket, we make sure concentrations match
             buckets = this.constants.BucketSizes(first.Chemistry);
             for (index in buckets) {
                 if (buckets.hasOwnProperty(index)) {
                     size = buckets[index];
                     result += this.dilutionTableDoubleRow(size, true);
                 }
-            }
+            }*/
 
             // deprecated: strobe dilutionTableDoubleRows. if we ever support that again
             // you'll need a separate set of rows for strobe again
@@ -594,9 +631,6 @@ var PrintView = Backbone.View.extend({
 
         result = "<table class='DilutionTable'>";
         result += this.columnHeader();
-        result += this.rowfromGetter(function (sample) {
-            return "#" + sample.PolymeraseTubeLabel + " " + sample.PolymeraseTubeInsertSize + "<br/>Polymerase Dilution";
-        }, "Final Reagent", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample.TubeNamePolymerase;
@@ -658,13 +692,14 @@ var PrintView = Backbone.View.extend({
             }, "DNA Control Dilution", " ul", "", false, "volume");
         }
 
-        result += this.rowfromGetter(function (sample) {
-            return sample.PolymeraseTubeLabel;
-        }, "Diluted Pol Tube #", "", "lineabove", false, "string");
+        // master mix is across all buckets now, no longer needed
+        //result += this.rowfromGetter(function (sample) {
+        //    return sample.PolymeraseTubeInsertSize + " Polymerase";
+        //}, "Dilution", "", "lineabove", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample.VolumeOfPolymeraseDilutionInBinding;
-        }, "Diluted Polymerase", " ul", "", false, "volume");
+        }, "Polymerase Dilution", " ul", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample.TotalVolumeOfBindingReaction;
@@ -749,7 +784,7 @@ var PrintView = Backbone.View.extend({
         var result, first, magbead;
         result = "";
         first = this.model.fetched[0];
-        magbead = (first.MagBead === "True");
+        magbead = (first.MagBead === "True" || first.MagBead === "OneCellPerWell");
 
         if (magbead) {
 
@@ -757,7 +792,7 @@ var PrintView = Backbone.View.extend({
             result += this.columnHeader();
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfFirstBindingBuffer;
-            }, "Bead Binding Buffer", " uL", "", false, "volume");
+            }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfFirstStockSpikeIn;
@@ -768,7 +803,7 @@ var PrintView = Backbone.View.extend({
             result += "<p>2. Second Dilution</p><table class='SpikeInForBoundComplexTable'>";
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfSecondBindingBuffer;
-            }, "Bead Binding Buffer", " uL", "", false, "volume");
+            }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
             result += this.rowfromGetter(function (sample) {
                 return sample.MagBeadSpikeInDilutionVolumeOfFirstDilution;
@@ -813,7 +848,7 @@ var PrintView = Backbone.View.extend({
 
         result = "";
         first = this.model.fetched[0];
-        magbead = (first.MagBead === "True");
+        magbead = (first.MagBead === "True" || first.MagBead === "OneCellPerWell");
 
         titration = (first.ComputeOption === "Titration");
         if (!titration) {
@@ -918,7 +953,7 @@ var PrintView = Backbone.View.extend({
 
             result += this.rowfromGetter(function (sample) {
                 return sample[which].MagBeadComplexDilutionVolumeOfFirstBindingBuffer;
-            }, "Bead Binding Buffer", " uL", "", false, "volume");
+            }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
             result += this.rowfromGetter(function (sample) {
                 return sample[which].MagBeadComplexDilutionVolumeOfFirstComplex;
@@ -929,11 +964,11 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSaltBuffer;
-        }, "Bead Wash Buffer", " uL", "", false, "volume");
+        }, "MagBead Wash Buffer", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
-        }, "Bead Binding Buffer", " uL", "", false, "volume");
+        }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
@@ -941,94 +976,97 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondComplex;
-        }, "Complex", " uL", "", false, "volume");
+        }, "Sample Complex", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeTotal;
         }, "Total Volume", " uL", "lineabove", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.ConcentrationOnPlate;
+            return sample[which].SampleConcentrationOnPlate;
         }, "Concentration on Plate", " nM", "", false, "concentration");
 
         // mag bead preps
 
-        result += "</table><h5>Magnetic Beads</h5>";
-        result += "<p>Part 1. Bead Wash. <span class='instructions'>Start by adding stock magnetic beads " +
-            "to an empty tube. Wash once and add Bead Binding Buffer.</span></p><table " +
+        result += "</table><h5>Magnetic Beads (Keep cold)</h5>";
+        result += "<p>MagBead Step 1. Wash.</p><table " +
             "class='UsingBoundComplexMagBeadSections'>";
 
         result += this.columnHeader();
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeads;
-        }, "Add beads to empty tube", " uL", "", false, "volume");
+        }, "Add MagBeads to empty tube", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeadWashBuffer;
-        }, "Add Bead Wash Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Wash Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeadBindingBuffer;
-        }, "Add Bead Binding Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
 
-        result += "</table><p>Part 2. Incubate Bead-Complex. <span class='instructions'>Place the indicated " +
-             "amount of washed beads to a new tube and add diluted complex. Mix well. Incubate at 4C for 20 " +
-             "minutes.</span></p><table class='UsingBoundComplexMagBeadSections'>";
+        result += "</table><p>MagBead Step 2. Incubate Bead-Complex. <span class='instructions'>Place the indicated " +
+             "amount of washed beads to a new tube and add diluted complex. Mix well." +
+             "</span></p><table class='UsingBoundComplexMagBeadSections'>";
 
         result += this.columnHeader();
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadIncubationVolumeOfWashedBeads;
-        }, "Washed beads to tube", " uL", "", false, "volume");
+        }, "Washed beads to new tube", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadIncubationVolumeOfComplex;
-        }, "Add diluted complex", " uL", "", false, "volume");
+        }, "Add diluted sample complex from previous step.", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>incubate at 4C for 20 min</i>";
-        }, "", "", "", false, "string");
+            return "";
+        }, "And mix well", "", "", false, "string");
 
 
-        result += "</table><p>Part 3. Wash Bead-Complex. <span class='instructions'>Wash Complex-bound beads " +
-             "twice and store in Bead Binding Buffer.</span></p><table class='UsingBoundComplexMagBeadSections'>";
+        result += "</table><p>MagBead Step 3. Incubate in a rotator <span class='instructions'>at 4C "+
+            "for 20 minutes (up to 2 hours).</span></p>";
+
+        result += "</table><p>MagBead Step 4. Wash Bead-Complex. <span class='instructions'>Wash " +
+            "MagBead complex as follows:</span></p><table class='UsingBoundComplexMagBeadSections'>";
 
         result += this.columnHeader();
         result += this.rowfromGetter(function () {
-            return "<i>magnet and save 5 uL</i>";
+            return "Collect beads. Remove supernatant and discard. " +
+                "<span class='instructions'><i>Optional:</i> save 5 uL of supernatant for QC purposes</span>";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfFirstBindingBuffer;
-        }, "Add Bead Binding Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfBeadWashBuffer;
-        }, "Add Bead Wash Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Wash Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
-            return "<i>remove supernatant</i>";
+            return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfSecondBindingBuffer;
-        }, "Add Bead Binding Buffer", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
             return "<i>keep at 4C until use</i>";
@@ -1040,11 +1078,11 @@ var PrintView = Backbone.View.extend({
     },
 
     usingBoundComplexTable: function () {
-        var first, magbead, result, spike;
+        var first, magbead, result, spike, titration;
 
         first = this.model.fetched[0];
-        magbead = (first.MagBead === "True");
-
+        magbead = (first.MagBead === "True" || first.MagBead === "OneCellPerWell");
+        titration = (first.ComputeOption === "Titration");
         result = "";
 
         spike = false;
@@ -1100,7 +1138,8 @@ var PrintView = Backbone.View.extend({
 
         } else {
             // magbead case is shared with the titration case
-            result += this.magBeadPreparation("MagBeadCalculations");
+            if (!titration)
+                result += this.magBeadPreparation("MagBeadCalculations");
         }
 
         return result;

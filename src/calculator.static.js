@@ -42,24 +42,24 @@ Constants.prototype.strings = {
     CalculatorVersion: "Version " + CalculatorVersion,                  // from calculator.version.js
     CalculatorVersionPrint: "Calculator Version " + CalculatorVersion,  // from calculator.version.js
     SampleInformationTitle: "Sample Information",
-    Step1Entry: "Step 1:  Enter sample information",
-    Step1Display: "Step 1:  Review sample information",
-    AnnealingTitle: "Annealing",
-    Step2: "Step 2: Dilute the Sequencing Primer in Elution Buffer",
-    Step3: "Step 3: In 0.2mL tubes, add the appropriate amount of reagents in the order listed below",
-    Step4: "Step 4: Incubate @ 80°C for 2 minutes then ramp temperature to 25°C at a rate of 0.1°C/second",
-    Step5: "Step 5: Transfer to 4°C location for immediate use or store at -20°C",
+    Step1Entry: "Enter sample information",
+    Step1Display: "Review sample information",
+    AnnealingTitle: "Sequencing Primer Annealing",
+    Step2: "Step 1: Dilute the Sequencing Primer in Elution Buffer",
+    Step3: "Step 2: In 0.2mL tubes, add the appropriate amount of reagents in the order listed below",
+    Step4: "Step 3: Incubate @ 80°C for 2 minutes then ramp temperature to 25°C at a rate of 0.1°C/second",
+    Step5: "Step 4: Transfer to 4°C location for immediate use or store at -20°C",
     DilutionsTitle: "Dilutions",
-    Step6: "Step6: Prepare dilutions of polymerase",
+    Step6: "Step 5: Prepare dilution(s) of polymerase",
     BindingPolymeraseTitle: "Binding Polymerase to Templates",
-    Step7: "Step 7: In a new 0.5mL tube, add the components in the order shown below",
+    Step7: "Step 6: In a new 0.5mL tube, add the components in the order shown below",
     Step7_1: "After adding each component, mix the tube contents",
-    Step8: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
+    Step8: "Step 7: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
         "For MagBead preparations only, after the 30 C incubation, heat to 37 C for 30 min. " +
         "Finish all preparations with a hold at 4 C",
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
-    Step9: "Step 9: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
+    Step9: "Step 8: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
     TitrationTitle: "Loading Titration",
     StorageTitle: "Long Term Storage",
     StorageStart: "Glycerol preparation for storage",
@@ -74,12 +74,12 @@ Constants.prototype.errors = {
 	SampleConcentrationLow: {
 		Coefficient: "StartingSampleConcentration",
         ShortMessage: "Too Low",
-        LongMessage: "Your concentration is too low for these settings. You may enable the non-standard option."
+        LongMessage: "Your concentration is too low for these settings. You may disable the Standard option."
 	},
 	BindingVolumeLow: {
 		Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Error: Not enough binding volume. You may enable the non-standard option."
+        LongMessage: "Error: Not enough binding volume. You may disable the Standard option."
 	},
     DifficultPipetting: {
         Coefficient: "",
@@ -99,12 +99,12 @@ Constants.prototype.errors = {
 	InvalidInsertSizeStandard: {
 		Coefficient: "AnnealedBasePairLength",
         ShortMessage: "Not supported",
-        LongMessage: "Your insert size is not supported for standard collections"
+        LongMessage: "Your insert size is not supported for standard collections."
 	},
 	InvalidInsertSizeStrobe: {
 		Coefficient: "AnnealedBasePairLength",
         ShortMessage: "Not supported",
-        LongMessage: "Your insert size is not supported for strobe collections"
+        LongMessage: "Your insert size is not supported for strobe collections."
 	},
 	InvalidInsertSizeMagBeadNew: {
 		Coefficient: "AnnealedBasePairLength",
@@ -121,22 +121,22 @@ Constants.prototype.errors = {
 	NonStandardLargeScaleNew: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations with the non-standard option are not supported"
+        LongMessage: "Large scale preparations require the Standard option."
 	},
 	NonStandardLargeScale: {    // deprecated, included just for comparison unit tests against C# version
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations with the non-standard option is not supported"
+        LongMessage: "Large scale preparations require the Standard option."
 	},
 	NonStandardTitration: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Titrations with the non-standard option are not supported"
+        LongMessage: "Titrations require the Standard option."
 	},
 	NonStandardByCells: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Computing by # of SMRTCells with the non-standard option is not supported"
+        LongMessage: "Computing by # of SMRTCells require the Standard option."
 	},
 	ReuseRequiredWithStrobe: {
 		Coefficient: "ComplexReuse",
@@ -157,23 +157,23 @@ Constants.prototype.errors = {
 		Coefficient: "BindingComplexNumberOfCellsRequested",
         ShortMessage: "See above",
         LongMessage: "Either use the binding complex directly on the sample plate or " +
-            "select an optional concentration on plate less than the final binding concentration."
+            "select a custom parameter concentration on plate less than the final binding concentration."
 	},
 	BindingConcentrationTooLowForReverseCalculation: {
 		Coefficient: "StartingSampleConcentration",
         ShortMessage: "Too Low",
-        LongMessage: "Concentration was too low on plate, select an optional " +
+        LongMessage: "Concentration was too low on plate, select a custom parameter " +
             "concentration on plate somewhat less than the final binding concentration."
 	},
 	TitrationConcentrationTooHigh: {
 		Coefficient: "TitrationConcentration4",
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample. You may enable the non-standard option."
+        LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard option."
 	},
 	TitrationConcentrationTooHighNonStandard: {
 		Coefficient: "TitrationConcentration4",		// C# had TitrationConcentrations
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample even with the non-standard option. Try a lower value."
+        LongMessage: "A requested titration concentration is too high for the sample even without the Standard option. Try a lower value."
 	},
 	NotEnoughAvailableVolume: {
 		Coefficient: "AvailableSampleVolume",
@@ -195,13 +195,13 @@ Constants.prototype.errors = {
     ConcentrationOnPlateTooHighWithControl: {
         Coefficient: "CustomConcentrationOnPlate",
         ShortMessage: "Too High",
-        LongMessage: "Optional concentration on plate is too high. Try disabling " +
+        LongMessage: "The custom parameter concentration on plate is too high. Try disabling " +
             "DNA Control Complex to allow for a higher concentration."
     },
     ConcentrationOnPlateTooHighWithoutControl: {
         Coefficient: "CustomConcentrationOnPlate",
         ShortMessage: "Too High",
-        LongMessage: "Optional concentration on plate is too high for the resulting binding concentration."
+        LongMessage: "The custom parameter concentration on plate is too high for the resulting binding concentration."
     },
     UntestedControlWithLongInsertSize: {
         Coefficient: "",
@@ -212,7 +212,7 @@ Constants.prototype.errors = {
     NonStandardSmallStorageNotSupported: {
         Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Small scale preparation using long term storage with the non-standard option is not supported."
+        LongMessage: "Small scale preparation using long term storage require the Standard option."
     }
 };
 

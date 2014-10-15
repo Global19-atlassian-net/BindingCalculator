@@ -134,6 +134,53 @@ var ListView = Backbone.View.extend({
 
             // this triggers 'delete' events which we should watch and then remove them from our grid
         });
+
+        String.prototype.endsWith = function(suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+
+        var importButton = $('.import_button');
+
+        $('.import_button').change(function (evt) {
+            if (window.File && window.FileReader && window.FileList && window.Blob) {
+                var files = evt.target.files; // FileList object, we're only allowing 1 input at a time to start
+                var f = files[0];
+                var name = encodeURIComponent(f.name);
+                if (f.name.endsWith(".sample")) {     // uses endsWith extension above
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+
+                        //
+                        // Use the SampleLocal class to add a new sample with the json, instead of sample.ReadFromJson
+                        // potentially. Make sure the check the GUID against existing samples and error if already
+                        // loaded. The SampleLocal class is our this.samples property. Have that property trigger
+                        // a 'new' event at the end of the import, and then our UI should update correctly.
+                        //
+
+                        var text = reader.result;
+                        var json = JSON.parse(text);
+
+                        // Make sure we have essential components
+
+                        if (json.hasOwnProperty("SampleName") && json.hasOwnProperty("SampleGuid")) {
+                            that.samples.importSample(json);
+                        } else {
+                            // TODO: move these error messages with replacement tokens to static.js and look up
+                            alert("Sorry, the file '"+ name + "' does not appear to contain sample information or is corrupted. Please contact Pacific Biosciences for assistance.")
+                        }
+
+                    }
+                    reader.readAsText(f);
+                } else {
+                    alert("Sorry, the file '"+ name + "' does not have the file extension 'sample'");
+                }
+
+            } else {
+                alert("This browser does not support importing samples, please upgrade to a more recent version.");
+            }
+
+            importButton.replaceWith( importButton = importButton.clone( true ) );
+        });
     },
 
     computeListWidth: function () {
@@ -161,6 +208,18 @@ var ListView = Backbone.View.extend({
         row.cells = sampledeets.Cells;
         row.conc = sampledeets.StartingSampleConcentration;
         row.bp = sampledeets.AnnealedBasePairLength;
+
+        //
+        // get just the sample input data to persist to the file, and use a simple
+        // filename encoding by replacing anything nonstandard with _, internally
+        // the name is still saved as utf-8 when it is reimported. Filename conflicts
+        // or renaming could occur when downloading though...
+        //
+
+        var data = "text/json;charset=utf-8," + encodeURIComponent(sampledeets.ToJson());
+        var filename = sampledeets.SampleName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".sample";
+
+        row.export = "<a href='data:" + data + "' download='" + filename + "'>export</a>";
         row.note = sampledeets.ShortDescription;
 
         $("#ui-jqgrid").jqGrid('addRowData', rowNumber, row);
@@ -189,16 +248,17 @@ var ListView = Backbone.View.extend({
             height: 'auto',
             autowidth: true,
             rowNum: 9999999,
-            colNames: ['Sample name', 'Volume', 'Cells', 'Conc', 'BP', 'Note', 'internalname'],
+            colNames: ['Sample name', 'Vol', 'Cells', 'Conc', 'BP', 'Exp', 'Note', 'internalname'],
             colModel: [
-                    { name: 'name', index: 'name', width: 150 },
-                    { name: 'volume', index: 'volume', width: 46, align: "right", sorttype: "float" },
-                    { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
-                    { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
-                    { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
-                    { name: 'note', index: 'note', width: 220, sortable: false },
-                    { name: 'internalname', index: "internalname", width: 0, hidden: true }
-                    ],
+                { name: 'name', index: 'name', width: 150 },
+                { name: 'volume', index: 'volume', width: 30, align: "right", sorttype: "float" },
+                { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
+                { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
+                { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
+                { name: 'export', index: 'export', width: 30, align: "right", sortable: false },
+                { name: 'note', index: 'note', width: 220, sortable: false },
+                { name: 'internalname', index: "internalname", width: 0, hidden: true }
+            ],
             multiselect: true,
             caption: "Samples"
         });

@@ -232,6 +232,11 @@ var SampleLocal = Backbone.Model.extend({
 
         sample = new Sample(this.options);
         sample.SampleName = name;
+        this.addNewSample(sample);
+    },
+
+    addNewSample: function(sample) {
+        var name = sample.SampleName;
 
         sample.Calculate();
 
@@ -244,6 +249,92 @@ var SampleLocal = Backbone.Model.extend({
 
         // then let everyone know that we have a new sample to display now
         this.trigger('new', sample);
+    },
+
+    isSampleNameTaken: function (name) {
+        var test, duplicate = false;
+        for (i = 0; i < this.names.length; i += 1) {
+            test = this.names[i];
+            if (this.samples[test].SampleName === name) {
+                duplicate = true;
+            }
+        }
+        return duplicate;
+    },
+
+    isSampleGuidTaken: function (guid) {
+        var test, duplicate = false;
+        for (i = 0; i < this.names.length; i += 1) {
+            test = this.names[i];
+            if (this.samples[test].SampleGuid === guid) {
+                duplicate = true;
+            }
+        }
+        return duplicate;
+    },
+
+    importSample: function (data) {
+        //
+        // Design decision: if we import a sample with the same GUID of a sample
+        // that already exists in our sample list, does that replace the sample
+        // information (an update semantic) or do we generate a new guid and
+        // append a new version of that sample with a new GUID? The former is the
+        // intent of the GUID for syncing between computers. But if someone reuses
+        // a sample instead of creating new ones, the behavior will be unexpected.
+        // We could ask a question, ala "another sample appears to have the same
+        // identity of this. would you like to update that sample?" But the user
+        // never sees the GUID only the sample name, so would more likely expect
+        // to see this behavior based upon the sample name not a GUID. Further,
+        // we don't allow two samples locally to have the same name. So then
+        // performing an update if the name matches instead would more fit the
+        // users mental model of naming samples. Still a confirmation would be
+        // wise ala "A sample with the same name already exists, would you like
+        // to update that sample with the imported information?"
+        //
+        // So based on that train of though, we will check for matching names
+        // and also check if a new GUID needs to be generated, since this is not
+        // syncing so much as archiving/restoring.
+        //
+
+        var name, sample, index, testName, changedName;
+
+        sample = new Sample(this.options);
+        sample.ReadFromJson(data);
+
+        if (this.isSampleGuidTaken(data.SampleGuid)) {
+            //
+            // make a new guid, for imports we always want
+            // to succeed and we're not trying to sync fully
+            //
+
+            sample.SampleGuid = sample.guid();
+        }
+
+        changedName = this.isSampleNameTaken(data.SampleName);
+        if (changedName) {
+            //
+            // Find a new name. Try appending "(import n)" if the name until we find one that we didn't already have
+            //
+            index = 1;
+            do {
+                testName = data.SampleName + " (import " + index + ")";
+                index += 1;
+            } while (this.isSampleNameTaken(testName));
+            sample.SampleName = testName;
+        }
+
+        //alert("Asked to import a sample named \"" + data.SampleName + "\" with GUID " + data.SampleGuid
+        //    + " and named it \"" + sample.SampleName + "\" with guid " + sample.SampleGuid);
+
+        this.addNewSample(sample);
+
+        if (changedName) {
+            alert("Imported sample as '" + sample.SampleName
+                + "' because another sample with the name '"
+                + data.SampleName + "' already exists.");
+        } else {
+            alert("Imported sample named '" + sample.SampleName + "'");
+        }
     },
 
     lastNewName: "",

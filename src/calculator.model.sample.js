@@ -93,7 +93,10 @@ var Sample = Backbone.Model.extend({
 
         this.constants = options.constants;
         this.samplecalc = new SampleCalc({ globals: options.constants.globals, errors: options.constants.errors, unitTesting: this.unitTesting });
+        this.SampleGuid = this.guid();
+    },
 
+    guid: function() {
         //
         // make a guid for new samples using simple random numbers, per
         // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
@@ -101,16 +104,12 @@ var Sample = Backbone.Model.extend({
 
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
-                     .toString(16)
-                     .substring(1);
+                .toString(16)
+                .substring(1);
         }
 
-        function guid() {
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                 s4() + '-' + s4() + s4() + s4();
-        }
-
-        this.SampleGuid = guid();
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
     },
 
     //
@@ -119,7 +118,7 @@ var Sample = Backbone.Model.extend({
 
     SampleName: "Untitled",
     ComputeOption: "Volume",
-    MagBead: "True",
+    MagBead: "True",            // For 2.3, default to MagBead === "OneCellPerWell"
     PreparationProtocol: "Small",
     LongTermStorage: "False",
     UseSpikeInControl: "True",
@@ -434,7 +433,7 @@ var Sample = Backbone.Model.extend({
 
         // then setup the bucket we're using
         type = this.CollectionProtocol;
-        if (this.MagBead === "True") { type = "MagBead"; }
+        if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") { type = "MagBead"; }
         calc.bucket = this.constants.FindBucket(this.AnnealedBasePairLength, type, this.Chemistry, this.Cell);
 
         // we're about to recalculate, clear old errors so we'll get a fresh set
@@ -446,7 +445,7 @@ var Sample = Backbone.Model.extend({
         this.errors = {};
         if (undefined === calc.bucket) {
 
-            if (this.MagBead === "True") {
+            if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") {
                 if (!this.unitTesting) {
                     this.errors.InvalidInsertSizeMagBeadNew = this.constants.errors.InvalidInsertSizeMagBeadNew;
                 } else {
@@ -474,7 +473,9 @@ var Sample = Backbone.Model.extend({
             // For unitTesting, compared to C#, disallow magbead less than 7500
             //
 
-            if (this.unitTesting && this.MagBead === "True" && this.AnnealedBasePairLength < 7500) {
+            if (this.unitTesting
+                && (this.MagBead === "True" || this.MagBead === "OneCellPerWell")
+                && this.AnnealedBasePairLength < 7500) {
                 this.errors.InvalidInsertSizeMagBead = this.constants.errors.InvalidInsertSizeMagBead;
             }
 
@@ -482,7 +483,9 @@ var Sample = Backbone.Model.extend({
             // Bugzilla 23145 - changed cutoff from 750 bp (bucket based) to 1000 bp (explicit)
             //
 
-            if (!this.unitTesting && this.MagBead === "True" && this.AnnealedBasePairLength < 1000) {
+            if (!this.unitTesting
+                && (this.MagBead === "True" || this.MagBead === "OneCellPerWell")
+                && this.AnnealedBasePairLength < 1000) {
                 this.errors.InvalidInsertSizeMagBeadNew = this.constants.errors.InvalidInsertSizeMagBeadNew;
             }
         }
@@ -1192,11 +1195,11 @@ var SampleCalc = Backbone.Model.extend({
     },
 
     ComputeOption: "Volume",
-    MagBead: "Yes",
+    MagBead: "True",
     PreparationProtocol: "Small",
-    UseSpikeInControl: "Yes",
-    ComplexReuse: "No",
-    LowConcentrationsAllowed: "No",
+    UseSpikeInControl: "True",
+    ComplexReuse: "False",
+    LowConcentrationsAllowed: "False",
     BindingComputation: "Volume",           // deprecated
     SampleVolumeToUseInAnnealing: 0,
     NumberOfCellsToUse: 0,
@@ -1348,7 +1351,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep2_ControlTubeNameInKit: function () {
         var that = this;
         this.ControlTubeNameInKit = (function () {                                           // Result: Prep2
-            if (that.MagBead === "True") {
+            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") {
                 return "DNA Control Tube";
             }
             if (that.CollectionProtocol === "Standard") {
@@ -1465,7 +1468,7 @@ var SampleCalc = Backbone.Model.extend({
         //          this.SampleConcentrationInBinding)));
 
         /* removed for 2.1.0.0 - no more sluff factor for magbead complex dilution (just bead wash)
-        if (this.MagBead === "True") {
+        if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") {
             volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                      // Prep0
 
             // In large scale mag bead we have two sluff factors, one for the additional dilution step from storage complex
@@ -1571,7 +1574,7 @@ var SampleCalc = Backbone.Model.extend({
                 					  parseFloat(that.DeadVolumePerWell); 		 // prep2
 
                 /* removed for 2.1.0.0
-            	if (that.MagBead === "True")                                     // Prep0
+            	if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
             	{
             		// for magbead = 9 uL plus 10 uL of deadvolumeperwell * 1.1 sluff factor = 20.9 uL currently
                 	volumeNeededPerChip *= that.globals.MagneticBeadSluffFactor; // Prep0
@@ -2121,7 +2124,7 @@ var SampleCalc = Backbone.Model.extend({
             //
 
             /* removed for 2.1.0.0
-            if (that.MagBead === "True")                                     // Prep0
+            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
             {
                 maxVolume /= that.globals.MagneticBeadSluffFactor;          // Prep0
 
@@ -2241,7 +2244,7 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep8_SpikeInControlVolumeInDilution: function () {
         this.SpikeInControlVolumeInDilution =               // Result: Prep8
-			(this.MagBead === "True") ?                      // Prep0
+			(this.MagBead === "True" || this.MagBead === "OneCellPerWell") ?  // Prep0
 			Number.NaN :
 			this.Helper_SpikeInVolumeInDilution(            // Prep6
 				this.ConcentrationOnPlate,                  // Prep6
@@ -2252,7 +2255,7 @@ var SampleCalc = Backbone.Model.extend({
         var that = this;
         this.SpikeInDilutionVolume = (function () {                     // Result: Prep10
             if (that.UseSpikeInControl === "False") { return 0.0; }     // Prep0
-            if (that.MagBead === "True") { return Number.NaN; }         // Prep0
+            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") { return Number.NaN; }  // Prep0
 
             var basic = 1.1 * that.SpikeInControlVolumeInDilution,      // Prep8
                 minimum = that.bucket.MinimumSpikeInDilutionVolume;     // Prep0
@@ -2373,7 +2376,8 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep26_VolumeOfBindingReactionInComplexDilution: function () {
         this.VolumeOfBindingReactionInComplexDilution =         // Result: Prep26
-			(this.MagBead === "True") ? Number.NaN :            // Prep0
+			(this.MagBead === "True" || this.MagBead === "OneCellPerWell") ?
+                Number.NaN :                                    // Prep0
 			(this.ConcentrationOnPlate *                        // Prep6
 				this.TotalComplexDilutionVolume) /              // Prep6
 	            (this.PreparationProtocol === "Large" ?         // Prep0
@@ -2447,13 +2451,13 @@ var SampleCalc = Backbone.Model.extend({
         this.ShortDescription = (function () {
             var details = "";
             details += (that.ComputeOption === "Titration") ? "Titration, " : "";
-            details += (that.MagBead === "True") ? "Mag bead, " : "";
+            details += (that.MagBead === "True" || that.MagBead === "OneCellPerWell") ? "Mag bead, " : "";
             details += ((that.Chemistry.length == 8) ?
                          "C" + that.Chemistry.substring(7) :
                          that.Chemistry.substring(7)) + ", ";
             details += (that.PreparationProtocol === "Small") ? "Small" : "Large";
             details += (that.LongTermStorage === "True" || that.PreparationProtocol !== "Small") ? ", Storage" : "";
-            details += (that.LowConcentrationsAllowed === "True") ? ", Non-standard" : "";
+            details += (that.LowConcentrationsAllowed === "True") ? ", Not Standard" : "";
             details += (that.UseSpikeInControl === "True") ? ", Control" : "";
             details += (that.ComplexReuse === "True") ? ", Reuse" : "";
             return details;

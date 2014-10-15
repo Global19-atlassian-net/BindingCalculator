@@ -468,6 +468,12 @@ div.ui-state-default.ui-jqgrid-hdiv:active { background: rgb(243,243,243); }
 .ui-jqgrid .ui-jqgrid-titlebar{ display: none; }
 .ui-jqgrid-title { display:none; }
 
+/* Don't show the "No file chosen" status after the Choose File button
+   per: http://stackoverflow.com/questions/12035400/how-can-i-remove-the-no-file-chosen-tooltip-from-a-file-input-in-chrome */
+input[type='file'] {
+    color: transparent;
+}
+
 /************************************************************************************************
  *
  * Print view, we manually set the background to white in the view

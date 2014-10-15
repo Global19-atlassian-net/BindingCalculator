@@ -105,10 +105,11 @@
         {{ if (sections.showTitrations) { }}
             <h4>Loading Titrations</h4>
             <p>{{= sections.LoadingTitrationTable }}</p>
+            <p class="instructions">{{= sections.Step9 }}</p>
         {{ } else { }}
             <h4>{{= strings.BindingComplexTitle }}</h4>
             {{= sections.UsingBoundComplexTable }}
-            <p class="instructions">{{= strings.Step9 }}</p>
+            <p class="instructions">{{= sections.Step9 }}</p>
             {{= sections.PlateLayout }}
         {{ } }}
     </script>
@@ -252,29 +253,24 @@
         <div class="grid1 alpha top2">bp</div>
         <div class="clear"></div>
         
-        <div class="grid2 rightalign top5"><span class="help-mag-bead">Magnetic Beads</span></div>
-        <div class="grid2 top4"><span><input type="radio" name="MagBead" id="MagBead-Radio-Yes" value="True" {{= radios.MagBeadYes }} />Yes</span></div>
-        <div class="clear"></div>
-        
-        <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" value="False" {{= radios.MagBeadNo }} />No</span></div>
-        <div class="clear"></div>  
+        <div class="grid2 rightalign top5"><span class="help-protocol">Protocol</span></div>
+          <div class="grid2 top4"><span><input type="radio" name="MagBead" value="False" {{= radios.MagBeadNo }} />Standard</span></div>
+          <div class="clear"></div>
+          <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" id="MagBead-Radio-Yes" value="True" {{= radios.MagBeadYes }} />MagBead Standard</span></div>
+          <div class="clear"></div>
+          <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" id="MagBead-Radio-One" value="OneCellPerWell" {{= radios.MagBeadOne }} />MagBead OCPW</span></div>
+          <div class="clear"></div>
 
         <div class='global_ShowChemistryOption'>
-            <div class="grid2 rightalign top5"><span class="help-prep-protocol">Binding Kit</span></div>
-            <div class="grid2 top4"><span class="help-chemistry-v1"><input type="radio" name="Chemistry" id="Chemistry-Radio-V2" value="Version2" {{= radios.ChemistryV2 }} />{{= strings.ChemistryV2option }}</span></div>
-            <div class="clear"></div>
-        
-            <div class="grid2 push2 top1"><span class="help-chemistry-v25"><input type="radio" name="Chemistry" value="VersionXL" {{= radios.ChemistryXL }} />{{= strings.ChemistryXLoption }}</span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
+            <div class="grid2 rightalign top5"><span class="help-chemistry">Binding Kit</span></div>
+            <div class="grid2 top4"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
             <div class="clear"></div>
 
             <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
             <div class="clear"></div>
 
-            <!--<div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
-            <div class="clear"></div>-->
+            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" id="Chemistry-Radio-P6" value="VersionP6" {{= radios.ChemistryP6 }} />{{= strings.ChemistryP6option }}</span></div>
+            <div class="clear"></div>
         </div>
 
         <div class='global_ShowCellOption'>
@@ -290,7 +286,7 @@
         <div class="grid2 top4"><span class="help-small-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Small" value="Small" {{= radios.PreparationSmall }} />Small scale</span></div>
         <div class="clear"></div>
         
-        <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
+        <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Large" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top5"><span class="help-prep-protocol">Long Term Storage</span></div>
@@ -314,7 +310,7 @@
         <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard</span></div>
+        <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard Concentration</span></div>
         <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />Yes</span></div>
         <div class="clear"></div>
         
@@ -356,15 +352,25 @@
         <input type="text" class="grid1" name="CustomSpikeInRatioPercent" disabled='disabled' id="CustomSpikeInRatioPercent"  value=""/>
         <div class="grid1 alpha top2">%</div>
         <div class="clear"></div>
-        
+
         <h4>Polymerase:Template Ratio</h4>
 
         <div class="grid2"><input type="radio" name="PolymeraseTemplateRatioOption" value="Default" {{= radios.PolymeraseRatioDefault }} id="PolymeraseTemplateRatioOption-Radio-Default" /> Use Default</div>
         <div class="grid1 top2"><span class="output_DefaultPolymeraseTemplateRatio"></span></div>
         <div class="clear"></div>
-        
+
         <div class="grid2 help-optional-polymerase-template-ratio"><input type="radio" name="PolymeraseTemplateRatioOption" value="Custom" {{= radios.PolymeraseRatioCustom }} id="PolymeraseTemplateRatio-Radio-Custom" /> Custom</div>
         <input type="text" class="grid1" name="CustomPolymeraseTemplateRatio" id="CustomPolymeraseTemplateRatio" value="" disabled='disabled' />
+        <div class="clear"></div>
+
+        <h4>Primer:Template Ratio</h4>
+
+        <div class="grid2"><input type="radio" name="PrimerTemplateRatioOption" value="Default" {{= radios.PrimerRatioDefault }} id="PrimerTemplateRatioOption-Radio-Default" /> Use Default</div>
+        <div class="grid1 top2"><span class="output_DefaultPrimerTemplateRatio"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 help-optional-primer-template-ratio"><input type="radio" name="PrimerTemplateRatioOption" value="Custom" {{= radios.PrimerRatioCustom }} id="PrimerTemplateRatio-Radio-Custom" /> Custom</div>
+        <input type="text" class="grid1" name="CustomPrimerTemplateRatio" id="CustomPrimerTemplateRatio" value="" disabled='disabled' />
         <div class="clear"></div>
 
       </section>
@@ -447,49 +453,8 @@
             <h4>{{= strings.DilutionsTitle }}</h4>
         </header>
         <p>{{= strings.Step6 }}</p>
-        
-        <div class='showV1SpikeInOutputs' style='display:none;'>
-        
-            <h4>Standard Control</h4>
-        
-            <div class="grid2 rightalign top2"><span class="output_TubeNameSpikeInControl help_found_in_kit"></span></div>
-            <div class="grid2 top2"><span class="output_SpikeInStockVolumeInFirstDilution uL"></span></div>
-            <div class="clear"></div>
 
-            <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
-            <div class="grid2 top2"><span class="output_BindingBufferInFirstDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
-            <div class="grid2 top2"><span class="output_TotalVolumeOfFirstSpikeInDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
-            <div class="grid2 top2"><span class="output_SpikeInFirstDilutionConcentration nM"></span></div>
-            <div class="clear"></div>
-
-
-            <h4 class="top5"><span class="output_SpikeInTubeInsertSize"></span> Spike Dilution (<span class="output_SpikeInTubeLabel"></span>)</h4>
-        
-            <div class="grid2 rightalign top2">Initial DNA Control Dilution (<span class="output_SpikeInFirstDilutionConcentration nM"></span>)</div>
-            <div class="grid2 top2"><span class="output_DilutedSpikeInVolumeInSecondDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
-            <div class="grid2 top2"><span class="output_BindingBufferInSecondDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
-            <div class="grid2 top2"><span class="output_TotalVolumeOfSecondSpikeInDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
-            <div class="grid2 top2"><span class="output_SpikeInSecondDilutionConcentration nM"></span></div>
-            <div class="clear"></div>
-
-        </div>
-        
-        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution</h4>
+        <h4 class="top5">Polymerase Dilution</h4>
         
         <div class="grid2 rightalign top2"><span class="output_TubeNamePolymerase"></span><br/>(<span class="output_PolymeraseStockConcentration nM"></span>)</div>
         <div class="grid2 top2"><span class="output_PolymeraseStockVolumeInDilution uL"></span></div>
@@ -545,36 +510,12 @@
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
-        <div class="hiddenV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
-        </div>
-        <div class="showV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 top2"><span class="help-notused-spikein-yes">Not used</span></div>
-        </div>
-        <div class="v2ChemistryShown">
-            <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
-        </div>
+        <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
         <div class="clear"></div>
         
         <div class="grid2 rightalign top2"><span class="help-bindingpoly-annealed">Annealed Template</span></div>
         <div class="grid2 top2"><span class="output_VolumeOfAnnealingReactionInBinding uL"></span></div>
         <div class="clear"></div>
-
-        <div class="showV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 rightalign top2"><span class="help-tube-label-left">DNA Control Tube #</span></div>
-            <div class="grid2 top2"><span class="output_SpikeInTubeLabel help-tube-label-right"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="help-bindingpoly-control">DNA Control Dilution</span></div>
-            <div class="grid2 top2"><span class="output_VolumeOfSpikeInDilutionInBinding uL"></span></div>
-            <div class="clear"></div>
-
-        </div>
-        <div class="hiddenV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 rightalign top2"><span class="">DNA Control Dilutions</span></div>
-            <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
-            <div class="clear"></div>
-        </div>
 
         <!-- the tube label suggestion was confusing to folks, skip displaying that from 2.1.0.3 onward
         <div class="grid2 rightalign top2"><span class="help-tube-label-left">Diluted Pol Tube #</span></div>
@@ -665,7 +606,7 @@
 
         <div class="nonMagBeadSection">
         
-            <div class="showV2SpikeInOutputs" style='display:none;'>
+            <div class="showSpikeIn" style='display:none;'>
 
                 <h4>DNA Control Dilution</h4>
         
@@ -728,7 +669,7 @@
 
         <div class="magBeadSection" style='display:none;'>
         
-            <div class="showV2SpikeInOutputs" style='display:none;'>
+            <div class="showSpikeIn" style='display:none;'>
 
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
@@ -818,7 +759,7 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -847,7 +788,7 @@
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
                     save 5 uL of supernatant for QC purposes</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -865,7 +806,13 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -881,35 +828,35 @@
       --
       -->
       
-        <p class="top5">{{= strings.Step9 }}</p>
+        <p class="top5"><span class="output_Step9Text">{{= strings.Step9 }}</span></p>
 
         <h4>Sample Plate Wells</h4>
         
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-fullwells"># of Max Volume Wells</span></div>
-        <div class="grid2 top2"><span class="output_NumberOfFullWells"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayNumberOfFullWells"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="">Volume / Well</span></div>
-        <div class="grid2 top2"><span class="output_MaxVolumePerWell uL"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayMaxVolumePerWell uL"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-fullcells"># of SMRT Cells / Well</span></div>
-        <div class="grid2 top2"><span class="output_MaxNumberOfCellsPerWell"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayMaxNumberOfCellsPerWell"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 top2"><hr style="width:30px;" align="right" /></div>
         <div class="clear"></div>
         
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-partialwells"># of Partial Wells</span></div>
-        <div class="grid2 top2"><span class="output_NumberOfPartialWells"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayNumberOfPartialWells"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="">Volume / Well</span></div>
-        <div class="grid2 top2"><span class="output_VolumeFromPartialWells uL"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayVolumePerPartialWell uL"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-partialcells"># of SMRT Cells / Well</span></div>
-        <div class="grid2 top2"><span class="output_NumberOfCellsFromPartialWells"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayNumberOfCellsPerPartialWell"></span></div>
         <div class="clear"></div>
 
       </section>
@@ -933,7 +880,7 @@
 
         <div class="magBeadSection" style='display:none;'>
 
-            <div class="showV2SpikeInOutputs" style='display:none;'>
+            <div class="showSpikeIn" style='display:none;'>
 
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
@@ -1026,7 +973,7 @@
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1053,7 +1000,7 @@
                     save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -1071,7 +1018,13 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1115,7 +1068,6 @@
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                     <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
                     <div class="clear"></div>
-
                 </div>
                 <div class="hiddenV2SpikeInOutputs" style='display:none;'>
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
@@ -1147,7 +1099,7 @@
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1176,7 +1128,7 @@
                     save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -1194,7 +1146,13 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1238,7 +1196,6 @@
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                     <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
                     <div class="clear"></div>
-
                 </div>
                 <div class="hiddenV2SpikeInOutputs" style='display:none;'>
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
@@ -1276,7 +1233,7 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1305,7 +1262,7 @@
                     save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -1323,7 +1280,13 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1368,7 +1331,6 @@
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                     <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
                     <div class="clear"></div>
-
                 </div>
                 <div class="hiddenV2SpikeInOutputs" style='display:none;'>
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
@@ -1402,7 +1364,7 @@
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1449,6 +1411,12 @@
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
                 <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
@@ -1466,7 +1434,7 @@
             -->
         
         <div class="nonMagBeadSection">
-        <div class="showV2SpikeInOutputs" style='display:none;'>
+        <div class="showSpikeIn" style='display:none;'>
 
             <h4>DNA Control Dilution</h4>
         
@@ -1508,12 +1476,10 @@
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer1 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume1 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume1 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex1 uL"></span></div>
             <div class="clear"></div>
@@ -1533,12 +1499,10 @@
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer2 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume2 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume2 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex2 uL"></span></div>
             <div class="clear"></div>
@@ -1557,12 +1521,10 @@
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer3 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume3 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume3 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex3 uL"></span></div>
             <div class="clear"></div>
@@ -1582,12 +1544,10 @@
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer4 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume4 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume4 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex4 uL"></span></div>
             <div class="clear"></div>

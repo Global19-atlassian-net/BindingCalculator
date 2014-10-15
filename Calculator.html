@@ -811,6 +811,12 @@ div.ui-state-default.ui-jqgrid-hdiv:active { background: rgb(243,243,243); }
 .ui-jqgrid .ui-jqgrid-titlebar{ display: none; }
 .ui-jqgrid-title { display:none; }
 
+/* Don't show the "No file chosen" status after the Choose File button
+   per: http://stackoverflow.com/questions/12035400/how-can-i-remove-the-no-file-chosen-tooltip-from-a-file-input-in-chrome */
+input[type='file'] {
+    color: transparent;
+}
+
 /************************************************************************************************
  *
  * Print view, we manually set the background to white in the view
@@ -1100,10 +1106,11 @@ div#printview p
         {{ if (sections.showTitrations) { }}
             <h4>Loading Titrations</h4>
             <p>{{= sections.LoadingTitrationTable }}</p>
+            <p class="instructions">{{= sections.Step9 }}</p>
         {{ } else { }}
             <h4>{{= strings.BindingComplexTitle }}</h4>
             {{= sections.UsingBoundComplexTable }}
-            <p class="instructions">{{= strings.Step9 }}</p>
+            <p class="instructions">{{= sections.Step9 }}</p>
             {{= sections.PlateLayout }}
         {{ } }}
     </script>
@@ -1247,29 +1254,24 @@ div#printview p
         <div class="grid1 alpha top2">bp</div>
         <div class="clear"></div>
         
-        <div class="grid2 rightalign top5"><span class="help-mag-bead">Magnetic Beads</span></div>
-        <div class="grid2 top4"><span><input type="radio" name="MagBead" id="MagBead-Radio-Yes" value="True" {{= radios.MagBeadYes }} />Yes</span></div>
-        <div class="clear"></div>
-        
-        <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" value="False" {{= radios.MagBeadNo }} />No</span></div>
-        <div class="clear"></div>  
+        <div class="grid2 rightalign top5"><span class="help-protocol">Protocol</span></div>
+          <div class="grid2 top4"><span><input type="radio" name="MagBead" value="False" {{= radios.MagBeadNo }} />Standard</span></div>
+          <div class="clear"></div>
+          <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" id="MagBead-Radio-Yes" value="True" {{= radios.MagBeadYes }} />MagBead Standard</span></div>
+          <div class="clear"></div>
+          <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" id="MagBead-Radio-One" value="OneCellPerWell" {{= radios.MagBeadOne }} />MagBead OCPW</span></div>
+          <div class="clear"></div>
 
         <div class='global_ShowChemistryOption'>
-            <div class="grid2 rightalign top5"><span class="help-prep-protocol">Binding Kit</span></div>
-            <div class="grid2 top4"><span class="help-chemistry-v1"><input type="radio" name="Chemistry" id="Chemistry-Radio-V2" value="Version2" {{= radios.ChemistryV2 }} />{{= strings.ChemistryV2option }}</span></div>
-            <div class="clear"></div>
-        
-            <div class="grid2 push2 top1"><span class="help-chemistry-v25"><input type="radio" name="Chemistry" value="VersionXL" {{= radios.ChemistryXL }} />{{= strings.ChemistryXLoption }}</span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
+            <div class="grid2 rightalign top5"><span class="help-chemistry">Binding Kit</span></div>
+            <div class="grid2 top4"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
             <div class="clear"></div>
 
             <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
             <div class="clear"></div>
 
-            <!--<div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
-            <div class="clear"></div>-->
+            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" id="Chemistry-Radio-P6" value="VersionP6" {{= radios.ChemistryP6 }} />{{= strings.ChemistryP6option }}</span></div>
+            <div class="clear"></div>
         </div>
 
         <div class='global_ShowCellOption'>
@@ -1285,7 +1287,7 @@ div#printview p
         <div class="grid2 top4"><span class="help-small-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Small" value="Small" {{= radios.PreparationSmall }} />Small scale</span></div>
         <div class="clear"></div>
         
-        <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
+        <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Large" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top5"><span class="help-prep-protocol">Long Term Storage</span></div>
@@ -1309,7 +1311,7 @@ div#printview p
         <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard</span></div>
+        <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard Concentration</span></div>
         <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />Yes</span></div>
         <div class="clear"></div>
         
@@ -1351,15 +1353,25 @@ div#printview p
         <input type="text" class="grid1" name="CustomSpikeInRatioPercent" disabled='disabled' id="CustomSpikeInRatioPercent"  value=""/>
         <div class="grid1 alpha top2">%</div>
         <div class="clear"></div>
-        
+
         <h4>Polymerase:Template Ratio</h4>
 
         <div class="grid2"><input type="radio" name="PolymeraseTemplateRatioOption" value="Default" {{= radios.PolymeraseRatioDefault }} id="PolymeraseTemplateRatioOption-Radio-Default" /> Use Default</div>
         <div class="grid1 top2"><span class="output_DefaultPolymeraseTemplateRatio"></span></div>
         <div class="clear"></div>
-        
+
         <div class="grid2 help-optional-polymerase-template-ratio"><input type="radio" name="PolymeraseTemplateRatioOption" value="Custom" {{= radios.PolymeraseRatioCustom }} id="PolymeraseTemplateRatio-Radio-Custom" /> Custom</div>
         <input type="text" class="grid1" name="CustomPolymeraseTemplateRatio" id="CustomPolymeraseTemplateRatio" value="" disabled='disabled' />
+        <div class="clear"></div>
+
+        <h4>Primer:Template Ratio</h4>
+
+        <div class="grid2"><input type="radio" name="PrimerTemplateRatioOption" value="Default" {{= radios.PrimerRatioDefault }} id="PrimerTemplateRatioOption-Radio-Default" /> Use Default</div>
+        <div class="grid1 top2"><span class="output_DefaultPrimerTemplateRatio"></span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 help-optional-primer-template-ratio"><input type="radio" name="PrimerTemplateRatioOption" value="Custom" {{= radios.PrimerRatioCustom }} id="PrimerTemplateRatio-Radio-Custom" /> Custom</div>
+        <input type="text" class="grid1" name="CustomPrimerTemplateRatio" id="CustomPrimerTemplateRatio" value="" disabled='disabled' />
         <div class="clear"></div>
 
       </section>
@@ -1442,49 +1454,8 @@ div#printview p
             <h4>{{= strings.DilutionsTitle }}</h4>
         </header>
         <p>{{= strings.Step6 }}</p>
-        
-        <div class='showV1SpikeInOutputs' style='display:none;'>
-        
-            <h4>Standard Control</h4>
-        
-            <div class="grid2 rightalign top2"><span class="output_TubeNameSpikeInControl help_found_in_kit"></span></div>
-            <div class="grid2 top2"><span class="output_SpikeInStockVolumeInFirstDilution uL"></span></div>
-            <div class="clear"></div>
 
-            <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
-            <div class="grid2 top2"><span class="output_BindingBufferInFirstDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
-            <div class="grid2 top2"><span class="output_TotalVolumeOfFirstSpikeInDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
-            <div class="grid2 top2"><span class="output_SpikeInFirstDilutionConcentration nM"></span></div>
-            <div class="clear"></div>
-
-
-            <h4 class="top5"><span class="output_SpikeInTubeInsertSize"></span> Spike Dilution (<span class="output_SpikeInTubeLabel"></span>)</h4>
-        
-            <div class="grid2 rightalign top2">Initial DNA Control Dilution (<span class="output_SpikeInFirstDilutionConcentration nM"></span>)</div>
-            <div class="grid2 top2"><span class="output_DilutedSpikeInVolumeInSecondDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
-            <div class="grid2 top2"><span class="output_BindingBufferInSecondDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
-            <div class="grid2 top2"><span class="output_TotalVolumeOfSecondSpikeInDilution uL"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="">Final Concentration</span></div>
-            <div class="grid2 top2"><span class="output_SpikeInSecondDilutionConcentration nM"></span></div>
-            <div class="clear"></div>
-
-        </div>
-        
-        <h4 class="top5"><span class="output_PolymeraseTubeInsertSize"></span> Polymerase Dilution</h4>
+        <h4 class="top5">Polymerase Dilution</h4>
         
         <div class="grid2 rightalign top2"><span class="output_TubeNamePolymerase"></span><br/>(<span class="output_PolymeraseStockConcentration nM"></span>)</div>
         <div class="grid2 top2"><span class="output_PolymeraseStockVolumeInDilution uL"></span></div>
@@ -1540,36 +1511,12 @@ div#printview p
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="output_TubeNameBindingBuffer help_binding_buffer"></span></div>
-        <div class="hiddenV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
-        </div>
-        <div class="showV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 top2"><span class="help-notused-spikein-yes">Not used</span></div>
-        </div>
-        <div class="v2ChemistryShown">
-            <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
-        </div>
+        <div class="grid2 top2"><span class="output_BindingBufferInBinding uL"></span></div>
         <div class="clear"></div>
         
         <div class="grid2 rightalign top2"><span class="help-bindingpoly-annealed">Annealed Template</span></div>
         <div class="grid2 top2"><span class="output_VolumeOfAnnealingReactionInBinding uL"></span></div>
         <div class="clear"></div>
-
-        <div class="showV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 rightalign top2"><span class="help-tube-label-left">DNA Control Tube #</span></div>
-            <div class="grid2 top2"><span class="output_SpikeInTubeLabel help-tube-label-right"></span></div>
-            <div class="clear"></div>
-
-            <div class="grid2 rightalign top2"><span class="help-bindingpoly-control">DNA Control Dilution</span></div>
-            <div class="grid2 top2"><span class="output_VolumeOfSpikeInDilutionInBinding uL"></span></div>
-            <div class="clear"></div>
-
-        </div>
-        <div class="hiddenV1SpikeInOutputs" style='display:none;'>
-            <div class="grid2 rightalign top2"><span class="">DNA Control Dilutions</span></div>
-            <div class="grid2 top2"><span class="help-notused-spikein-no">Not used</span></div>
-            <div class="clear"></div>
-        </div>
 
         <!-- the tube label suggestion was confusing to folks, skip displaying that from 2.1.0.3 onward
         <div class="grid2 rightalign top2"><span class="help-tube-label-left">Diluted Pol Tube #</span></div>
@@ -1660,7 +1607,7 @@ div#printview p
 
         <div class="nonMagBeadSection">
         
-            <div class="showV2SpikeInOutputs" style='display:none;'>
+            <div class="showSpikeIn" style='display:none;'>
 
                 <h4>DNA Control Dilution</h4>
         
@@ -1723,7 +1670,7 @@ div#printview p
 
         <div class="magBeadSection" style='display:none;'>
         
-            <div class="showV2SpikeInOutputs" style='display:none;'>
+            <div class="showSpikeIn" style='display:none;'>
 
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
@@ -1813,7 +1760,7 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1842,7 +1789,7 @@ div#printview p
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard. <i>Optional:</i>
                     save 5 uL of supernatant for QC purposes</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -1860,7 +1807,13 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -1876,35 +1829,35 @@ div#printview p
       --
       -->
       
-        <p class="top5">{{= strings.Step9 }}</p>
+        <p class="top5"><span class="output_Step9Text">{{= strings.Step9 }}</span></p>
 
         <h4>Sample Plate Wells</h4>
         
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-fullwells"># of Max Volume Wells</span></div>
-        <div class="grid2 top2"><span class="output_NumberOfFullWells"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayNumberOfFullWells"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="">Volume / Well</span></div>
-        <div class="grid2 top2"><span class="output_MaxVolumePerWell uL"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayMaxVolumePerWell uL"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-fullcells"># of SMRT Cells / Well</span></div>
-        <div class="grid2 top2"><span class="output_MaxNumberOfCellsPerWell"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayMaxNumberOfCellsPerWell"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 top2"><hr style="width:30px;" align="right" /></div>
         <div class="clear"></div>
         
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-partialwells"># of Partial Wells</span></div>
-        <div class="grid2 top2"><span class="output_NumberOfPartialWells"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayNumberOfPartialWells"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="">Volume / Well</span></div>
-        <div class="grid2 top2"><span class="output_VolumeFromPartialWells uL"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayVolumePerPartialWell uL"></span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top2"><span class="help-bindingcomplex-partialcells"># of SMRT Cells / Well</span></div>
-        <div class="grid2 top2"><span class="output_NumberOfCellsFromPartialWells"></span></div>
+        <div class="grid2 top2"><span class="output_DisplayNumberOfCellsPerPartialWell"></span></div>
         <div class="clear"></div>
 
       </section>
@@ -1928,7 +1881,7 @@ div#printview p
 
         <div class="magBeadSection" style='display:none;'>
 
-            <div class="showV2SpikeInOutputs" style='display:none;'>
+            <div class="showSpikeIn" style='display:none;'>
 
                 <h4>DNA Control Dilution</h4>
                 <h4 style="padding-left:1em">1. First DNA Control Dilution</h4>
@@ -2021,7 +1974,7 @@ div#printview p
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration1BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2048,7 +2001,7 @@ div#printview p
                     save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -2066,7 +2019,13 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration1MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration1ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2110,7 +2069,6 @@ div#printview p
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                     <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
                     <div class="clear"></div>
-
                 </div>
                 <div class="hiddenV2SpikeInOutputs" style='display:none;'>
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
@@ -2142,7 +2100,7 @@ div#printview p
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration2BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2171,7 +2129,7 @@ div#printview p
                     save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -2189,7 +2147,13 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration2MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration2ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2233,7 +2197,6 @@ div#printview p
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                     <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
                     <div class="clear"></div>
-
                 </div>
                 <div class="hiddenV2SpikeInOutputs" style='display:none;'>
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
@@ -2271,7 +2234,7 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration3BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2300,7 +2263,7 @@ div#printview p
                     save 5 uL of supernatant for QC purposes</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfFirstBindingBuffer uL"></span>
                     <span class="addendum"></span></div>
                 <div class="clear"></div>
@@ -2318,7 +2281,13 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration3MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration3ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2363,7 +2332,6 @@ div#printview p
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                     <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
                     <div class="clear"></div>
-
                 </div>
                 <div class="hiddenV2SpikeInOutputs" style='display:none;'>
                     <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
@@ -2397,7 +2365,7 @@ div#printview p
 
                 <div class="grid2 rightalign top2"><span class=""></span></div>
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div> <div class="clear"></div>
-                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
+                <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and mix</span></div>
                 <div class="grid2 top2"><span class="output_Titration4BeadWashVolumeOfBeadBindingBuffer uL"></span></div>
                 <div class="clear"></div>
 
@@ -2444,6 +2412,12 @@ div#printview p
                 <div class="grid2 top2"><span class="">Collect beads. Remove supernatant and discard</span></div>
                 <div class="clear"></div>
 
+                <div class="showP6SpikeInOutputs" style='display:none;'>
+                    <div class="grid2 rightalign top2"><span class="">Add DNA Control Dilution</span></div>
+                    <div class="grid2 top2"><span class="output_Titration4MagBeadComplexDilutionVolumeOfSpikeInDilution uL"></span></div>
+                    <div class="clear"></div>
+                </div>
+
                 <div class="grid2 rightalign top2"><span class="">Add MagBead Binding Buffer and wash</span></div>
                 <div class="grid2 top2"><span class="output_Titration4ComplexBeadWashVolumeOfSecondBindingBuffer uL"></span></div>
                 <div class="clear"></div>
@@ -2461,7 +2435,7 @@ div#printview p
             -->
         
         <div class="nonMagBeadSection">
-        <div class="showV2SpikeInOutputs" style='display:none;'>
+        <div class="showSpikeIn" style='display:none;'>
 
             <h4>DNA Control Dilution</h4>
         
@@ -2503,12 +2477,10 @@ div#printview p
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer1 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume1 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume1 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex1 uL"></span></div>
             <div class="clear"></div>
@@ -2528,12 +2500,10 @@ div#printview p
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer2 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume2 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume2 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex2 uL"></span></div>
             <div class="clear"></div>
@@ -2552,12 +2522,10 @@ div#printview p
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer3 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume3 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume3 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex3 uL"></span></div>
             <div class="clear"></div>
@@ -2577,12 +2545,10 @@ div#printview p
             <div class="grid2 top2"><span class="output_TitrationComplexDilutionBuffer4 uL"></span></div>
             <div class="clear"></div>
 
-            <div class="v2ChemistryShown">
-                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
-                <div class="grid2 top2"><span class="output_TitrationSpikeInVolume4 uL"></span></div>
-                <div class="clear"></div>
+            <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+            <div class="grid2 top2"><span class="output_TitrationSpikeInVolume4 uL"></span></div>
+            <div class="clear"></div>
 
-            </div>
             <div class="grid2 rightalign top2"><span class="">Sample Complex</span></div>
             <div class="grid2 top2"><span class="output_TitrationBindingComplex4 uL"></span></div>
             <div class="clear"></div>
@@ -7039,7 +7005,7 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
             });
         });
     };
-})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.1.0.3";
+})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.3.0.0";
 </script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
@@ -7058,7 +7024,7 @@ var Constants = function () {
 };
 
 Constants.prototype.globals = {
-    "PolymeraseStockConcentration": "1600.0",
+    //"PolymeraseStockConcentration": "1600.0", now per bucket in 2.3.0.0 since it changes for P6
     "AnnealingPrimerStockConcentration": "5000.0",
     "CustomAnnealingConcentration": "5",
     "CustomBindingConcentration": "3",
@@ -7102,6 +7068,7 @@ Constants.prototype.strings = {
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
     Step9: "Step 8: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
+    Step9oneCellPerWell: "Step 8: IMPORTANT: Re-suspend beads to homogeneity immediately prior to aliquoting.  Aliquot 45uL per well into separate wells of a new 96-well PCR plate for processing on PacBio RS.",
     TitrationTitle: "Loading Titration",
     StorageTitle: "Long Term Storage",
     StorageStart: "Glycerol preparation for storage",
@@ -7109,19 +7076,20 @@ Constants.prototype.strings = {
     ChemistryV2option: "C2",
     ChemistryXLoption: "XL",
     ChemistryP4option: "P4",
-    ChemistryP5option: "P5"
+    ChemistryP5option: "P5",
+    ChemistryP6option: "P6"
 };
 
 Constants.prototype.errors = {
 	SampleConcentrationLow: {
 		Coefficient: "StartingSampleConcentration",
         ShortMessage: "Too Low",
-        LongMessage: "Your concentration is too low for these settings. You may disable the Standard option."
+        LongMessage: "Your concentration is too low for these settings. You may disable the Standard Concentration option."
 	},
 	BindingVolumeLow: {
 		Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Error: Not enough binding volume. You may disable the Standard option."
+        LongMessage: "Error: Not enough binding volume. You may disable the Standard Concentration option."
 	},
     DifficultPipetting: {
         Coefficient: "",
@@ -7163,22 +7131,22 @@ Constants.prototype.errors = {
 	NonStandardLargeScaleNew: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations require the Standard option."
+        LongMessage: "Large scale preparations require Standard Concentration."
 	},
 	NonStandardLargeScale: {    // deprecated, included just for comparison unit tests against C# version
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations require the Standard option."
+        LongMessage: "Large scale preparations require Standard Concentration."
 	},
 	NonStandardTitration: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Titrations require the Standard option."
+        LongMessage: "Titrations requires Standard Concentration."
 	},
 	NonStandardByCells: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Computing by # of SMRTCells require the Standard option."
+        LongMessage: "Computing by # of SMRTCells requires Standard Concentration."
 	},
 	ReuseRequiredWithStrobe: {
 		Coefficient: "ComplexReuse",
@@ -7210,12 +7178,12 @@ Constants.prototype.errors = {
 	TitrationConcentrationTooHigh: {
 		Coefficient: "TitrationConcentration4",
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard option."
+        LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard Concentration option."
 	},
 	TitrationConcentrationTooHighNonStandard: {
 		Coefficient: "TitrationConcentration4",		// C# had TitrationConcentrations
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample even without the Standard option. Try a lower value."
+        LongMessage: "A requested titration concentration is too high for the sample even without a Standard Concentration. Try a lower value."
 	},
 	NotEnoughAvailableVolume: {
 		Coefficient: "AvailableSampleVolume",
@@ -7254,7 +7222,12 @@ Constants.prototype.errors = {
     NonStandardSmallStorageNotSupported: {
         Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Small scale preparation using long term storage require the Standard option."
+        LongMessage: "Small scale preparation using long term storage require Standard Concentration."
+    },
+    DiffusionSmallStorageNotSupported: {
+        Coefficient: "",
+        ShortMessage: "",
+        LongMessage: "Long term storage is not supported for small scale preparation and standard loading."
     }
 };
 
@@ -7267,7 +7240,9 @@ Constants.prototype.tooltips = [
         'Enter the titration experiment on-plate concentrations for up to four SMRT Cells.' },
     { "htmlclass": 'help-dna-concentration', "position": 'left', "content": 
         'Concentration of SMRTbell template before annealing.' },
-    { "htmlclass": 'help-prep-protocol', "position": 'left', "content": 
+    { "htmlclass": 'help-protocol', "position": 'left', "content":
+        'Select the protocol type. Standard is diffusion loading. MagBead uses magnetic beads and includes the OneCellPerWell option.' },
+    { "htmlclass": 'help-prep-protocol', "position": 'left', "content":
         'Select the library scale you used to prepare your sample.' },
     { "htmlclass": 'help-collection-protocol', "position": 'left', "content": 
         'Select the sequencing protocol you will be using.' },
@@ -7277,8 +7252,10 @@ Constants.prototype.tooltips = [
         'For DNA concentration greater than 62 nM.' },
     { "htmlclass": 'help-chemistry-122', "position": 'right', "content": 
         'For preparation with the 1.2.2 version of PacBio RS chemistry.' },
-    { "htmlclass": 'help-chemistry-130', "position": 'right', "content": 
+    { "htmlclass": 'help-chemistry-130', "position": 'right', "content":
         'For preparation with the 1.3 version of PacBio RS chemistry' },
+    { "htmlclass": 'help-chemistry', "position": 'right', "content":
+        'Select the binding chemistry used to prepare your sample.' },
     { "htmlclass": 'help-standard-collection', "position": 'right', "content": 
         'If this sample will be used in standard sequencing.' },
     { "htmlclass": 'help-strobe-collection', "position": 'right', "content": 
@@ -7342,13 +7319,13 @@ Constants.prototype.tooltips = [
     { "htmlclass": 'help_sa_dna_tube', "position": 'left', "content": 
         'SA-DNA polymerase tube in your Binding Kit.' },
     { "htmlclass": 'help-low-amounts', "position": 'left', "content": 
-        'To allow concentrations and volumes that are not recommended.' },
+        'To allow low concentrations or low volumes that do not meet recommended annealing and binding concentrations. Standard concentrations: MagBead: 0.833 nM for annealing, 0.5 nM for polymerase binding. Diffusion:  5 nM for annealing, 3 nM for polymerase binding.' },
     { "htmlclass": 'help-tube-label-left', "position": 'left', "content": 
         'Label your tubes with these shorthand designations.' },
     { "htmlclass": 'help-tube-label-right', "position": 'right', "content": 
         'Label your tubes with these shorthand designations.' },
     { "htmlclass": 'help-available-volume', "position": 'left', "content": 
-        'Enter how much sample you have for non-standard titrations.' }
+        'Enter how much sample you have for titrations without standard concentrations.' }
 ];
 
 Constants.prototype.errorbucket = {
@@ -7359,6 +7336,7 @@ Constants.prototype.errorbucket = {
     "Size": Number.NaN,
     "LowSize": Number.NaN,
     "HighSize": Number.NaN,
+    "PolymeraseStockConcentration": Number.NaN,
     "MaxNumberOfCellsPerWellNoReuse": Number.NaN,
     "MaxNumberOfCellsPerWellWithReuse": Number.NaN,
     "MaxVolumePerWellNoReuse": Number.NaN,
@@ -7402,7 +7380,264 @@ Constants.prototype.errorbucket = {
 
 Constants.prototype.buckets = [
 
-/////////////////////////////////////////
+    /////////////////////////////////////////
+    //
+    // Diffusion P5 Chemistry and V3 chips
+    //
+
+    { "Name": "p6-standard-cv3-parent", // PARENT
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        //"Size": "500",
+        "LowSize": Number.NaN,
+        "HighSize": Number.NaN,
+        "PolymeraseStockConcentration": "500.0",
+        "MaxNumberOfCellsPerWellNoReuse": "18",
+        "MaxNumberOfCellsPerWellWithReuse": "24",
+        "MaxVolumePerWellNoReuse": "77",
+        "MaxVolumePerWellWithReuse": "44",
+        "VolumePerChipNoReuse": "9",
+        "SampleConcentrationOnChipSmallScale": "0.06",
+        "SampleConcentrationOnChipLargeScale": "0.06",
+        "SampleDilutionFactorOnInstrument": "0.33333",
+        "SampleConcentrationInAnnealingSmallScale": "5",
+        "SampleConcentrationInAnnealingSmallStorage": Number.NaN,
+        "SampleConcentrationInAnnealingLargeScale": "50",
+        "RatioOfBindingToAnnealingConcentration": "0.6",
+        "MaxNumberOfCellsPerReuseCycle": "3",
+        "VolumeOfDilutedSamplePerReuseCycle": "4.8",
+        "SpikeInPercentOfTemplateConcentration": "0.01",
+        "TargetConcentrationOfFirstDilution": "100",
+        "PolymeraseTemplateRatioSmallScale": "3.01",
+        "PolymeraseTemplateRatioLargeScale": "3.01",
+        "MinimumSampleConcentrationSmallScale": "6.25",
+        "MinimumSampleConcentrationLargeScale": "62.5",
+        "SpikeInStockConcentration": "10",
+        "SpikeInConcentrationInDilution": "0.1",
+        "MinimumSpikeInDilutionVolume": "50",
+        "DilutedPrimerConcentrationSmallScale": "1000",
+        "DilutedPrimerConcentrationLargeScale": "1000",
+        "MinimumVolumeOfDilutedPrimer": "10",
+        "DefaultPrimerToTemplateRatioSmallScale": "20",
+        "DefaultPrimerToTemplateRatioLargeScale": "2",
+        "DeadVolumePerWell": "5",
+        "TubeNamePolymerase": "SA-DNA Polymerase P6",
+        "TubeNameBindingBuffer": "Binding Buffer v2",
+        "TubeNameDtt": "DTT",
+        "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
+        "TubeNameComplexDilutionBuffer": "Complex Dilution Buffer v2",
+        "TubeNameSequencingPrimer": "Sequencing Primer v2",
+        "TubeNameNucleotides": "dNTP",
+        "TubeNameSpikeInControl": "DNA Control Complex P6",
+        "SpikeInTubeLabel": "DNA Control Complex P6",
+        "PolymeraseTubeLabel": "NotUsed"
+    },
+
+    { "Name": "p6-standard-250-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "250",
+        "LowSize": "100",
+        "HighSize": "300",
+        "VolumePerChipNoReuse": "4",
+        "PolymeraseTemplateRatioSmallScale": "2.01",
+        "PolymeraseTemplateRatioLargeScale": "2.01",
+        "DefaultPrimerToTemplateRatioLargeScale": "2",
+        "SpikeInPercentOfTemplateConcentration": "0.001",
+        "SampleDilutionFactorOnInstrument": "0.13333",
+        "SampleConcentrationOnChipSmallScale": "0.05",
+        "SampleConcentrationOnChipLargeScale": "0.025"
+    },
+
+    { "Name": "p6-standard-500-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "500",
+        "LowSize": "301",
+        "HighSize": "750",
+        "VolumePerChipNoReuse": "4",
+        "PolymeraseTemplateRatioSmallScale": "2.01",
+        "PolymeraseTemplateRatioLargeScale": "2.01",
+        "DefaultPrimerToTemplateRatioLargeScale": "2",
+        "SpikeInPercentOfTemplateConcentration": "0.002",
+        "SampleDilutionFactorOnInstrument": "0.13333",
+        "SampleConcentrationOnChipSmallScale": "0.125",
+        "SampleConcentrationOnChipLargeScale": "0.075"
+    },
+
+    { "Name": "p6-standard-1000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "1000",
+        "LowSize": "751",
+        "HighSize": "1500",
+        "DefaultPrimerToTemplateRatioLargeScale": "5",
+        "SpikeInPercentOfTemplateConcentration": "0.004",
+        "SampleConcentrationOnChipSmallScale": "0.15",
+        "SampleConcentrationOnChipLargeScale": "0.075"
+    },
+
+    { "Name": "p6-standard-2000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "2000",
+        "LowSize": "1501",
+        "HighSize": "3000",
+        "DefaultPrimerToTemplateRatioLargeScale": "10",
+        "SpikeInPercentOfTemplateConcentration": "0.008",
+        "SampleConcentrationOnChipSmallScale": "0.15",
+        "SampleConcentrationOnChipLargeScale": "0.075"
+    },
+
+    { "Name": "p6-standard-5000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "5000",
+        "LowSize": "3001",
+        "HighSize": "7500",
+        "SampleConcentrationOnChipSmallScale": Number.NaN,
+        "SampleConcentrationOnChipLargeScale": Number.NaN,
+        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6 binding. Use a MagBead protocol instead."
+    },
+
+    { "Name": "p6-standard-10000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "10000",
+        "LowSize": "7501",
+        "HighSize": "50000",
+        "SampleConcentrationOnChipSmallScale": Number.NaN,
+        "SampleConcentrationOnChipLargeScale": Number.NaN,
+        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6 binding. Use a MagBead protocol instead."
+    },
+
+
+    /////////////////////////////////////////
+    //
+    // MagBead P5 Chemistry and V3 chips
+    //
+
+    { "Name": "p6-magbead-cv3-parent",     // PARENT
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "LowSize": Number.NaN,
+        "HighSize": Number.NaN,
+        "PolymeraseStockConcentration": "500.0",
+        "MaxNumberOfCellsPerWellNoReuse": "8",
+        "MaxNumberOfCellsPerWellWithReuse": "18",
+        "MaxVolumePerWellNoReuse": "82",
+        "MaxVolumePerWellWithReuse": "82",
+        "VolumePerChipNoReuse": "9",
+        "SampleConcentrationOnChipSmallScale": "0.005",
+        "SampleConcentrationOnChipLargeScale": "0.005",
+        "SampleDilutionFactorOnInstrument": "0.2",
+        "SampleConcentrationInAnnealingSmallScale": "0.83333",
+        "SampleConcentrationInAnnealingSmallStorage": "5",
+        "SampleConcentrationInAnnealingLargeScale": "50",
+        "RatioOfBindingToAnnealingConcentration": "0.6",
+        "MaxNumberOfCellsPerReuseCycle": "3",
+        "VolumeOfDilutedSamplePerReuseCycle": "12",
+        "SpikeInPercentOfTemplateConcentration": "0.008",
+        "TargetConcentrationOfFirstDilution": "100",
+        "PolymeraseTemplateRatioSmallScale": "10",
+        "PolymeraseTemplateRatioLargeScale": "3",
+        "MinimumSampleConcentrationSmallScale": "1.06",
+        "MinimumSampleConcentrationLargeScale": "76.93",
+        "SpikeInStockConcentration": "10",
+        "SpikeInConcentrationInDilution": "0.1",
+        "MinimumSpikeInDilutionVolume": "50",
+        "DilutedPrimerConcentrationSmallScale": "150",
+        "DilutedPrimerConcentrationLargeScale": "1000",
+        "MinimumVolumeOfDilutedPrimer": "10",
+        "DefaultPrimerToTemplateRatioSmallScale": "20",
+        "DefaultPrimerToTemplateRatioLargeScale": "5",
+        "DeadVolumePerWell": "10",
+        "TubeNamePolymerase": "SA-DNA Polymerase P6",
+        "TubeNameBindingBuffer": "Binding Buffer v2",
+        "TubeNameDtt": "DTT",
+        "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
+        "TubeNameComplexDilutionBuffer": "Complex Dilution Buffer v2",
+        "TubeNameSequencingPrimer": "Sequencing Primer v2",
+        "TubeNameNucleotides": "dNTP",
+        "TubeNameSpikeInControl": "DNA Control Complex P6",
+        "SpikeInTubeLabel": "DNA Control Complex P6",
+        "PolymeraseTubeLabel": "NotUsed"
+    },
+
+    { "Name": "p6-magbead-1000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "1000",
+        "LowSize": "751",
+        "HighSize": "1500",
+        "SpikeInPercentOfTemplateConcentration": "0.005"
+    },
+
+    { "Name": "p6-magbead-2000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "2000",
+        "LowSize": "1501",
+        "HighSize": "3000",
+        "SpikeInPercentOfTemplateConcentration": "0.01"
+    },
+
+    { "Name": "p6-magbead-5000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "5000",
+        "LowSize": "3001",
+        "HighSize": "7500",
+        "SpikeInPercentOfTemplateConcentration": "0.025"
+    },
+
+    { "Name": "p6-magbead-10000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "10000",
+        "LowSize": "7501",
+        "HighSize": "15000",
+        "SpikeInPercentOfTemplateConcentration": "0.05"
+    },
+
+    { "Name": "p6-magbead-20000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "10000",
+        "LowSize": "15001",
+        "HighSize": "50000",
+        "SampleConcentrationOnChipSmallScale": "0.04", // 40 pM on cell for 20k size selected
+        "SampleConcentrationOnChipLargeScale": "0.04",
+        "SpikeInPercentOfTemplateConcentration": "0.005",
+        "WarningMessage": "Use size selected libraries for insert sizes larger than 15kb."
+    },
+
+    /////////////////////////////////////////
     //
     // Diffusion P5 Chemistry and V3 chips
     //
@@ -7414,6 +7649,7 @@ Constants.prototype.buckets = [
         "Size": "500",
         "LowSize": "301",
         "HighSize": "750",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "18",
         "MaxNumberOfCellsPerWellWithReuse": "24",
         "MaxVolumePerWellNoReuse": "77",
@@ -7462,6 +7698,7 @@ Constants.prototype.buckets = [
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -7510,6 +7747,7 @@ Constants.prototype.buckets = [
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -7558,6 +7796,7 @@ Constants.prototype.buckets = [
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -7606,6 +7845,7 @@ Constants.prototype.buckets = [
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "50000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -7660,6 +7900,7 @@ Constants.prototype.buckets = [
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -7708,6 +7949,7 @@ Constants.prototype.buckets = [
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -7756,6 +7998,7 @@ Constants.prototype.buckets = [
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -7804,6 +8047,7 @@ Constants.prototype.buckets = [
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "15000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -7852,6 +8096,7 @@ Constants.prototype.buckets = [
         "Size": "10000",
         "LowSize": "15001",
         "HighSize": "50000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -7906,6 +8151,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -7954,6 +8200,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -8002,6 +8249,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8050,6 +8298,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8098,6 +8347,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8146,6 +8396,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8200,6 +8451,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -8248,6 +8500,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -8296,6 +8549,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -8344,6 +8598,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "15000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -8392,6 +8647,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "15001",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -8444,6 +8700,7 @@ Constants.prototype.buckets = [
     "CellType": "CellVersion3",
     "LowSize": Number.NaN,
     "HighSize": Number.NaN,
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8615,6 +8872,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -8664,6 +8922,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -8713,6 +8972,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8762,6 +9022,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8811,6 +9072,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8860,6 +9122,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -8914,6 +9177,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -8962,6 +9226,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9010,6 +9275,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9058,6 +9324,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9111,6 +9378,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9159,6 +9427,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9207,6 +9476,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9255,6 +9525,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9316,6 +9587,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -9364,6 +9636,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -9412,6 +9685,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9460,6 +9734,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9508,6 +9783,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9556,6 +9832,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9610,6 +9887,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -9659,6 +9937,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -9708,6 +9987,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9757,6 +10037,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9806,6 +10087,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9855,6 +10137,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -9910,6 +10193,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -9958,6 +10242,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10006,6 +10291,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10054,6 +10340,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10108,6 +10395,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10156,6 +10444,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10204,6 +10493,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10252,6 +10542,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -10307,6 +10598,7 @@ Constants.prototype.buckets = [
     "Size": "6000",
     "LowSize": "3500",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -10356,6 +10648,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -10403,6 +10696,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -10450,6 +10744,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -10497,6 +10792,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -10544,6 +10840,7 @@ Constants.prototype.buckets = [
     "Size": "6000",
     "LowSize": "3501",
     "HighSize": "10500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -10591,6 +10888,7 @@ Constants.prototype.buckets = [
     "Size": "6000",
     "LowSize": "3500",
     "HighSize": "10500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "NaN",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "NaN",
@@ -11581,7 +11879,11 @@ var Sample = Backbone.Model.extend({
         }
 
         this.constants = options.constants;
-        this.samplecalc = new SampleCalc({ globals: options.constants.globals, errors: options.constants.errors, unitTesting: this.unitTesting });
+        this.samplecalc = new SampleCalc({
+            globals: options.constants.globals,
+            strings: options.constants.strings,
+            errors: options.constants.errors,
+            unitTesting: this.unitTesting });
         this.SampleGuid = this.guid();
     },
 
@@ -11627,7 +11929,7 @@ var Sample = Backbone.Model.extend({
     TitrationConcentration4: 0,
     AvailableSampleVolume: 0,
     CollectionProtocol: "Standard", // versus strobe - deprecated option currently
-    Chemistry: "VersionP4",
+    Chemistry: "VersionP6",
     Cell: "CellVersion3",
     AnnealedBasePairLength: 10000,
     CustomConcentrationOnPlate: 0,
@@ -11636,7 +11938,9 @@ var Sample = Backbone.Model.extend({
     SpikeInRatioOption: "Default",
     CustomSpikeInRatioPercent: "0",
     CustomPolymeraseTemplateRatio: "0",
+    CustomPrimerTemplateRatio: "0",
     PolymeraseTemplateRatioOption: "Default",
+    PrimerTemplateRatioOption: "Default",
     NumberOfCellsInBinding: 0,
     BindingPolymeraseOption: "Volume",
     StorageComplexOption: "Default",
@@ -11691,6 +11995,20 @@ var Sample = Backbone.Model.extend({
         this.StorageComplexOption = json.StorageComplexOption;
         this.CustomVolumeOfBindingReactionInStorageComplex = json.CustomVolumeOfBindingReactionInStorageComplex;
 
+        // added in 2.3.0.0, if they don't exist add reasonable defaults
+
+        if (json.hasOwnProperty("PrimerTemplateRatioOption")) {
+            this.PrimerTemplateRatioOption = json.PrimerTemplateRatioOption;
+        } else {
+            this.PrimerTemplateRatioOption = "Default";
+        }
+
+        if (json.hasOwnProperty("CustomPrimerTemplateRatio")) {
+            this.CustomPrimerTemplateRatio = json.CustomPrimerTemplateRatio;
+        } else {
+            this.CustomPrimerTemplateRatio = 0;
+        }
+
         //
         // Then compute all outputs
         //
@@ -11736,7 +12054,9 @@ var Sample = Backbone.Model.extend({
         output.SpikeInRatioOption = this.SpikeInRatioOption;
         output.CustomSpikeInRatioPercent = this.CustomSpikeInRatioPercent;
         output.CustomPolymeraseTemplateRatio = this.CustomPolymeraseTemplateRatio;
+        output.CustomPrimerTemplateRatio = this.CustomPrimerTemplateRatio;
         output.PolymeraseTemplateRatioOption = this.PolymeraseTemplateRatioOption;
+        output.PrimerTemplateRatioOption = this.PrimerTemplateRatioOption;
         output.NumberOfCellsInBinding = this.NumberOfCellsInBinding;
         output.BindingPolymeraseOption = this.BindingPolymeraseOption;
         output.StorageComplexOption = this.StorageComplexOption;
@@ -11864,6 +12184,7 @@ var Sample = Backbone.Model.extend({
         "CustomConcentrationOnPlate",
         "CustomSpikeInRatioPercent",
         "CustomPolymeraseTemplateRatio",
+        "CustomPrimerTemplateRatio",
         "CustomVolumeOfBindingReactionInStorageComplex"
     ],
 
@@ -11913,7 +12234,9 @@ var Sample = Backbone.Model.extend({
         calc.SpikeInRatioOption = this.SpikeInRatioOption;
         calc.CustomSpikeInRatioPercent = parseFloat(this.CustomSpikeInRatioPercent);
         calc.CustomPolymeraseTemplateRatio = parseFloat(this.CustomPolymeraseTemplateRatio);
+        calc.CustomPrimerTemplateRatio = parseFloat(this.CustomPrimerTemplateRatio);
         calc.PolymeraseTemplateRatioOption = this.PolymeraseTemplateRatioOption;
+        calc.PrimerTemplateRatioOption = this.PrimerTemplateRatioOption;
         calc.NumberOfCellsInBinding = parseInt(this.NumberOfCellsInBinding, 10);
         calc.BindingPolymeraseOption = this.BindingPolymeraseOption;
         calc.StorageComplexOption = this.StorageComplexOption;
@@ -12097,9 +12420,11 @@ var BucketHelpers = Backbone.Model.extend({
 //
 var SamplePlateLayout = Backbone.Model.extend({
 	bucket: undefined,
+    MagBead: undefined,
 	ComplexReuse: "",
 	initialize: function(options) {
 		this.bucket = options.bucket;
+        this.MagBead = options.MagBead;
 		this.ComplexReuse = options.ComplexReuse;
 	    this.gaussianRounding = options.gaussianRounding;
 		
@@ -12109,7 +12434,20 @@ var SamplePlateLayout = Backbone.Model.extend({
 
 	    // no additional setup needed, all functions are static using initialized values
 	},
-	ComputeVolumeInPartialWells: function(cellsRequested, numFullWells) {
+
+    DeadVolumeForOCPW: function(cellsRequested) {
+        if (1 >= cellsRequested) {
+            return 0.0;
+        } else if (8 >= cellsRequested) {
+            return 1.0 / cellsRequested;
+        } else if (16 >= cellsRequested) {
+            return 2.0 / cellsRequested;
+        } else {
+            return 3.0 / cellsRequested;
+        }
+    },
+
+    ComputeVolumeInPartialWells: function(cellsRequested, numFullWells) {
 	    var volumePerChipNoReuse = parseFloat(this.bucket.VolumePerChipNoReuse),
 	        deadVolumePerWell = parseFloat(this.bucket.DeadVolumePerWell),
 	        volumeOfDilutedSamplePerReuseCycle = this.bucket.VolumeOfDilutedSamplePerReuseCycle,
@@ -12117,15 +12455,25 @@ var SamplePlateLayout = Backbone.Model.extend({
 	        maxNumberOfCellsPerWellFromBucket = this.MaxNumberOfCellsPerWellFromBucket,
 	        reuse, numCells, volumeInPartial, numCellsFromPartialWell, numberOfCycles, modulo;
 
-	    if (cellsRequested === 0) {
-	        return 0;
-	    }
+        if (cellsRequested === 0) {
+            return 0;
+        }
 
-	    reuse = (this.ComplexReuse === "True");
-	    if (!reuse) {
-	        numCells = parseInt(cellsRequested % maxNumberOfCellsPerWellFromBucket, 10);
-	        return (0 === numCells) ? 0 : parseFloat(volumePerChipNoReuse * numCells) + deadVolumePerWell;
-	    }
+        reuse = ("True" === this.ComplexReuse);
+        if (!reuse) {
+
+            numCells = parseInt(cellsRequested % maxNumberOfCellsPerWellFromBucket, 10);
+
+            if (this.MagBead === "OneCellPerWell") {
+                // hack - assume we calculated volume needed for MaxNumberOfCellsPerWellFromBucket
+                // in the full well case (even though for OCPW we don't use full wells)
+                // so then we're calculating here a non-reuse case with the modulo cells beyond that
+                deadVolumePerWell = this.DeadVolumeForOCPW(cellsRequested);
+                return (0 === numCells) ? 0 : parseFloat((volumePerChipNoReuse + deadVolumePerWell) * numCells);
+            }
+
+            return (0 === numCells) ? 0 : parseFloat(volumePerChipNoReuse * numCells) + deadVolumePerWell;
+        }
 
 	    volumeInPartial = Number.NaN;
 
@@ -12154,6 +12502,13 @@ var SamplePlateLayout = Backbone.Model.extend({
             volumeOfDilutedSamplePerReuseCycle = this.bucket.VolumeOfDilutedSamplePerReuseCycle,
             maxNumberOfCellsPerReuseCycle = this.bucket.MaxNumberOfCellsPerReuseCycle,
 		    usableVolume, reuse, numCycles, numCells, remainingAmount;
+
+        // don't need to care about the magbead OneCellPerWell case
+        // because this function doesn't get used in that case.
+        // but return NaN in that case to make sure we don't...
+        if (this.MagBead === "OneCellPerWell") {
+            return Number.NaN;
+        }
 
         if (volume < deadVolumePerWell) {
             return 0;
@@ -12189,12 +12544,34 @@ var SamplePlateLayout = Backbone.Model.extend({
         return parseInt(result, 10);
 	},
 
-	VolumeFromFullWells: function(cellsRequested) {
-        return this.NumberOfFullWells(cellsRequested) *
-		this.MaxVolumePerWellFromBucket;
-	},
+    VolumeFromFullWells: function(cellsRequested) {
+        var volumePerFullWell = this.MaxVolumePerWellFromBucket;
+
+        if (this.MagBead === "OneCellPerWell")
+        {
+            //
+            // We are tricking the caller into thinking we're putting these in full
+            // wells (sorry, a hack I know) so compute how many one cell wells we
+            // would have for the MaxNumberOfCellsPerWellFromBucket of this bucket
+            // instead.
+            //
+            // To refactor this in the future, I need to break apart the assumption
+            // that there are just full wells and one partial well everywhere and
+            // make sure all of the calculations for that are in one spot instead
+            // of distributed...
+            //
+
+            var deadVolumePerWell, volumePerChipNoReuse, perCellVolume;
+            deadVolumePerWell = this.DeadVolumeForOCPW(cellsRequested);
+            perCellVolume = parseFloat(this.bucket.VolumePerChipNoReuse) + deadVolumePerWell;
+            volumePerFullWell = perCellVolume * this.MaxNumberOfCellsPerWellFromBucket;
+        }
+
+        return this.NumberOfFullWells(cellsRequested) * volumePerFullWell;
+    },
 
 	NumberOfCellsFromPartialWells: function(cellsRequested) {
+        //if (this.MagBead === "OneCellPerWell") { return cellsRequested; }
 		return parseInt(cellsRequested - 
 			this.NumberOfCellsFromFullWells(cellsRequested), 10);
 	},
@@ -12314,6 +12691,8 @@ var MagBeadCalc = Backbone.Model.extend({
         this.globals = options.globals;
         this.gaussianRounding = options.gaussianRounding;
 
+        this.Chemistry = options.Chemistry;
+        this.MagBead = options.MagBead;
         this.PreparationProtocol = options.PreparationProtocol;
         this.LongTermStorage = options.LongTermStorage;
         this.UseSpikeInControl = options.UseSpikeInControl;
@@ -12326,7 +12705,10 @@ var MagBeadCalc = Backbone.Model.extend({
         this.FinalStorageConcentration = options.FinalStorageConcentration;
         this.SpikeInPercentOfTemplateConcentration = options.SpikeInPercentOfTemplateConcentration;
 
-        this.SamplePlateLayout = new SamplePlateLayout({ bucket: this.bucket, ComplexReuse: this.ComplexReuse,
+        this.SamplePlateLayout = new SamplePlateLayout({
+            bucket: this.bucket,
+            MagBead: this.MagBead,  // really the protocol, need to know for OCPW
+            ComplexReuse: this.ComplexReuse,
             gaussianRounding: this.gaussianRounding
         });
 
@@ -12334,6 +12716,16 @@ var MagBeadCalc = Backbone.Model.extend({
 
         // bug 24078 - support raising errors here as well
         this.Errors = [];
+
+        //
+        // Spike-in dilution is different for P6 control, comes in higher concentration
+        //
+
+        if (this.Chemistry === "VersionP6") {
+            this.MagBeadStockSpikeInConcentration = 10.0;           // still 10000 pm
+            this.MagBeadIntermediateSpikeInConcentration = 0.100;   // dilutes down to 100 pm (10x dilution)
+            this.MagBeadFinalSpikeInConcentration = 0.002;          // then down to 2 pm (50x dilution)
+        }
 
         //
         // Call all "Prep" functions in our prototype in index order
@@ -12486,12 +12878,23 @@ var MagBeadCalc = Backbone.Model.extend({
     },
 
     Prep8_MagBeadComplexDilutionVolumeOfSecondBindingBuffer: function () {
+
+        //
+        // For 2.3.0.0 and P6 the spike in moves down as a diffusion loaded
+        // So only include it here if we're not using P6
+        //
+
+        var volumeOfSpikeInDilution = this.MagBeadComplexDilutionVolumeOfSpikeInDilution; // MagPrep6
+        if (this.Chemistry === "VersionP6") {
+            volumeOfSpikeInDilution = 0.0;
+        }
+
         this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer =            // Result: MagPrep8
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.MagBeadComplexDilutionVolumeTotal -                            // MagPrep4
-        this.MagBeadComplexDilutionVolumeOfSpikeInDilution -                // MagPrep6
 		this.MagBeadComplexDilutionVolumeOfSecondComplex -                  // MagPrep6
-        this.MagBeadComplexDilutionVolumeOfSaltBuffer;                      // MagPrep7
+        this.MagBeadComplexDilutionVolumeOfSaltBuffer -                     // MagPrep7
+        volumeOfSpikeInDilution;                                            // MagPrep6
 
         // bug 24078 - if salt adjustment would cause BBB to go negative, then omit
         // this calculation and instead make all of the BBB to instead appear here
@@ -12499,8 +12902,9 @@ var MagBeadCalc = Backbone.Model.extend({
         // to calculate total - spike-in - complex here to see if we're going negative
 
         var aliquotSoFar = this.MagBeadComplexDilutionVolumeTotal -           // MagPrep4
-            this.MagBeadComplexDilutionVolumeOfSpikeInDilution -              // MagPrep6
-            this.MagBeadComplexDilutionVolumeOfSecondComplex;                 // MagPrep6
+            this.MagBeadComplexDilutionVolumeOfSecondComplex -                // MagPrep6
+            volumeOfSpikeInDilution;                                          // MagPrep6
+
         if (aliquotSoFar < 0.0)
         {
             // error case, the requested concentration on plate/chip is SO HIGH
@@ -12509,10 +12913,11 @@ var MagBeadCalc = Backbone.Model.extend({
             this.MagBeadComplexDilutionVolumeOfSaltBuffer = Number.NaN;
             this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer = Number.NaN;
 
-            this.Errors.push((this.MagBeadComplexDilutionVolumeOfSpikeInDilution > 0.0) ?
+            this.Errors.push((volumeOfSpikeInDilution > 0.0) ?
                 "ConcentrationOnPlateTooHighWithControl" :      // suggest they try without control
                 "ConcentrationOnPlateTooHighWithoutControl");   // otherwise they're dead
         }
+
         if (aliquotSoFar - this.MagBeadComplexDilutionVolumeOfSaltBuffer - 1.0 < 0.0)
         {
             // we have enough concentration, but not with the salt adjustment
@@ -12557,7 +12962,7 @@ var MagBeadCalc = Backbone.Model.extend({
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }    // MagPrep0
             if (that.UseSpikeInControl === "True")                          // MagPrep0
             {
-                return that.SpikeInPercentOfTemplateConcentration *         // MagPrep0
+                return that.SpikeInPercentOfTemplateConcentration *        // MagPrep0
                         (that.FinalBeadedSampleConcentration /              // MagPrep2
                         that.MagBeadFinalSpikeInConcentration) *            // MagPrep0
                         that.MagBeadComplexDilutionVolumeTotal;             // MagPrep4
@@ -12577,38 +12982,36 @@ var MagBeadCalc = Backbone.Model.extend({
 
     Prep4_MagBeadComplexDilutionVolumeTotal: function () {
         this.MagBeadComplexDilutionVolumeTotal =                            // Result: MagPrep4
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfComplex; /* *                        // MagPrep2
-		this.MagneticBeadSluffFactor;  removed for 2.1.0.0    */                        // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
     },
 
     Prep6_BeadWashVolumeOfBeads: function () {
         this.BeadWashVolumeOfBeads =                                        // Result: MagPrep6
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfWashedBeads *                     // MagPrep4
-		this.MagneticBeadSluffFactor;   // leave this in for 2.1.0.0, used for wash beads only now
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+		this.ComplexBeadIncubationVolumeOfWashedBeads;                      // MagPrep4
     },
 
     Prep8_BeadWashVolumeOfBeadWashBuffer: function () {
         this.BeadWashVolumeOfBeadWashBuffer =                               // Result: MagPrep8
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.BeadWashVolumeOfBeads;                                         // MagPrep6
     },
 
     Prep8_BeadWashVolumeOfBeadBindingBuffer: function () {
         this.BeadWashVolumeOfBeadBindingBuffer =                            // Result: MagPrep8
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.BeadWashVolumeOfBeads;                                         // MagPrep6
     },
 
     Prep4_ComplexBeadIncubationVolumeOfWashedBeads: function () {
         var that = this;
-        this.ComplexBeadIncubationVolumeOfWashedBeads = (function () {       // Result: MagPrep4
+        this.ComplexBeadIncubationVolumeOfWashedBeads = (function () {      // Result: MagPrep4
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }    // MagPrep0
             if (0 === that.TotalComplexDilutionCells) { return 0.0; }       // MagPrep0
 
             return that.ComplexBeadIncubationVolumeOfComplex *              // MagPrep2
-				   that.globals.MagBeadToComplexRatio;                      // MagPrep0
+				   that.globals.MagBeadToComplexRatio;
 
             /* 
             * This is Ravi's alternative clever equation, 
@@ -12623,7 +13026,7 @@ var MagBeadCalc = Backbone.Model.extend({
 
     Prep2_ComplexBeadIncubationVolumeOfComplex: function () {
         var that = this;
-        this.ComplexBeadIncubationVolumeOfComplex = (function () {            // Result: MagPrep2
+        this.ComplexBeadIncubationVolumeOfComplex = (function () {           // Result: MagPrep2
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }     // MagPrep0
             if (0 === that.TotalComplexDilutionCells) { return 0.0; }        // MagPrep0
 
@@ -12646,18 +13049,43 @@ var MagBeadCalc = Backbone.Model.extend({
         this.ComplexBeadWashVolumeOfFirstBindingBuffer =                    // Result: MagPrep4
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
 		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
+
+        if (this.MagBead === "OneCellPerWell" && 1 === this.TotalComplexDilutionCells) {
+            // for one cell, make the pipette volume a little safer
+            this.ComplexBeadWashVolumeOfFirstBindingBuffer *= 2;
+        }
     },
 
     Prep4_ComplexBeadWashVolumeOfBeadWashBuffer: function () {
         this.ComplexBeadWashVolumeOfBeadWashBuffer =                        // Result: MagPrep4
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
 		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
+
+        if (this.MagBead === "OneCellPerWell" && 1 === this.TotalComplexDilutionCells) {
+            // for one cell, make the pipette volume a little safer
+            this.ComplexBeadWashVolumeOfBeadWashBuffer *= 2;
+        }
     },
 
-    Prep4_ComplexBeadWashVolumeOfSecondBindingBuffer: function () {
+    Prep7_ComplexBeadWashVolumeOfSecondBindingBuffer: function () {
+
+        //
+        // For 2.3.0.0 we now add spike-in here diffusion loaded
+        //
+
+        var amount = this.ComplexBeadIncubationVolumeOfComplex;             // MagPrep2
+        if (this.MagBead === "OneCellPerWell") {
+            amount = amount * 5;
+        }
+        if (this.Chemistry === "VersionP6" && this.UseSpikeInControl === "True") { // MagPrep0
+            // subtract spike in amount if we have spike in
+            // spike-in dilution was already multiplied by 5 above
+            amount -= this.MagBeadComplexDilutionVolumeOfSpikeInDilution;   // MagPrep6
+        }
+
         this.ComplexBeadWashVolumeOfSecondBindingBuffer =                   // Result: MagPrep4
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+		amount;                                                             // MagPrep2
     }
 });
 
@@ -12671,11 +13099,13 @@ var MagBeadCalc = Backbone.Model.extend({
 //
 var SampleCalc = Backbone.Model.extend({
     globals: undefined,
+    strings: undefined,
     bucket: undefined,
     errors: undefined,
 
     initialize: function (options) {
         this.globals = options.globals;
+        this.strings = options.strings;
         this.errors = options.errors;
 
         if (options.hasOwnProperty("unitTesting")) {
@@ -12712,7 +13142,9 @@ var SampleCalc = Backbone.Model.extend({
     SpikeInRatioOption: "Default",
     CustomSpikeInRatioPercent: "0",
     CustomPolymeraseTemplateRatio: "0",
+    CustomPrimerTemplateRatio: "0",
     PolymeraseTemplateRatioOption: "Default",
+    PrimerTemplateRatioOption: "Default",
     NumberOfCellsInBinding: 0,
     BindingPolymeraseOption: "Volume",
     StorageComplexOption: "Default",
@@ -12822,7 +13254,7 @@ var SampleCalc = Backbone.Model.extend({
         this.VolumePerChipNoReuse = parseFloat(this.bucket.VolumePerChipNoReuse);                   // Result: Prep2
     },
     Prep2_PrimerToTemplateRatio: function () { // private
-        this.PrimerToTemplateRatio = parseFloat((this.PreparationProtocol === "Small") ?            // Result: Prep2
+        this.DefaultPrimerTemplateRatio = parseFloat((this.PreparationProtocol === "Small") ?            // Result: Prep2
             this.bucket.DefaultPrimerToTemplateRatioSmallScale :
             this.bucket.DefaultPrimerToTemplateRatioLargeScale);
     },
@@ -12908,6 +13340,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep2_SetupSamplePlateLayout: function () {
         this.SamplePlateLayout = new SamplePlateLayout(                     // Result: Prep2
 			{bucket: this.bucket,                                           // Prep0
+            MagBead: this.MagBead,                                          // Prep0
 			ComplexReuse: this.ComplexReuse,                                // Prep0
 			gaussianRounding: this.gaussianRounding                         // Prep0
 
@@ -12917,14 +13350,26 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep6_MaxVolumePerWell: function () {
         this.MaxVolumePerWell =                                             // Result: Prep6
-            (this.NumberOfFullWells === 0) ? 0 :                             // Prep4
+            (this.NumberOfFullWells === 0) ? 0 :                            // Prep4
                 this.MaxVolumePerWellFromBucket;                            // Prep2
     },
 
     Prep6_MaxNumberOfCellsPerWell: function () {
         this.MaxNumberOfCellsPerWell =                                     // Result: Prep6
-             (this.NumberOfFullWells === 0) ? 0 :                            // Prep4
-                 this.MaxNumberOfCellsPerWellFromBucket;                    // Prep2
+            (this.NumberOfFullWells === 0) ? 0 :                            // Prep4
+                this.MaxNumberOfCellsPerWellFromBucket;                    // Prep2
+    },
+
+    Prep7_DisplayMaxVolumePerWell: function () {
+        this.DisplayMaxVolumePerWell =                                      // Result: Prep7
+            (this.MagBead === "OneCellPerWell")
+                ? 0 : this.MaxVolumePerWell;                                      // Prep6
+    },
+
+    Prep7_DisplayMaxNumberOfCellsPerWell: function () {
+        this.DisplayMaxNumberOfCellsPerWell =                               // Result: Prep7
+            (this.MagBead === "OneCellPerWell")
+                ? 0 : this.MaxNumberOfCellsPerWell;                               // Prep6
     },
 
     ComputeNonStandardTotalVolumeOfAnnealingReaction: function (sampleVolumeInAnnealingReaction, primerVolume) { // Result: Prep0
@@ -12934,7 +13379,7 @@ var SampleCalc = Backbone.Model.extend({
     ComputeNonStandardPrimerVolumeInAnnealingReaction: function (sampleVolumeInAnnealing) {         // Result: Prep4
         var molesOfTemplate, molesOfPrimer;
         molesOfTemplate = (sampleVolumeInAnnealing * this.StartingSampleConcentrationInNanoMolar);  // Prep4
-        molesOfPrimer = this.PrimerToTemplateRatio * molesOfTemplate;                               // Prep2
+        molesOfPrimer = this.PrimerTemplateRatio * molesOfTemplate;                               // Prep2
         return molesOfPrimer / this.DilutedPrimerConcentration;                                     // Prep2
     },
 
@@ -12943,35 +13388,24 @@ var SampleCalc = Backbone.Model.extend({
     },
 
     ComputeVolumeOfAnnealingReactionInBindingFromDesiredCells: function (requestedCells, reuse, sampleConcentrationInBinding) {  // Result: Prep6
-        var numFullWells, volumeInPartial, volumeOnPlate, totalVolumeOfBindingReacton;
+        var numFullWells, volumeInPartial, volumeOnPlate, totalVolumeOfBindingReaction;
 
         numFullWells = parseInt(requestedCells / this.MaxNumberOfCellsPerWellFromBucket, 10);       // Prep2
         volumeInPartial = this.SamplePlateLayout.ComputeVolumeInPartialWells(requestedCells, numFullWells);    // Prep2 for SPL
         volumeOnPlate = (numFullWells * this.MaxVolumePerWellFromBucket) + volumeInPartial;         // Prep2
 
         // no longer needed: SampleConcentrationInBinding is now computed from FinalAnnealedConcentration
-        //var totalVolumeOfBindingReacton = Math.max(this.MinimumVolumeOfBindingReaction, volumeOnPlate * 
+        //var totalVolumeOfBindingReaction = Math.max(this.MinimumVolumeOfBindingReaction, volumeOnPlate *
         //    (this.ConcentrationOnPlate / 
         //       (LowConcentrationsAllowed === "True") ? 
         //          (this.FinalAnnealedConcentration * 0.6) : 
         //          this.SampleConcentrationInBinding)));
 
-        /* removed for 2.1.0.0 - no more sluff factor for magbead complex dilution (just bead wash)
-        if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") {
-            volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                      // Prep0
-
-            // In large scale mag bead we have two sluff factors, one for the additional dilution step from storage complex
-            if (this.PreparationProtocol === "Large") {
-                volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                  // Prep0
-            }
-        }
-        */
-
-        totalVolumeOfBindingReacton = Math.max(
+        totalVolumeOfBindingReaction = Math.max(
           this.MinimumVolumeOfBindingReaction, volumeOnPlate *                                          // Prep4
           (this.ConcentrationOnPlate / sampleConcentrationInBinding));                                  // Prep6
 
-        return totalVolumeOfBindingReacton * 0.6;
+        return totalVolumeOfBindingReaction * 0.6;
     },
 
 
@@ -13062,13 +13496,6 @@ var SampleCalc = Backbone.Model.extend({
                 volumeNeededPerChip = parseFloat(that.VolumePerChipNoReuse) + 	 // prep2
                 					  parseFloat(that.DeadVolumePerWell); 		 // prep2
 
-                /* removed for 2.1.0.0
-            	if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
-            	{
-            		// for magbead = 9 uL plus 10 uL of deadvolumeperwell * 1.1 sluff factor = 20.9 uL currently
-                	volumeNeededPerChip *= that.globals.MagneticBeadSluffFactor; // Prep0
-                }*/
-
                 if (that.TitrationConcentration1 > 0) {
                     totalVolumeOfBindingReaction += volumeNeededPerChip * (that.TitrationConcentration1 / concentrationInBinding);
                 }
@@ -13147,7 +13574,7 @@ var SampleCalc = Backbone.Model.extend({
                 // future: unfinished feature
                 //if (that.NonStandardAnnealingConcentrationOption === "Custom")          // Prep0
                 //    return that.TotalVolumeOfAnnealingReaction *                        // Prep9
-                //        that.PrimerToTemplateRatio *                                    // Prep2
+                //        that.PrimerTemplateRatio *                                    // Prep2
                 //        that.NonStandardAnnealingConcentration /                        // Prep6
                 //        that.DilutedPrimerConcentration;                                // Prep2
 
@@ -13155,7 +13582,7 @@ var SampleCalc = Backbone.Model.extend({
             }
 
             return that.TotalVolumeOfAnnealingReaction *                                // Prep9
-                that.PrimerToTemplateRatio *                                            // Prep2
+                that.PrimerTemplateRatio *                                            // Prep2
                 that.SampleConcentrationInAnnealingReaction /                           // Prep2
                 that.DilutedPrimerConcentration;                                        // Prep2
         } ());
@@ -13357,9 +13784,16 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep4_PolymeraseTemplateRatio: function () {
         this.PolymeraseTemplateRatio =                                  // Result: Prep4
-		(this.PolymeraseTemplateRatioOption === "Default") ?            // Prep0
-		    this.DefaultPolymeraseTemplateRatio :                       // Prep2
-		    this.CustomPolymeraseTemplateRatio;                         // Prep0
+            (this.PolymeraseTemplateRatioOption === "Default") ?        // Prep0
+                this.DefaultPolymeraseTemplateRatio :                   // Prep2
+                this.CustomPolymeraseTemplateRatio;                     // Prep0
+    },
+
+    Prep4_PrimerTemplateRatio: function () {
+        this.PrimerTemplateRatio =                                      // Result: Prep4
+            (this.PrimerTemplateRatioOption === "Default") ?            // Prep0
+                this.DefaultPrimerTemplateRatio :                       // Prep2
+                this.CustomPrimerTemplateRatio;                         // Prep0
     },
 
     Prep28_TotalVolumeOfFirstSpikeInDilution: function () {
@@ -13437,7 +13871,7 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep2_PolymeraseStockConcentration: function () {
         this.PolymeraseStockConcentration =                             // Result: Prep2
-            this.globals.PolymeraseStockConcentration;                  // Prep0
+            this.bucket.PolymeraseStockConcentration;                  // Prep0
     },
 
     //
@@ -13467,6 +13901,9 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep2_DeadVolumePerWell: function () {
         this.DeadVolumePerWell = this.bucket.DeadVolumePerWell;                         // Result: Prep2
+        if (this.MagBead === "OneCellPerWell") {
+            this.DeadVolumePerWell = 0.0;
+        }
     },
 
     Prep22_TotalVolumeOfBindingReaction: function () {
@@ -13592,9 +14029,12 @@ var SampleCalc = Backbone.Model.extend({
 
             var targetConcentration, boundTemplateRequired, finalResultingVolumeForOneChip, concentrationTooLow,
                 fullWells, cellsFromFullWells, partialVolume, cellsFromPartialWell, result,
-                maxVolume = volume *
-						    that.FinalBindingConcentration /        // Prep24
-							that.ConcentrationOnPlate;              // Prep6
+                maxVolume;
+
+            targetConcentration = that.ConcentrationOnPlate;    // Prep6
+            maxVolume = volume *
+                        that.FinalBindingConcentration /        // Prep24
+                        targetConcentration;
 
             // Don't use StorageComplexConcentration, that's what we end up with after the final long term storage dilution, but then we
             // end up with that much more volume to get to that concentration!
@@ -13607,23 +14047,6 @@ var SampleCalc = Backbone.Model.extend({
 
                 return 0;
             }
-
-            //
-            // If mag bead, we adjust by Ravi's MagBeadSluffFactor
-            //
-
-            /* removed for 2.1.0.0
-            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
-            {
-                maxVolume /= that.globals.MagneticBeadSluffFactor;          // Prep0
-
-                // for large scale mag bead, we need twice the sluff factor since we have an extra complex dilution step (from storage)
-
-                if (that.PreparationProtocol === "Large" || if small and storage case)                    // Prep0
-                {
-                    maxVolume /= that.globals.MagneticBeadSluffFactor;      // Prep0
-                }
-            }*/
 
             // #19588 we're already including the spike in volume now TotalVolumeOfBindingReaction
             //if (Chemistry.Equals(BucketConstants.ChemistryV2))
@@ -13644,7 +14067,6 @@ var SampleCalc = Backbone.Model.extend({
             // then we have an error.
             //
 
-            targetConcentration = that.ConcentrationOnPlate;                        // Prep6
             if (that.ComputeOption === "Titration") {                               // Prep0
                 // for titration, use the maximum titration to test if we will have enough instead of the standard ConcentrationOnPlate
                 targetConcentration = Math.max(Math.max(that.TitrationConcentration1, that.TitrationConcentration2),    // Prep0
@@ -13677,11 +14099,33 @@ var SampleCalc = Backbone.Model.extend({
             // Round the volume up to something pipette-able to handle edge conditions
             //
 
-            fullWells = parseInt(maxVolume / that.MaxVolumePerWellFromBucket, 10);      // Prep2
-            cellsFromFullWells = fullWells * that.MaxNumberOfCellsPerWellFromBucket;    // Prep2
-            partialVolume = maxVolume - (fullWells * that.MaxVolumePerWellFromBucket);  // Prep2
-            cellsFromPartialWell = that.SamplePlateLayout.ComputeCellsFromPartialWell(partialVolume); // Prep2
-            result = cellsFromFullWells + cellsFromPartialWell;
+            if ("OneCellPerWell" === that.MagBead) {
+                //
+                // we use different dead volume based upon the number of cells possible,
+                // so this is differential slightly... 0 uL for 1 cell, 1 uL for 2 to 8, 2 uL to 16 cells, 3 uL above
+                // so if the volume is up to one this.bucket.VolumePerChipNoReuse the dead volume is 0, if the
+                // volume is less than or equal to (1.0 + this.bucket.VolumePerChipNoReuse) * 8 then use that, etc.
+                //
+
+                var volumePerChip = parseFloat(that.VolumePerChipNoReuse);
+                if ((maxVolume - 3.0) >= (volumePerChip * 16)) {
+                    result = parseInt((maxVolume - 3.0) / volumePerChip);
+                } else if ((maxVolume - 2.0) >= (volumePerChip * 8)) {
+                    result = parseInt((maxVolume - 2.0) / volumePerChip);
+                } else if ((maxVolume - 1.0) >= volumePerChip) {
+                    result = parseInt((maxVolume - 1.0) / volumePerChip);
+                } else if (maxVolume === volumePerChip) {
+                    result = 1;
+                } else {
+                    result = 0;
+                }
+            } else {
+                fullWells = parseInt(maxVolume / that.MaxVolumePerWellFromBucket, 10);      // Prep2
+                cellsFromFullWells = fullWells * that.MaxNumberOfCellsPerWellFromBucket;    // Prep2
+                partialVolume = maxVolume - (fullWells * that.MaxVolumePerWellFromBucket);  // Prep2
+                cellsFromPartialWell = that.SamplePlateLayout.ComputeCellsFromPartialWell(partialVolume); // Prep2
+                result = cellsFromFullWells + cellsFromPartialWell;
+            }
 
             //
             // Can we make enough? Compare against TotalComplexDilutionCells and raise an error
@@ -13789,6 +14233,11 @@ var SampleCalc = Backbone.Model.extend({
         this.ComplexDilutionBufferName = "Complex Dilution Buffer";     // Result: Prep0 (todo convert to global string)
     },
 
+    Prep0_Step9Text: function () {
+        this.Step9Text = ((this.MagBead === "OneCellPerWell") ?
+            this.strings.Step9oneCellPerWell : this.strings.Step9);
+    },
+
     Prep4_VolumeFromFullWells: function () {
         this.VolumeFromFullWells =                                      // Result: Prep4
 			this.SamplePlateLayout.VolumeFromFullWells(                 // Prep2 for SPL instance
@@ -13803,14 +14252,26 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep4_VolumeFromPartialWells: function () {
         this.VolumeFromPartialWells =                                   // Result: Prep4
-			this.SamplePlateLayout.VolumeFromPartialWells(              // Prep2 for SPL instance
-				this.BindingComplexNumberOfCellsRequested);             // Prep0
+            this.SamplePlateLayout.VolumeFromPartialWells(              // Prep2 for SPL instance
+                this.BindingComplexNumberOfCellsRequested);             // Prep0
+    },
+
+    Prep5_DisplayVolumePerPartialWell: function () {
+        this.DisplayVolumePerPartialWell =                              // Result: Prep5
+            (this.MagBead === "OneCellPerWell")
+               ? 45 : this.VolumeFromPartialWells;                      // Prep4
     },
 
     Prep4_NumberOfFullWells: function () {
         this.NumberOfFullWells = parseInt(                              // Result: Prep4
-			this.SamplePlateLayout.NumberOfFullWells(                   // Prep2 for SPL instance
-				this.BindingComplexNumberOfCellsRequested), 10);        // Prep0
+            this.SamplePlateLayout.NumberOfFullWells(                   // Prep2 for SPL instance
+                this.BindingComplexNumberOfCellsRequested), 10);        // Prep0
+    },
+
+    Prep5_DisplayNumberOfFullWells: function () {
+        this.DisplayNumberOfFullWells =                                 // Result: Prep5
+            (this.MagBead === "OneCellPerWell")                         // Prep0
+            ? 0 : this.NumberOfFullWells;                               // Prep4
     },
 
     Prep4_NumberOfCellsFromPartialWells: function () {
@@ -13819,9 +14280,22 @@ var SampleCalc = Backbone.Model.extend({
 				this.BindingComplexNumberOfCellsRequested), 10);        // Prep0
     },
 
+    Prep5_DisplayNumberOfCellsPerPartialWell: function() {
+        this.DisplayNumberOfCellsPerPartialWell =                       // Result: Prep5
+            (this.MagBead === "OneCellPerWell")                         // Prep0
+                ? 1 : this.NumberOfCellsFromPartialWells;               // Prep4
+    },
+
     Prep6_NumberOfPartialWells: function () {
-        this.NumberOfPartialWells =                             // Result: Prep6
-			this.NumberOfCellsFromPartialWells > 0 ? 1 : 0;     // Prep4
+        this.NumberOfPartialWells =                                     // Result: Prep6
+            this.NumberOfCellsFromPartialWells > 0 ? 1 : 0;             // Prep4
+    },
+
+    Prep6_DisplayNumberOfPartialWells: function () {
+        this.DisplayNumberOfPartialWells =                              // Result: Prep6
+            (this.MagBead === "OneCellPerWell")
+              ?  this.BindingComplexNumberOfCellsRequested              // Prep0
+              :  this.NumberOfCellsFromPartialWells > 0 ? 1 : 0;        // Prep4
     },
 
     Prep6_TotalComplexDilutionCells: function () {
@@ -13896,7 +14370,9 @@ var SampleCalc = Backbone.Model.extend({
             NumberOfFullWells: this.NumberOfFullWells,                          // Prep4
             FinalBindingConcentration: this.FinalBindingConcentration,          // Prep24
             FinalStorageConcentration: this.FinalStorageConcentration,          // Prep30
-            SpikeInPercentOfTemplateConcentration: this.SpikeInPercentOfTemplateConcentration   // Prep4
+            SpikeInPercentOfTemplateConcentration: this.SpikeInPercentOfTemplateConcentration,   // Prep4
+            MagBead: this.MagBead,                                              // Prep0
+            Chemistry: this.Chemistry                                           // Prep0
         };
 
         if (this.unitTesting || this.ComputeOption === "Titration") {
@@ -14073,9 +14549,16 @@ var SampleCalc = Backbone.Model.extend({
             this.RaiseError("NonStandardSmallStorageNotSupported");
         }
 
+        if (this.PreparationProtocol === "Small" && this.LongTermStorage === "True" && this.MagBead === "False") {
+            this.RaiseError("DiffusionSmallStorageNotSupported");
+        }
+
         // issue 24100 - control with 20kb bucket is unsupported in 2.1.0.0
+        // but for 2.3 it is supported with the P6 chemistry
         if (this.UseSpikeInControl === "True" && this.AnnealedBasePairLength > 15000) {
-            this.RaiseError("UntestedControlWithLongInsertSize");
+            if (this.Chemistry === "VersionP5" || this.Chemistry === "VersionP4") {
+                this.RaiseError("UntestedControlWithLongInsertSize");
+            }
         }
 
         //
@@ -14751,7 +15234,7 @@ var SamplesView = Backbone.View.extend({
 
         $('input').each(function () {
             if ($(this).is(':radio')) {
-                if ($(this).attr('checked')) {
+                if ($(this).prop('checked')) {
                     $(this).trigger('change');
                 }
                 return;
@@ -14855,6 +15338,10 @@ var SamplesView = Backbone.View.extend({
             that.toggleRadioInputs('#PolymeraseTemplateRatioOption-Radio-Default', null, '#CustomPolymeraseTemplateRatio');
         });
 
+        $('input[name="PrimerTemplateRatioOption"]').bind('change', function () {
+            that.toggleRadioInputs('#PrimerTemplateRatioOption-Radio-Default', null, '#CustomPrimerTemplateRatio');
+        });
+
         $('input[name="BindingPolymeraseOption"]').bind('change', function () {
             that.toggleRadioInputs('#BindingPolymeraseOption-Radio-All', null, '#NumberOfCellsInBinding');
         });
@@ -14866,42 +15353,49 @@ var SamplesView = Backbone.View.extend({
         //
         // If we turn Spike-In Control use on or off the hide/show related sections
         //
+        // Note: as of 2.3.0.0 I am removing the support for C1/V1 chemistry editing,
+        // primarily because the P6 spike-in protocol changes these again and trying
+        // to keep the C1/V1 toggles would be a headache.
+        //
 
         $('input[name="UseSpikeInControl"]').add($('input[name="Chemistry"]')).bind('change', function () {
+
+            // for elements we always show if spike-in is selected (like dilution steps)
             if ($('#UseSpikeInControl-Radio-True').is(':checked')) {
-                // Use Spike-In is true
-                if ($('#Chemistry-Radio-V1').is(':checked')) {
-                    $('.hiddenV1SpikeInOutputs').hide();
-                    $('.showV1SpikeInOutputs').show();
-                    $('.hiddenV2SpikeInOutputs').hide();
-                    $('.showV2SpikeInOutputs').hide();
-                } else {
-                    $('.hiddenV1SpikeInOutputs').hide();
-                    $('.showV1SpikeInOutputs').hide();
-                    $('.hiddenV2SpikeInOutputs').hide();
-                    $('.showV2SpikeInOutputs').show();
-                }
+                $('.showSpikeIn').show();
             } else {
-                // Use Spike-In is false
-                if ($('#Chemistry-Radio-V1').is(':checked')) {
-                    $('.hiddenV1SpikeInOutputs').show();
-                    $('.showV1SpikeInOutputs').hide();
-                    $('.hiddenV2SpikeInOutputs').hide();
+                $('.showSpikeIn').hide();
+            }
+
+            if ($('#Chemistry-Radio-P6').is(':checked')) {
+                //
+                // Show P6 spike-in details if spike-in selected
+                // Don't show the "not used" values though like V2
+                // when the P6 spike in is requested. Just omit it.
+                //
+                if ($('#UseSpikeInControl-Radio-True').is(':checked')) {
+                    $('.hiddenV2SpikeInOutputs').hide();    // omit
                     $('.showV2SpikeInOutputs').hide();
+                    $('.showP6SpikeInOutputs').show();
                 } else {
-                    $('.hiddenV1SpikeInOutputs').hide();
-                    $('.showV1SpikeInOutputs').hide();
                     $('.hiddenV2SpikeInOutputs').show();
                     $('.showV2SpikeInOutputs').hide();
+                    $('.showP6SpikeInOutputs').hide();
                 }
-            }
-        });
-
-        $('input[name="Chemistry"]').bind('change', function () {
-            if ($('#Chemistry-Radio-V1').is(':checked')) {
-                $('.v2ChemistryShown').hide();
             } else {
-                $('.v2ChemistryShown').show();
+
+                // Show P4/P5 spike-in details if spike-in selected
+                if ($('#UseSpikeInControl-Radio-True').is(':checked')) {
+                    // Use Spike-In is true
+                    $('.hiddenV2SpikeInOutputs').hide();
+                    $('.showV2SpikeInOutputs').show();
+                    $('.showP6SpikeInOutputs').hide();
+                } else {
+                    // Use Spike-In is false
+                    $('.hiddenV2SpikeInOutputs').show();
+                    $('.showV2SpikeInOutputs').hide();
+                    $('.showP6SpikeInOutputs').hide();
+                }
             }
         });
 
@@ -14930,8 +15424,8 @@ var SamplesView = Backbone.View.extend({
                 $('#LongTermStorage-Radio-True').removeAttr('disabled');
                 $('#LongTermStorage-Radio-False').removeAttr('disabled');
             } else {
-                $('#LongTermStorage-Radio-False').attr('disabled', true);
-                $('#LongTermStorage-Radio-True').attr('disabled', true).attr('checked', true);
+                $('#LongTermStorage-Radio-False').attr('disabled', true).prop('checked', true);
+                $('#LongTermStorage-Radio-True').attr('disabled', true);
             }
         });
 
@@ -14945,13 +15439,23 @@ var SamplesView = Backbone.View.extend({
                 $('.nonMagBeadSection').hide();
                 // also mark complex reuse as false: not allowed with magbead in 1.3.2
                 $('#ComplexReuse-Radio-Yes').attr('disabled', true);
-                $('#ComplexReuse-Radio-No').attr('disabled', true).attr('checked', true);
+                $('#ComplexReuse-Radio-No').attr('disabled', true).prop('checked', true);
             } else {
                 $('.magBeadSection').hide();
                 $('.nonMagBeadSection').show();
                 // allow complex reuse again
                 $('#ComplexReuse-Radio-Yes').removeAttr('disabled');
                 $('#ComplexReuse-Radio-No').removeAttr('disabled');
+            }
+        });
+
+        $('input[name="Chemistry"]').bind('change', function () {
+            if ($("#Chemistry-Radio-P6").is(':checked')) {
+                $('#PreparationProtocol-Radio-Small').attr('disabled', true).prop('checked', true);
+                $('#PreparationProtocol-Radio-Large').attr('disabled', true);
+            } else {
+                $('#PreparationProtocol-Radio-Small').removeAttr('disabled');
+                $('#PreparationProtocol-Radio-Large').removeAttr('disabled');
             }
         });
     },
@@ -15468,7 +15972,18 @@ var SamplesView = Backbone.View.extend({
                 return;
             }
 
+            //
+            // we want to both load the sample on the page and
+            // also change the window location, so if the user
+            // navigates away (or to 'print') and back we don't
+            // keep a "#new" in the URI and create a new sample
+            // accidentally from navigating back.
+            //
+
             that.samples.selectSample(data.SampleName, true);
+            querystring = "#sample/";
+            querystring += encodeURIComponent(data.SampleName);
+            window.location = querystring;
         });
 
         //
@@ -15587,13 +16102,14 @@ var SamplesView = Backbone.View.extend({
         radios.ComputeOptionVolume = "checked='checked'";
         radios.ComputeOptionCells = "";
         radios.ComputeOptionTitration = "";
-        radios.MagBeadYes = "checked='checked'";
+        radios.MagBeadYes = "";
         radios.MagBeadNo = "";
-        radios.MagBeadOne = "";
+        radios.MagBeadOne = "checked='checked'";
         radios.ChemistryV2 = "";
         radios.ChemistryXL = "";
-        radios.ChemistryP4 = "checked='checked'";
+        radios.ChemistryP4 = "";
         radios.ChemistryP5 = "";
+        radios.ChemistryP6 = "checked='checked'";
         radios.CellVersion2 = "";
         radios.CellVersion3 = "checked='checked'";
         radios.PreparationSmall = "checked='checked'";
@@ -15612,6 +16128,8 @@ var SamplesView = Backbone.View.extend({
         radios.ControlComplexRatioCustom = "";
         radios.PolymeraseRatioDefault = "checked='checked'";
         radios.PolymeraseRatioCustom = "";
+        radios.PrimerRatioDefault = "checked='checked'";
+        radios.PrimerRatioCustom = "";
         radios.BindingPolymeraseAll = "checked='checked'";
         radios.BindingPolymeraseSome = "";
         radios.StorageComplexDefault = "checked='checked'";
@@ -15912,6 +16430,9 @@ var ListView = Backbone.View.extend({
         $('body').css('background', "rgb(201,201,206)");
         this.$el.prop("id", "listview");    // toggle css
 
+        // TODO: for narrow layouts like mobile, show few columns or just one column
+        // TODO: and then redraw on resize
+
         $("#ui-jqgrid").jqGrid({
             datatype: "local",
             height: 'auto',
@@ -15919,15 +16440,15 @@ var ListView = Backbone.View.extend({
             rowNum: 9999999,
             colNames: ['Sample name', 'Vol', 'Cells', 'Conc', 'BP', 'Exp', 'Note', 'internalname'],
             colModel: [
-                { name: 'name', index: 'name', width: 150 },
-                { name: 'volume', index: 'volume', width: 30, align: "right", sorttype: "float" },
-                { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
-                { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
-                { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
-                { name: 'export', index: 'export', width: 30, align: "right", sortable: false },
-                { name: 'note', index: 'note', width: 220, sortable: false },
-                { name: 'internalname', index: "internalname", width: 0, hidden: true }
-            ],
+                    { name: 'name', index: 'name', width: 150 },
+                    { name: 'volume', index: 'volume', width: 30, align: "right", sorttype: "float" },
+                    { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
+                    { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
+                    { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
+                    { name: 'export', index: 'export', width: 30, align: "right", sortable: false },
+                    { name: 'note', index: 'note', width: 220, sortable: false },
+                    { name: 'internalname', index: "internalname", width: 0, hidden: true }
+                    ],
             multiselect: true,
             caption: "Samples"
         });
@@ -16058,6 +16579,7 @@ var PrintView = Backbone.View.extend({
             sections.LoadingTitrationTable = this.loadingTitrationTable();
             sections.UsingBoundComplexTable = this.usingBoundComplexTable();
             sections.PlateLayout = this.plateLayout();
+            sections.Step9 = this.Step9Text();
 
             template += _.template($('#print-view-details').html(), {
                 strings: that.constants.strings,
@@ -16167,10 +16689,6 @@ var PrintView = Backbone.View.extend({
             sampleTitration = (sample.ComputeOption === "Titration");
             if (sampleTitration !== titration) {
                 similarCompute = false;
-            }
-
-            if (sample.PreparationProtocol !== preparation) {
-                sameSize = false;
             }
         }
 
@@ -16325,6 +16843,25 @@ var PrintView = Backbone.View.extend({
         if (type === "VersionP4") {
             return "P4";
         }
+        if (type === "VersionP5") {
+            return "P5";
+        }
+        if (type === "VersionP6") {
+            return "P6";
+        }
+        return "Unknown";
+    },
+
+    protocolNameByType: function(type){
+        if (type === "False") {
+            return "Standard";
+        }
+        if (type === "True") {
+            return "MagBead Standard";
+        }
+        if (type === "OneCellPerWell") {
+            return "MagBead OCPW";
+        }
         return "Unknown";
     },
 
@@ -16346,6 +16883,10 @@ var PrintView = Backbone.View.extend({
         result += this.rowfromGetter(function (sample) {
             return sample.AnnealedBasePairLength;
         }, "Insert size", " bp", "", false, "input");
+
+        result += this.rowfromGetter(function (sample) {
+            return that.protocolNameByType(sample.MagBead);
+        }, "Protocol", "", "", false, "string");
 
         if (first.ShowChemistryOption) {
             result += this.rowfromGetter(function (sample) {
@@ -16384,7 +16925,7 @@ var PrintView = Backbone.View.extend({
         result += this.rowfromGetter(function (sample) {
             // return the opposite of LowConcentrationsAllowed for "Standard"
             return ("True" === sample.LowConcentrationsAllowed) ? "False" : "True";
-        }, "Standard", "", "", false, "string");
+        }, "Standard Concentration", "", "", false, "string");
 
         // include Optional information so the print view is a complete archive of sample inputs (bugzilla 25310)'
 
@@ -16405,6 +16946,12 @@ var PrintView = Backbone.View.extend({
                 return "Default (" + sample.DefaultPolymeraseTemplateRatio + ")";
             return "Custom (" + sample.CustomPolymeraseTemplateRatio + ")";
         }, "Polymerase:Template Ratio", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.PrimerTemplateRatioOption)
+                return "Default (" + sample.DefaultPrimerTemplateRatio + ")";
+            return "Custom (" + sample.CustomPrimerTemplateRatio + ")";
+        }, "Primer:Template Ratio", "", "", false, "string");
 
         result += "</table>";
 
@@ -16942,9 +17489,13 @@ var PrintView = Backbone.View.extend({
             return sample[which].MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
         }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
-        result += this.rowfromGetter(function (sample) {
-            return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
-        }, "DNA Control Dilution", " uL", "", false, "volume");
+        // For 2.3.0.0, we add the P6 DNA control below diffusion loaded instead of here
+        first = this.model.fetched[0];
+        if (first.Chemistry !== "VersionP6") {
+            result += this.rowfromGetter(function (sample) {
+                return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
+            }, "DNA Control Dilution", " uL", "", false, "volume");
+        }
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -16983,7 +17534,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeadBindingBuffer;
-        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and mix <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
 
         result += "</table><p>MagBead Step 2. Incubate Bead-Complex. <span class='instructions'>Place the indicated " +
@@ -17022,7 +17573,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfFirstBindingBuffer;
-        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and mix <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
             return "Collect beads. Remove supernatant and discard";
@@ -17036,9 +17587,16 @@ var PrintView = Backbone.View.extend({
             return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
+        // For 2.3.0.0, we add the P6 DNA control here diffusion loaded instead of above
+        if (first.Chemistry === "VersionP6") {
+            result += this.rowfromGetter(function (sample) {
+                return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
+            }, "DNA Control Dilution", " uL", "", false, "volume");
+        }
+
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfSecondBindingBuffer;
-        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and mix <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
             return "<i>keep at 4C until use</i>";
@@ -17117,6 +17675,11 @@ var PrintView = Backbone.View.extend({
         return result;
     },
 
+    Step9Text: function () {
+        var first = this.model.fetched[0];
+        return first.Step9Text;
+    },
+
     plateLayout: function () {
         //
         // Finish with the sample plate well allocations
@@ -17126,27 +17689,27 @@ var PrintView = Backbone.View.extend({
         result += "<h4 class='instructions'>Sample Plate Wells</h4><table class='PlateLayout'>";
         result += this.columnHeader();
         result += this.rowfromGetter(function (sample) {
-            return sample.NumberOfFullWells;
+            return sample.DisplayNumberOfFullWells;
         }, "# of Max Volume Wells", "", "lineabove", false, "integer");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.MaxVolumePerWell;
+            return sample.DisplayMaxVolumePerWell;
         }, "Volume / Well", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.MaxNumberOfCellsPerWell;
+            return sample.DisplayMaxNumberOfCellsPerWell;
         }, "# of SMRT Cells / Well", "", "", false, "integer");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.NumberOfPartialWells;
+            return sample.DisplayNumberOfPartialWells;
         }, "# of Partial Wells", "", "lineabove", false, "integer");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.VolumeFromPartialWells;
+            return sample.DisplayVolumePerPartialWell;
         }, "Volume / Well", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.NumberOfCellsFromPartialWells;
+            return sample.DisplayNumberOfCellsPerPartialWell;
         }, "# of SMRT Cells / Well", "", "", false, "integer");
 
         result += "</table>";

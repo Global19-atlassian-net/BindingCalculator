@@ -1,3 +1,10 @@
+Version 2.3.0.0
+- Add support for the P6 binding protocol
+- Add support for the OneCellPerWell (OCPW) protocol
+- Add a custom parameter for Primer to Template Ratio
+- All changes from the 2.1.0.3 calculator below including sample export and import, label changes, and print view additions
+- This version no longer allows editing of samples using C2 or XL binding, download older calculators for those samples
+
 Version 2.1.0.3
 - Add export and import of samples in the list page. 
     - Samples are saved as files with a ".sample" filename

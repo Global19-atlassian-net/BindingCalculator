@@ -99,10 +99,12 @@ var TestSampleView = Backbone.View.extend({
         data["CustomConcentrationOnPlate"] = (Math.floor(Math.random() * 100) / 1000);      // from 0 to 0.0100
         data["CustomSpikeInRatioPercent"] = Math.floor((Math.random() * 90) / 10);          // from 0 to 9.0
         data["CustomPolymeraseTemplateRatio"] = Math.floor((Math.random() * 300) / 10) + 1; // from 1 to 30.0
+        data["CustomPrimerTemplateRatio"] = Math.floor((Math.random() * 300) / 10) + 1; // from 1 to 30.0
 
         data["ConcentrationOnPlateOption"] = randomString(["Default", "Custom"]);
         data["SpikeInRatioOption"] = randomString(["Default", "Custom"]);
         data["PolymeraseTemplateRatioOption"] = randomString(["Default", "Custom"]);
+        data["PrimerTemplateRatioOption"] = randomString(["Default", "Custom"]);
         data["StorageComplexOption"] = randomString(["Default", "Custom"]);
 
         /*

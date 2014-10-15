@@ -92,7 +92,11 @@ var Sample = Backbone.Model.extend({
         }
 
         this.constants = options.constants;
-        this.samplecalc = new SampleCalc({ globals: options.constants.globals, errors: options.constants.errors, unitTesting: this.unitTesting });
+        this.samplecalc = new SampleCalc({
+            globals: options.constants.globals,
+            strings: options.constants.strings,
+            errors: options.constants.errors,
+            unitTesting: this.unitTesting });
         this.SampleGuid = this.guid();
     },
 
@@ -138,7 +142,7 @@ var Sample = Backbone.Model.extend({
     TitrationConcentration4: 0,
     AvailableSampleVolume: 0,
     CollectionProtocol: "Standard", // versus strobe - deprecated option currently
-    Chemistry: "VersionP4",
+    Chemistry: "VersionP6",
     Cell: "CellVersion3",
     AnnealedBasePairLength: 10000,
     CustomConcentrationOnPlate: 0,
@@ -147,7 +151,9 @@ var Sample = Backbone.Model.extend({
     SpikeInRatioOption: "Default",
     CustomSpikeInRatioPercent: "0",
     CustomPolymeraseTemplateRatio: "0",
+    CustomPrimerTemplateRatio: "0",
     PolymeraseTemplateRatioOption: "Default",
+    PrimerTemplateRatioOption: "Default",
     NumberOfCellsInBinding: 0,
     BindingPolymeraseOption: "Volume",
     StorageComplexOption: "Default",
@@ -202,6 +208,20 @@ var Sample = Backbone.Model.extend({
         this.StorageComplexOption = json.StorageComplexOption;
         this.CustomVolumeOfBindingReactionInStorageComplex = json.CustomVolumeOfBindingReactionInStorageComplex;
 
+        // added in 2.3.0.0, if they don't exist add reasonable defaults
+
+        if (json.hasOwnProperty("PrimerTemplateRatioOption")) {
+            this.PrimerTemplateRatioOption = json.PrimerTemplateRatioOption;
+        } else {
+            this.PrimerTemplateRatioOption = "Default";
+        }
+
+        if (json.hasOwnProperty("CustomPrimerTemplateRatio")) {
+            this.CustomPrimerTemplateRatio = json.CustomPrimerTemplateRatio;
+        } else {
+            this.CustomPrimerTemplateRatio = 0;
+        }
+
         //
         // Then compute all outputs
         //
@@ -247,7 +267,9 @@ var Sample = Backbone.Model.extend({
         output.SpikeInRatioOption = this.SpikeInRatioOption;
         output.CustomSpikeInRatioPercent = this.CustomSpikeInRatioPercent;
         output.CustomPolymeraseTemplateRatio = this.CustomPolymeraseTemplateRatio;
+        output.CustomPrimerTemplateRatio = this.CustomPrimerTemplateRatio;
         output.PolymeraseTemplateRatioOption = this.PolymeraseTemplateRatioOption;
+        output.PrimerTemplateRatioOption = this.PrimerTemplateRatioOption;
         output.NumberOfCellsInBinding = this.NumberOfCellsInBinding;
         output.BindingPolymeraseOption = this.BindingPolymeraseOption;
         output.StorageComplexOption = this.StorageComplexOption;
@@ -375,6 +397,7 @@ var Sample = Backbone.Model.extend({
         "CustomConcentrationOnPlate",
         "CustomSpikeInRatioPercent",
         "CustomPolymeraseTemplateRatio",
+        "CustomPrimerTemplateRatio",
         "CustomVolumeOfBindingReactionInStorageComplex"
     ],
 
@@ -424,7 +447,9 @@ var Sample = Backbone.Model.extend({
         calc.SpikeInRatioOption = this.SpikeInRatioOption;
         calc.CustomSpikeInRatioPercent = parseFloat(this.CustomSpikeInRatioPercent);
         calc.CustomPolymeraseTemplateRatio = parseFloat(this.CustomPolymeraseTemplateRatio);
+        calc.CustomPrimerTemplateRatio = parseFloat(this.CustomPrimerTemplateRatio);
         calc.PolymeraseTemplateRatioOption = this.PolymeraseTemplateRatioOption;
+        calc.PrimerTemplateRatioOption = this.PrimerTemplateRatioOption;
         calc.NumberOfCellsInBinding = parseInt(this.NumberOfCellsInBinding, 10);
         calc.BindingPolymeraseOption = this.BindingPolymeraseOption;
         calc.StorageComplexOption = this.StorageComplexOption;
@@ -608,9 +633,11 @@ var BucketHelpers = Backbone.Model.extend({
 //
 var SamplePlateLayout = Backbone.Model.extend({
 	bucket: undefined,
+    MagBead: undefined,
 	ComplexReuse: "",
 	initialize: function(options) {
 		this.bucket = options.bucket;
+        this.MagBead = options.MagBead;
 		this.ComplexReuse = options.ComplexReuse;
 	    this.gaussianRounding = options.gaussianRounding;
 		
@@ -620,7 +647,20 @@ var SamplePlateLayout = Backbone.Model.extend({
 
 	    // no additional setup needed, all functions are static using initialized values
 	},
-	ComputeVolumeInPartialWells: function(cellsRequested, numFullWells) {
+
+    DeadVolumeForOCPW: function(cellsRequested) {
+        if (1 >= cellsRequested) {
+            return 0.0;
+        } else if (8 >= cellsRequested) {
+            return 1.0 / cellsRequested;
+        } else if (16 >= cellsRequested) {
+            return 2.0 / cellsRequested;
+        } else {
+            return 3.0 / cellsRequested;
+        }
+    },
+
+    ComputeVolumeInPartialWells: function(cellsRequested, numFullWells) {
 	    var volumePerChipNoReuse = parseFloat(this.bucket.VolumePerChipNoReuse),
 	        deadVolumePerWell = parseFloat(this.bucket.DeadVolumePerWell),
 	        volumeOfDilutedSamplePerReuseCycle = this.bucket.VolumeOfDilutedSamplePerReuseCycle,
@@ -628,15 +668,25 @@ var SamplePlateLayout = Backbone.Model.extend({
 	        maxNumberOfCellsPerWellFromBucket = this.MaxNumberOfCellsPerWellFromBucket,
 	        reuse, numCells, volumeInPartial, numCellsFromPartialWell, numberOfCycles, modulo;
 
-	    if (cellsRequested === 0) {
-	        return 0;
-	    }
+        if (cellsRequested === 0) {
+            return 0;
+        }
 
-	    reuse = (this.ComplexReuse === "True");
-	    if (!reuse) {
-	        numCells = parseInt(cellsRequested % maxNumberOfCellsPerWellFromBucket, 10);
-	        return (0 === numCells) ? 0 : parseFloat(volumePerChipNoReuse * numCells) + deadVolumePerWell;
-	    }
+        reuse = ("True" === this.ComplexReuse);
+        if (!reuse) {
+
+            numCells = parseInt(cellsRequested % maxNumberOfCellsPerWellFromBucket, 10);
+
+            if (this.MagBead === "OneCellPerWell") {
+                // hack - assume we calculated volume needed for MaxNumberOfCellsPerWellFromBucket
+                // in the full well case (even though for OCPW we don't use full wells)
+                // so then we're calculating here a non-reuse case with the modulo cells beyond that
+                deadVolumePerWell = this.DeadVolumeForOCPW(cellsRequested);
+                return (0 === numCells) ? 0 : parseFloat((volumePerChipNoReuse + deadVolumePerWell) * numCells);
+            }
+
+            return (0 === numCells) ? 0 : parseFloat(volumePerChipNoReuse * numCells) + deadVolumePerWell;
+        }
 
 	    volumeInPartial = Number.NaN;
 
@@ -665,6 +715,13 @@ var SamplePlateLayout = Backbone.Model.extend({
             volumeOfDilutedSamplePerReuseCycle = this.bucket.VolumeOfDilutedSamplePerReuseCycle,
             maxNumberOfCellsPerReuseCycle = this.bucket.MaxNumberOfCellsPerReuseCycle,
 		    usableVolume, reuse, numCycles, numCells, remainingAmount;
+
+        // don't need to care about the magbead OneCellPerWell case
+        // because this function doesn't get used in that case.
+        // but return NaN in that case to make sure we don't...
+        if (this.MagBead === "OneCellPerWell") {
+            return Number.NaN;
+        }
 
         if (volume < deadVolumePerWell) {
             return 0;
@@ -700,12 +757,34 @@ var SamplePlateLayout = Backbone.Model.extend({
         return parseInt(result, 10);
 	},
 
-	VolumeFromFullWells: function(cellsRequested) {
-        return this.NumberOfFullWells(cellsRequested) *
-		this.MaxVolumePerWellFromBucket;
-	},
+    VolumeFromFullWells: function(cellsRequested) {
+        var volumePerFullWell = this.MaxVolumePerWellFromBucket;
+
+        if (this.MagBead === "OneCellPerWell")
+        {
+            //
+            // We are tricking the caller into thinking we're putting these in full
+            // wells (sorry, a hack I know) so compute how many one cell wells we
+            // would have for the MaxNumberOfCellsPerWellFromBucket of this bucket
+            // instead.
+            //
+            // To refactor this in the future, I need to break apart the assumption
+            // that there are just full wells and one partial well everywhere and
+            // make sure all of the calculations for that are in one spot instead
+            // of distributed...
+            //
+
+            var deadVolumePerWell, volumePerChipNoReuse, perCellVolume;
+            deadVolumePerWell = this.DeadVolumeForOCPW(cellsRequested);
+            perCellVolume = parseFloat(this.bucket.VolumePerChipNoReuse) + deadVolumePerWell;
+            volumePerFullWell = perCellVolume * this.MaxNumberOfCellsPerWellFromBucket;
+        }
+
+        return this.NumberOfFullWells(cellsRequested) * volumePerFullWell;
+    },
 
 	NumberOfCellsFromPartialWells: function(cellsRequested) {
+        //if (this.MagBead === "OneCellPerWell") { return cellsRequested; }
 		return parseInt(cellsRequested - 
 			this.NumberOfCellsFromFullWells(cellsRequested), 10);
 	},
@@ -825,6 +904,8 @@ var MagBeadCalc = Backbone.Model.extend({
         this.globals = options.globals;
         this.gaussianRounding = options.gaussianRounding;
 
+        this.Chemistry = options.Chemistry;
+        this.MagBead = options.MagBead;
         this.PreparationProtocol = options.PreparationProtocol;
         this.LongTermStorage = options.LongTermStorage;
         this.UseSpikeInControl = options.UseSpikeInControl;
@@ -837,7 +918,10 @@ var MagBeadCalc = Backbone.Model.extend({
         this.FinalStorageConcentration = options.FinalStorageConcentration;
         this.SpikeInPercentOfTemplateConcentration = options.SpikeInPercentOfTemplateConcentration;
 
-        this.SamplePlateLayout = new SamplePlateLayout({ bucket: this.bucket, ComplexReuse: this.ComplexReuse,
+        this.SamplePlateLayout = new SamplePlateLayout({
+            bucket: this.bucket,
+            MagBead: this.MagBead,  // really the protocol, need to know for OCPW
+            ComplexReuse: this.ComplexReuse,
             gaussianRounding: this.gaussianRounding
         });
 
@@ -845,6 +929,16 @@ var MagBeadCalc = Backbone.Model.extend({
 
         // bug 24078 - support raising errors here as well
         this.Errors = [];
+
+        //
+        // Spike-in dilution is different for P6 control, comes in higher concentration
+        //
+
+        if (this.Chemistry === "VersionP6") {
+            this.MagBeadStockSpikeInConcentration = 10.0;           // still 10000 pm
+            this.MagBeadIntermediateSpikeInConcentration = 0.100;   // dilutes down to 100 pm (10x dilution)
+            this.MagBeadFinalSpikeInConcentration = 0.002;          // then down to 2 pm (50x dilution)
+        }
 
         //
         // Call all "Prep" functions in our prototype in index order
@@ -997,12 +1091,23 @@ var MagBeadCalc = Backbone.Model.extend({
     },
 
     Prep8_MagBeadComplexDilutionVolumeOfSecondBindingBuffer: function () {
+
+        //
+        // For 2.3.0.0 and P6 the spike in moves down as a diffusion loaded
+        // So only include it here if we're not using P6
+        //
+
+        var volumeOfSpikeInDilution = this.MagBeadComplexDilutionVolumeOfSpikeInDilution; // MagPrep6
+        if (this.Chemistry === "VersionP6") {
+            volumeOfSpikeInDilution = 0.0;
+        }
+
         this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer =            // Result: MagPrep8
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.MagBeadComplexDilutionVolumeTotal -                            // MagPrep4
-        this.MagBeadComplexDilutionVolumeOfSpikeInDilution -                // MagPrep6
 		this.MagBeadComplexDilutionVolumeOfSecondComplex -                  // MagPrep6
-        this.MagBeadComplexDilutionVolumeOfSaltBuffer;                      // MagPrep7
+        this.MagBeadComplexDilutionVolumeOfSaltBuffer -                     // MagPrep7
+        volumeOfSpikeInDilution;                                            // MagPrep6
 
         // bug 24078 - if salt adjustment would cause BBB to go negative, then omit
         // this calculation and instead make all of the BBB to instead appear here
@@ -1010,8 +1115,9 @@ var MagBeadCalc = Backbone.Model.extend({
         // to calculate total - spike-in - complex here to see if we're going negative
 
         var aliquotSoFar = this.MagBeadComplexDilutionVolumeTotal -           // MagPrep4
-            this.MagBeadComplexDilutionVolumeOfSpikeInDilution -              // MagPrep6
-            this.MagBeadComplexDilutionVolumeOfSecondComplex;                 // MagPrep6
+            this.MagBeadComplexDilutionVolumeOfSecondComplex -                // MagPrep6
+            volumeOfSpikeInDilution;                                          // MagPrep6
+
         if (aliquotSoFar < 0.0)
         {
             // error case, the requested concentration on plate/chip is SO HIGH
@@ -1020,10 +1126,11 @@ var MagBeadCalc = Backbone.Model.extend({
             this.MagBeadComplexDilutionVolumeOfSaltBuffer = Number.NaN;
             this.MagBeadComplexDilutionVolumeOfSecondBindingBuffer = Number.NaN;
 
-            this.Errors.push((this.MagBeadComplexDilutionVolumeOfSpikeInDilution > 0.0) ?
+            this.Errors.push((volumeOfSpikeInDilution > 0.0) ?
                 "ConcentrationOnPlateTooHighWithControl" :      // suggest they try without control
                 "ConcentrationOnPlateTooHighWithoutControl");   // otherwise they're dead
         }
+
         if (aliquotSoFar - this.MagBeadComplexDilutionVolumeOfSaltBuffer - 1.0 < 0.0)
         {
             // we have enough concentration, but not with the salt adjustment
@@ -1068,7 +1175,7 @@ var MagBeadCalc = Backbone.Model.extend({
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }    // MagPrep0
             if (that.UseSpikeInControl === "True")                          // MagPrep0
             {
-                return that.SpikeInPercentOfTemplateConcentration *         // MagPrep0
+                return that.SpikeInPercentOfTemplateConcentration *        // MagPrep0
                         (that.FinalBeadedSampleConcentration /              // MagPrep2
                         that.MagBeadFinalSpikeInConcentration) *            // MagPrep0
                         that.MagBeadComplexDilutionVolumeTotal;             // MagPrep4
@@ -1088,38 +1195,36 @@ var MagBeadCalc = Backbone.Model.extend({
 
     Prep4_MagBeadComplexDilutionVolumeTotal: function () {
         this.MagBeadComplexDilutionVolumeTotal =                            // Result: MagPrep4
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfComplex; /* *                        // MagPrep2
-		this.MagneticBeadSluffFactor;  removed for 2.1.0.0    */                        // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
     },
 
     Prep6_BeadWashVolumeOfBeads: function () {
         this.BeadWashVolumeOfBeads =                                        // Result: MagPrep6
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfWashedBeads *                     // MagPrep4
-		this.MagneticBeadSluffFactor;   // leave this in for 2.1.0.0, used for wash beads only now
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+		this.ComplexBeadIncubationVolumeOfWashedBeads;                      // MagPrep4
     },
 
     Prep8_BeadWashVolumeOfBeadWashBuffer: function () {
         this.BeadWashVolumeOfBeadWashBuffer =                               // Result: MagPrep8
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.BeadWashVolumeOfBeads;                                         // MagPrep6
     },
 
     Prep8_BeadWashVolumeOfBeadBindingBuffer: function () {
         this.BeadWashVolumeOfBeadBindingBuffer =                            // Result: MagPrep8
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
 		this.BeadWashVolumeOfBeads;                                         // MagPrep6
     },
 
     Prep4_ComplexBeadIncubationVolumeOfWashedBeads: function () {
         var that = this;
-        this.ComplexBeadIncubationVolumeOfWashedBeads = (function () {       // Result: MagPrep4
+        this.ComplexBeadIncubationVolumeOfWashedBeads = (function () {      // Result: MagPrep4
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }    // MagPrep0
             if (0 === that.TotalComplexDilutionCells) { return 0.0; }       // MagPrep0
 
             return that.ComplexBeadIncubationVolumeOfComplex *              // MagPrep2
-				   that.globals.MagBeadToComplexRatio;                      // MagPrep0
+				   that.globals.MagBeadToComplexRatio;
 
             /* 
             * This is Ravi's alternative clever equation, 
@@ -1134,7 +1239,7 @@ var MagBeadCalc = Backbone.Model.extend({
 
     Prep2_ComplexBeadIncubationVolumeOfComplex: function () {
         var that = this;
-        this.ComplexBeadIncubationVolumeOfComplex = (function () {            // Result: MagPrep2
+        this.ComplexBeadIncubationVolumeOfComplex = (function () {           // Result: MagPrep2
             if (0.0 === that.SampleConcentrationOnPlate) { return 0.0; }     // MagPrep0
             if (0 === that.TotalComplexDilutionCells) { return 0.0; }        // MagPrep0
 
@@ -1157,18 +1262,43 @@ var MagBeadCalc = Backbone.Model.extend({
         this.ComplexBeadWashVolumeOfFirstBindingBuffer =                    // Result: MagPrep4
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
 		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
+
+        if (this.MagBead === "OneCellPerWell" && 1 === this.TotalComplexDilutionCells) {
+            // for one cell, make the pipette volume a little safer
+            this.ComplexBeadWashVolumeOfFirstBindingBuffer *= 2;
+        }
     },
 
     Prep4_ComplexBeadWashVolumeOfBeadWashBuffer: function () {
         this.ComplexBeadWashVolumeOfBeadWashBuffer =                        // Result: MagPrep4
 		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
 		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
+
+        if (this.MagBead === "OneCellPerWell" && 1 === this.TotalComplexDilutionCells) {
+            // for one cell, make the pipette volume a little safer
+            this.ComplexBeadWashVolumeOfBeadWashBuffer *= 2;
+        }
     },
 
-    Prep4_ComplexBeadWashVolumeOfSecondBindingBuffer: function () {
+    Prep7_ComplexBeadWashVolumeOfSecondBindingBuffer: function () {
+
+        //
+        // For 2.3.0.0 we now add spike-in here diffusion loaded
+        //
+
+        var amount = this.ComplexBeadIncubationVolumeOfComplex;             // MagPrep2
+        if (this.MagBead === "OneCellPerWell") {
+            amount = amount * 5;
+        }
+        if (this.Chemistry === "VersionP6" && this.UseSpikeInControl === "True") { // MagPrep0
+            // subtract spike in amount if we have spike in
+            // spike-in dilution was already multiplied by 5 above
+            amount -= this.MagBeadComplexDilutionVolumeOfSpikeInDilution;   // MagPrep6
+        }
+
         this.ComplexBeadWashVolumeOfSecondBindingBuffer =                   // Result: MagPrep4
-		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                    // MagPrep0
-		this.ComplexBeadIncubationVolumeOfComplex;                          // MagPrep2
+		(0.0 === this.SampleConcentrationOnPlate) ? 0.0 :                   // MagPrep0
+		amount;                                                             // MagPrep2
     }
 });
 
@@ -1182,11 +1312,13 @@ var MagBeadCalc = Backbone.Model.extend({
 //
 var SampleCalc = Backbone.Model.extend({
     globals: undefined,
+    strings: undefined,
     bucket: undefined,
     errors: undefined,
 
     initialize: function (options) {
         this.globals = options.globals;
+        this.strings = options.strings;
         this.errors = options.errors;
 
         if (options.hasOwnProperty("unitTesting")) {
@@ -1223,7 +1355,9 @@ var SampleCalc = Backbone.Model.extend({
     SpikeInRatioOption: "Default",
     CustomSpikeInRatioPercent: "0",
     CustomPolymeraseTemplateRatio: "0",
+    CustomPrimerTemplateRatio: "0",
     PolymeraseTemplateRatioOption: "Default",
+    PrimerTemplateRatioOption: "Default",
     NumberOfCellsInBinding: 0,
     BindingPolymeraseOption: "Volume",
     StorageComplexOption: "Default",
@@ -1333,7 +1467,7 @@ var SampleCalc = Backbone.Model.extend({
         this.VolumePerChipNoReuse = parseFloat(this.bucket.VolumePerChipNoReuse);                   // Result: Prep2
     },
     Prep2_PrimerToTemplateRatio: function () { // private
-        this.PrimerToTemplateRatio = parseFloat((this.PreparationProtocol === "Small") ?            // Result: Prep2
+        this.DefaultPrimerTemplateRatio = parseFloat((this.PreparationProtocol === "Small") ?            // Result: Prep2
             this.bucket.DefaultPrimerToTemplateRatioSmallScale :
             this.bucket.DefaultPrimerToTemplateRatioLargeScale);
     },
@@ -1419,6 +1553,7 @@ var SampleCalc = Backbone.Model.extend({
     Prep2_SetupSamplePlateLayout: function () {
         this.SamplePlateLayout = new SamplePlateLayout(                     // Result: Prep2
 			{bucket: this.bucket,                                           // Prep0
+            MagBead: this.MagBead,                                          // Prep0
 			ComplexReuse: this.ComplexReuse,                                // Prep0
 			gaussianRounding: this.gaussianRounding                         // Prep0
 
@@ -1428,14 +1563,26 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep6_MaxVolumePerWell: function () {
         this.MaxVolumePerWell =                                             // Result: Prep6
-            (this.NumberOfFullWells === 0) ? 0 :                             // Prep4
+            (this.NumberOfFullWells === 0) ? 0 :                            // Prep4
                 this.MaxVolumePerWellFromBucket;                            // Prep2
     },
 
     Prep6_MaxNumberOfCellsPerWell: function () {
         this.MaxNumberOfCellsPerWell =                                     // Result: Prep6
-             (this.NumberOfFullWells === 0) ? 0 :                            // Prep4
-                 this.MaxNumberOfCellsPerWellFromBucket;                    // Prep2
+            (this.NumberOfFullWells === 0) ? 0 :                            // Prep4
+                this.MaxNumberOfCellsPerWellFromBucket;                    // Prep2
+    },
+
+    Prep7_DisplayMaxVolumePerWell: function () {
+        this.DisplayMaxVolumePerWell =                                      // Result: Prep7
+            (this.MagBead === "OneCellPerWell")
+                ? 0 : this.MaxVolumePerWell;                                      // Prep6
+    },
+
+    Prep7_DisplayMaxNumberOfCellsPerWell: function () {
+        this.DisplayMaxNumberOfCellsPerWell =                               // Result: Prep7
+            (this.MagBead === "OneCellPerWell")
+                ? 0 : this.MaxNumberOfCellsPerWell;                               // Prep6
     },
 
     ComputeNonStandardTotalVolumeOfAnnealingReaction: function (sampleVolumeInAnnealingReaction, primerVolume) { // Result: Prep0
@@ -1445,7 +1592,7 @@ var SampleCalc = Backbone.Model.extend({
     ComputeNonStandardPrimerVolumeInAnnealingReaction: function (sampleVolumeInAnnealing) {         // Result: Prep4
         var molesOfTemplate, molesOfPrimer;
         molesOfTemplate = (sampleVolumeInAnnealing * this.StartingSampleConcentrationInNanoMolar);  // Prep4
-        molesOfPrimer = this.PrimerToTemplateRatio * molesOfTemplate;                               // Prep2
+        molesOfPrimer = this.PrimerTemplateRatio * molesOfTemplate;                               // Prep2
         return molesOfPrimer / this.DilutedPrimerConcentration;                                     // Prep2
     },
 
@@ -1454,35 +1601,24 @@ var SampleCalc = Backbone.Model.extend({
     },
 
     ComputeVolumeOfAnnealingReactionInBindingFromDesiredCells: function (requestedCells, reuse, sampleConcentrationInBinding) {  // Result: Prep6
-        var numFullWells, volumeInPartial, volumeOnPlate, totalVolumeOfBindingReacton;
+        var numFullWells, volumeInPartial, volumeOnPlate, totalVolumeOfBindingReaction;
 
         numFullWells = parseInt(requestedCells / this.MaxNumberOfCellsPerWellFromBucket, 10);       // Prep2
         volumeInPartial = this.SamplePlateLayout.ComputeVolumeInPartialWells(requestedCells, numFullWells);    // Prep2 for SPL
         volumeOnPlate = (numFullWells * this.MaxVolumePerWellFromBucket) + volumeInPartial;         // Prep2
 
         // no longer needed: SampleConcentrationInBinding is now computed from FinalAnnealedConcentration
-        //var totalVolumeOfBindingReacton = Math.max(this.MinimumVolumeOfBindingReaction, volumeOnPlate * 
+        //var totalVolumeOfBindingReaction = Math.max(this.MinimumVolumeOfBindingReaction, volumeOnPlate *
         //    (this.ConcentrationOnPlate / 
         //       (LowConcentrationsAllowed === "True") ? 
         //          (this.FinalAnnealedConcentration * 0.6) : 
         //          this.SampleConcentrationInBinding)));
 
-        /* removed for 2.1.0.0 - no more sluff factor for magbead complex dilution (just bead wash)
-        if (this.MagBead === "True" || this.MagBead === "OneCellPerWell") {
-            volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                      // Prep0
-
-            // In large scale mag bead we have two sluff factors, one for the additional dilution step from storage complex
-            if (this.PreparationProtocol === "Large") {
-                volumeOnPlate *= this.globals.MagneticBeadSluffFactor;                                  // Prep0
-            }
-        }
-        */
-
-        totalVolumeOfBindingReacton = Math.max(
+        totalVolumeOfBindingReaction = Math.max(
           this.MinimumVolumeOfBindingReaction, volumeOnPlate *                                          // Prep4
           (this.ConcentrationOnPlate / sampleConcentrationInBinding));                                  // Prep6
 
-        return totalVolumeOfBindingReacton * 0.6;
+        return totalVolumeOfBindingReaction * 0.6;
     },
 
 
@@ -1573,13 +1709,6 @@ var SampleCalc = Backbone.Model.extend({
                 volumeNeededPerChip = parseFloat(that.VolumePerChipNoReuse) + 	 // prep2
                 					  parseFloat(that.DeadVolumePerWell); 		 // prep2
 
-                /* removed for 2.1.0.0
-            	if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
-            	{
-            		// for magbead = 9 uL plus 10 uL of deadvolumeperwell * 1.1 sluff factor = 20.9 uL currently
-                	volumeNeededPerChip *= that.globals.MagneticBeadSluffFactor; // Prep0
-                }*/
-
                 if (that.TitrationConcentration1 > 0) {
                     totalVolumeOfBindingReaction += volumeNeededPerChip * (that.TitrationConcentration1 / concentrationInBinding);
                 }
@@ -1658,7 +1787,7 @@ var SampleCalc = Backbone.Model.extend({
                 // future: unfinished feature
                 //if (that.NonStandardAnnealingConcentrationOption === "Custom")          // Prep0
                 //    return that.TotalVolumeOfAnnealingReaction *                        // Prep9
-                //        that.PrimerToTemplateRatio *                                    // Prep2
+                //        that.PrimerTemplateRatio *                                    // Prep2
                 //        that.NonStandardAnnealingConcentration /                        // Prep6
                 //        that.DilutedPrimerConcentration;                                // Prep2
 
@@ -1666,7 +1795,7 @@ var SampleCalc = Backbone.Model.extend({
             }
 
             return that.TotalVolumeOfAnnealingReaction *                                // Prep9
-                that.PrimerToTemplateRatio *                                            // Prep2
+                that.PrimerTemplateRatio *                                            // Prep2
                 that.SampleConcentrationInAnnealingReaction /                           // Prep2
                 that.DilutedPrimerConcentration;                                        // Prep2
         } ());
@@ -1868,9 +1997,16 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep4_PolymeraseTemplateRatio: function () {
         this.PolymeraseTemplateRatio =                                  // Result: Prep4
-		(this.PolymeraseTemplateRatioOption === "Default") ?            // Prep0
-		    this.DefaultPolymeraseTemplateRatio :                       // Prep2
-		    this.CustomPolymeraseTemplateRatio;                         // Prep0
+            (this.PolymeraseTemplateRatioOption === "Default") ?        // Prep0
+                this.DefaultPolymeraseTemplateRatio :                   // Prep2
+                this.CustomPolymeraseTemplateRatio;                     // Prep0
+    },
+
+    Prep4_PrimerTemplateRatio: function () {
+        this.PrimerTemplateRatio =                                      // Result: Prep4
+            (this.PrimerTemplateRatioOption === "Default") ?            // Prep0
+                this.DefaultPrimerTemplateRatio :                       // Prep2
+                this.CustomPrimerTemplateRatio;                         // Prep0
     },
 
     Prep28_TotalVolumeOfFirstSpikeInDilution: function () {
@@ -1948,7 +2084,7 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep2_PolymeraseStockConcentration: function () {
         this.PolymeraseStockConcentration =                             // Result: Prep2
-            this.globals.PolymeraseStockConcentration;                  // Prep0
+            this.bucket.PolymeraseStockConcentration;                  // Prep0
     },
 
     //
@@ -1978,6 +2114,9 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep2_DeadVolumePerWell: function () {
         this.DeadVolumePerWell = this.bucket.DeadVolumePerWell;                         // Result: Prep2
+        if (this.MagBead === "OneCellPerWell") {
+            this.DeadVolumePerWell = 0.0;
+        }
     },
 
     Prep22_TotalVolumeOfBindingReaction: function () {
@@ -2103,9 +2242,12 @@ var SampleCalc = Backbone.Model.extend({
 
             var targetConcentration, boundTemplateRequired, finalResultingVolumeForOneChip, concentrationTooLow,
                 fullWells, cellsFromFullWells, partialVolume, cellsFromPartialWell, result,
-                maxVolume = volume *
-						    that.FinalBindingConcentration /        // Prep24
-							that.ConcentrationOnPlate;              // Prep6
+                maxVolume;
+
+            targetConcentration = that.ConcentrationOnPlate;    // Prep6
+            maxVolume = volume *
+                        that.FinalBindingConcentration /        // Prep24
+                        targetConcentration;
 
             // Don't use StorageComplexConcentration, that's what we end up with after the final long term storage dilution, but then we
             // end up with that much more volume to get to that concentration!
@@ -2118,23 +2260,6 @@ var SampleCalc = Backbone.Model.extend({
 
                 return 0;
             }
-
-            //
-            // If mag bead, we adjust by Ravi's MagBeadSluffFactor
-            //
-
-            /* removed for 2.1.0.0
-            if (that.MagBead === "True" || that.MagBead === "OneCellPerWell") // Prep0
-            {
-                maxVolume /= that.globals.MagneticBeadSluffFactor;          // Prep0
-
-                // for large scale mag bead, we need twice the sluff factor since we have an extra complex dilution step (from storage)
-
-                if (that.PreparationProtocol === "Large" || if small and storage case)                    // Prep0
-                {
-                    maxVolume /= that.globals.MagneticBeadSluffFactor;      // Prep0
-                }
-            }*/
 
             // #19588 we're already including the spike in volume now TotalVolumeOfBindingReaction
             //if (Chemistry.Equals(BucketConstants.ChemistryV2))
@@ -2155,7 +2280,6 @@ var SampleCalc = Backbone.Model.extend({
             // then we have an error.
             //
 
-            targetConcentration = that.ConcentrationOnPlate;                        // Prep6
             if (that.ComputeOption === "Titration") {                               // Prep0
                 // for titration, use the maximum titration to test if we will have enough instead of the standard ConcentrationOnPlate
                 targetConcentration = Math.max(Math.max(that.TitrationConcentration1, that.TitrationConcentration2),    // Prep0
@@ -2188,11 +2312,33 @@ var SampleCalc = Backbone.Model.extend({
             // Round the volume up to something pipette-able to handle edge conditions
             //
 
-            fullWells = parseInt(maxVolume / that.MaxVolumePerWellFromBucket, 10);      // Prep2
-            cellsFromFullWells = fullWells * that.MaxNumberOfCellsPerWellFromBucket;    // Prep2
-            partialVolume = maxVolume - (fullWells * that.MaxVolumePerWellFromBucket);  // Prep2
-            cellsFromPartialWell = that.SamplePlateLayout.ComputeCellsFromPartialWell(partialVolume); // Prep2
-            result = cellsFromFullWells + cellsFromPartialWell;
+            if ("OneCellPerWell" === that.MagBead) {
+                //
+                // we use different dead volume based upon the number of cells possible,
+                // so this is differential slightly... 0 uL for 1 cell, 1 uL for 2 to 8, 2 uL to 16 cells, 3 uL above
+                // so if the volume is up to one this.bucket.VolumePerChipNoReuse the dead volume is 0, if the
+                // volume is less than or equal to (1.0 + this.bucket.VolumePerChipNoReuse) * 8 then use that, etc.
+                //
+
+                var volumePerChip = parseFloat(that.VolumePerChipNoReuse);
+                if ((maxVolume - 3.0) >= (volumePerChip * 16)) {
+                    result = parseInt((maxVolume - 3.0) / volumePerChip);
+                } else if ((maxVolume - 2.0) >= (volumePerChip * 8)) {
+                    result = parseInt((maxVolume - 2.0) / volumePerChip);
+                } else if ((maxVolume - 1.0) >= volumePerChip) {
+                    result = parseInt((maxVolume - 1.0) / volumePerChip);
+                } else if (maxVolume === volumePerChip) {
+                    result = 1;
+                } else {
+                    result = 0;
+                }
+            } else {
+                fullWells = parseInt(maxVolume / that.MaxVolumePerWellFromBucket, 10);      // Prep2
+                cellsFromFullWells = fullWells * that.MaxNumberOfCellsPerWellFromBucket;    // Prep2
+                partialVolume = maxVolume - (fullWells * that.MaxVolumePerWellFromBucket);  // Prep2
+                cellsFromPartialWell = that.SamplePlateLayout.ComputeCellsFromPartialWell(partialVolume); // Prep2
+                result = cellsFromFullWells + cellsFromPartialWell;
+            }
 
             //
             // Can we make enough? Compare against TotalComplexDilutionCells and raise an error
@@ -2300,6 +2446,11 @@ var SampleCalc = Backbone.Model.extend({
         this.ComplexDilutionBufferName = "Complex Dilution Buffer";     // Result: Prep0 (todo convert to global string)
     },
 
+    Prep0_Step9Text: function () {
+        this.Step9Text = ((this.MagBead === "OneCellPerWell") ?
+            this.strings.Step9oneCellPerWell : this.strings.Step9);
+    },
+
     Prep4_VolumeFromFullWells: function () {
         this.VolumeFromFullWells =                                      // Result: Prep4
 			this.SamplePlateLayout.VolumeFromFullWells(                 // Prep2 for SPL instance
@@ -2314,14 +2465,26 @@ var SampleCalc = Backbone.Model.extend({
 
     Prep4_VolumeFromPartialWells: function () {
         this.VolumeFromPartialWells =                                   // Result: Prep4
-			this.SamplePlateLayout.VolumeFromPartialWells(              // Prep2 for SPL instance
-				this.BindingComplexNumberOfCellsRequested);             // Prep0
+            this.SamplePlateLayout.VolumeFromPartialWells(              // Prep2 for SPL instance
+                this.BindingComplexNumberOfCellsRequested);             // Prep0
+    },
+
+    Prep5_DisplayVolumePerPartialWell: function () {
+        this.DisplayVolumePerPartialWell =                              // Result: Prep5
+            (this.MagBead === "OneCellPerWell")
+               ? 45 : this.VolumeFromPartialWells;                      // Prep4
     },
 
     Prep4_NumberOfFullWells: function () {
         this.NumberOfFullWells = parseInt(                              // Result: Prep4
-			this.SamplePlateLayout.NumberOfFullWells(                   // Prep2 for SPL instance
-				this.BindingComplexNumberOfCellsRequested), 10);        // Prep0
+            this.SamplePlateLayout.NumberOfFullWells(                   // Prep2 for SPL instance
+                this.BindingComplexNumberOfCellsRequested), 10);        // Prep0
+    },
+
+    Prep5_DisplayNumberOfFullWells: function () {
+        this.DisplayNumberOfFullWells =                                 // Result: Prep5
+            (this.MagBead === "OneCellPerWell")                         // Prep0
+            ? 0 : this.NumberOfFullWells;                               // Prep4
     },
 
     Prep4_NumberOfCellsFromPartialWells: function () {
@@ -2330,9 +2493,22 @@ var SampleCalc = Backbone.Model.extend({
 				this.BindingComplexNumberOfCellsRequested), 10);        // Prep0
     },
 
+    Prep5_DisplayNumberOfCellsPerPartialWell: function() {
+        this.DisplayNumberOfCellsPerPartialWell =                       // Result: Prep5
+            (this.MagBead === "OneCellPerWell")                         // Prep0
+                ? 1 : this.NumberOfCellsFromPartialWells;               // Prep4
+    },
+
     Prep6_NumberOfPartialWells: function () {
-        this.NumberOfPartialWells =                             // Result: Prep6
-			this.NumberOfCellsFromPartialWells > 0 ? 1 : 0;     // Prep4
+        this.NumberOfPartialWells =                                     // Result: Prep6
+            this.NumberOfCellsFromPartialWells > 0 ? 1 : 0;             // Prep4
+    },
+
+    Prep6_DisplayNumberOfPartialWells: function () {
+        this.DisplayNumberOfPartialWells =                              // Result: Prep6
+            (this.MagBead === "OneCellPerWell")
+              ?  this.BindingComplexNumberOfCellsRequested              // Prep0
+              :  this.NumberOfCellsFromPartialWells > 0 ? 1 : 0;        // Prep4
     },
 
     Prep6_TotalComplexDilutionCells: function () {
@@ -2407,7 +2583,9 @@ var SampleCalc = Backbone.Model.extend({
             NumberOfFullWells: this.NumberOfFullWells,                          // Prep4
             FinalBindingConcentration: this.FinalBindingConcentration,          // Prep24
             FinalStorageConcentration: this.FinalStorageConcentration,          // Prep30
-            SpikeInPercentOfTemplateConcentration: this.SpikeInPercentOfTemplateConcentration   // Prep4
+            SpikeInPercentOfTemplateConcentration: this.SpikeInPercentOfTemplateConcentration,   // Prep4
+            MagBead: this.MagBead,                                              // Prep0
+            Chemistry: this.Chemistry                                           // Prep0
         };
 
         if (this.unitTesting || this.ComputeOption === "Titration") {
@@ -2584,9 +2762,16 @@ var SampleCalc = Backbone.Model.extend({
             this.RaiseError("NonStandardSmallStorageNotSupported");
         }
 
+        if (this.PreparationProtocol === "Small" && this.LongTermStorage === "True" && this.MagBead === "False") {
+            this.RaiseError("DiffusionSmallStorageNotSupported");
+        }
+
         // issue 24100 - control with 20kb bucket is unsupported in 2.1.0.0
+        // but for 2.3 it is supported with the P6 chemistry
         if (this.UseSpikeInControl === "True" && this.AnnealedBasePairLength > 15000) {
-            this.RaiseError("UntestedControlWithLongInsertSize");
+            if (this.Chemistry === "VersionP5" || this.Chemistry === "VersionP4") {
+                this.RaiseError("UntestedControlWithLongInsertSize");
+            }
         }
 
         //

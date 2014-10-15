@@ -327,7 +327,7 @@ var SamplesView = Backbone.View.extend({
 
         $('input').each(function () {
             if ($(this).is(':radio')) {
-                if ($(this).attr('checked')) {
+                if ($(this).prop('checked')) {
                     $(this).trigger('change');
                 }
                 return;
@@ -431,6 +431,10 @@ var SamplesView = Backbone.View.extend({
             that.toggleRadioInputs('#PolymeraseTemplateRatioOption-Radio-Default', null, '#CustomPolymeraseTemplateRatio');
         });
 
+        $('input[name="PrimerTemplateRatioOption"]').bind('change', function () {
+            that.toggleRadioInputs('#PrimerTemplateRatioOption-Radio-Default', null, '#CustomPrimerTemplateRatio');
+        });
+
         $('input[name="BindingPolymeraseOption"]').bind('change', function () {
             that.toggleRadioInputs('#BindingPolymeraseOption-Radio-All', null, '#NumberOfCellsInBinding');
         });
@@ -442,42 +446,49 @@ var SamplesView = Backbone.View.extend({
         //
         // If we turn Spike-In Control use on or off the hide/show related sections
         //
+        // Note: as of 2.3.0.0 I am removing the support for C1/V1 chemistry editing,
+        // primarily because the P6 spike-in protocol changes these again and trying
+        // to keep the C1/V1 toggles would be a headache.
+        //
 
         $('input[name="UseSpikeInControl"]').add($('input[name="Chemistry"]')).bind('change', function () {
+
+            // for elements we always show if spike-in is selected (like dilution steps)
             if ($('#UseSpikeInControl-Radio-True').is(':checked')) {
-                // Use Spike-In is true
-                if ($('#Chemistry-Radio-V1').is(':checked')) {
-                    $('.hiddenV1SpikeInOutputs').hide();
-                    $('.showV1SpikeInOutputs').show();
-                    $('.hiddenV2SpikeInOutputs').hide();
-                    $('.showV2SpikeInOutputs').hide();
-                } else {
-                    $('.hiddenV1SpikeInOutputs').hide();
-                    $('.showV1SpikeInOutputs').hide();
-                    $('.hiddenV2SpikeInOutputs').hide();
-                    $('.showV2SpikeInOutputs').show();
-                }
+                $('.showSpikeIn').show();
             } else {
-                // Use Spike-In is false
-                if ($('#Chemistry-Radio-V1').is(':checked')) {
-                    $('.hiddenV1SpikeInOutputs').show();
-                    $('.showV1SpikeInOutputs').hide();
-                    $('.hiddenV2SpikeInOutputs').hide();
+                $('.showSpikeIn').hide();
+            }
+
+            if ($('#Chemistry-Radio-P6').is(':checked')) {
+                //
+                // Show P6 spike-in details if spike-in selected
+                // Don't show the "not used" values though like V2
+                // when the P6 spike in is requested. Just omit it.
+                //
+                if ($('#UseSpikeInControl-Radio-True').is(':checked')) {
+                    $('.hiddenV2SpikeInOutputs').hide();    // omit
                     $('.showV2SpikeInOutputs').hide();
+                    $('.showP6SpikeInOutputs').show();
                 } else {
-                    $('.hiddenV1SpikeInOutputs').hide();
-                    $('.showV1SpikeInOutputs').hide();
                     $('.hiddenV2SpikeInOutputs').show();
                     $('.showV2SpikeInOutputs').hide();
+                    $('.showP6SpikeInOutputs').hide();
                 }
-            }
-        });
-
-        $('input[name="Chemistry"]').bind('change', function () {
-            if ($('#Chemistry-Radio-V1').is(':checked')) {
-                $('.v2ChemistryShown').hide();
             } else {
-                $('.v2ChemistryShown').show();
+
+                // Show P4/P5 spike-in details if spike-in selected
+                if ($('#UseSpikeInControl-Radio-True').is(':checked')) {
+                    // Use Spike-In is true
+                    $('.hiddenV2SpikeInOutputs').hide();
+                    $('.showV2SpikeInOutputs').show();
+                    $('.showP6SpikeInOutputs').hide();
+                } else {
+                    // Use Spike-In is false
+                    $('.hiddenV2SpikeInOutputs').show();
+                    $('.showV2SpikeInOutputs').hide();
+                    $('.showP6SpikeInOutputs').hide();
+                }
             }
         });
 
@@ -506,8 +517,8 @@ var SamplesView = Backbone.View.extend({
                 $('#LongTermStorage-Radio-True').removeAttr('disabled');
                 $('#LongTermStorage-Radio-False').removeAttr('disabled');
             } else {
-                $('#LongTermStorage-Radio-False').attr('disabled', true);
-                $('#LongTermStorage-Radio-True').attr('disabled', true).attr('checked', true);
+                $('#LongTermStorage-Radio-False').attr('disabled', true).prop('checked', true);
+                $('#LongTermStorage-Radio-True').attr('disabled', true);
             }
         });
 
@@ -521,13 +532,23 @@ var SamplesView = Backbone.View.extend({
                 $('.nonMagBeadSection').hide();
                 // also mark complex reuse as false: not allowed with magbead in 1.3.2
                 $('#ComplexReuse-Radio-Yes').attr('disabled', true);
-                $('#ComplexReuse-Radio-No').attr('disabled', true).attr('checked', true);
+                $('#ComplexReuse-Radio-No').attr('disabled', true).prop('checked', true);
             } else {
                 $('.magBeadSection').hide();
                 $('.nonMagBeadSection').show();
                 // allow complex reuse again
                 $('#ComplexReuse-Radio-Yes').removeAttr('disabled');
                 $('#ComplexReuse-Radio-No').removeAttr('disabled');
+            }
+        });
+
+        $('input[name="Chemistry"]').bind('change', function () {
+            if ($("#Chemistry-Radio-P6").is(':checked')) {
+                $('#PreparationProtocol-Radio-Small').attr('disabled', true).prop('checked', true);
+                $('#PreparationProtocol-Radio-Large').attr('disabled', true);
+            } else {
+                $('#PreparationProtocol-Radio-Small').removeAttr('disabled');
+                $('#PreparationProtocol-Radio-Large').removeAttr('disabled');
             }
         });
     },
@@ -1044,7 +1065,18 @@ var SamplesView = Backbone.View.extend({
                 return;
             }
 
+            //
+            // we want to both load the sample on the page and
+            // also change the window location, so if the user
+            // navigates away (or to 'print') and back we don't
+            // keep a "#new" in the URI and create a new sample
+            // accidentally from navigating back.
+            //
+
             that.samples.selectSample(data.SampleName, true);
+            querystring = "#sample/";
+            querystring += encodeURIComponent(data.SampleName);
+            window.location = querystring;
         });
 
         //
@@ -1163,13 +1195,14 @@ var SamplesView = Backbone.View.extend({
         radios.ComputeOptionVolume = "checked='checked'";
         radios.ComputeOptionCells = "";
         radios.ComputeOptionTitration = "";
-        radios.MagBeadYes = "checked='checked'";
+        radios.MagBeadYes = "";
         radios.MagBeadNo = "";
-        radios.MagBeadOne = "";
+        radios.MagBeadOne = "checked='checked'";
         radios.ChemistryV2 = "";
         radios.ChemistryXL = "";
-        radios.ChemistryP4 = "checked='checked'";
+        radios.ChemistryP4 = "";
         radios.ChemistryP5 = "";
+        radios.ChemistryP6 = "checked='checked'";
         radios.CellVersion2 = "";
         radios.CellVersion3 = "checked='checked'";
         radios.PreparationSmall = "checked='checked'";
@@ -1188,6 +1221,8 @@ var SamplesView = Backbone.View.extend({
         radios.ControlComplexRatioCustom = "";
         radios.PolymeraseRatioDefault = "checked='checked'";
         radios.PolymeraseRatioCustom = "";
+        radios.PrimerRatioDefault = "checked='checked'";
+        radios.PrimerRatioCustom = "";
         radios.BindingPolymeraseAll = "checked='checked'";
         radios.BindingPolymeraseSome = "";
         radios.StorageComplexDefault = "checked='checked'";

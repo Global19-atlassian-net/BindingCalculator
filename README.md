@@ -1,8 +1,6 @@
 BindingCalculator
 =================
 
-(aka SamplePrepCalculator)
-
 This folder contains a version of the binding calculator
 used with the PacBio RS and PacBio RS II sequencers. It is used to
 calculate binding and annealing reactions and to prepare DNA samples
@@ -29,8 +27,7 @@ Browser Compatibility
 ---------------------
 The recommended web browsers to use with the Binding Calculator
 are the Firefox and Chrome browsers.  The Safari browser, including 
-mobile Safari, will also function although we have not tested it 
-extensively.
+mobile Safari, will likely also function although we have not tested it. 
 
 Opening Calculator.html in Chrome and Safari will always show the 
 list of old calculations. Opening a new version of Calculator.html 

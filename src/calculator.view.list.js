@@ -243,6 +243,9 @@ var ListView = Backbone.View.extend({
         $('body').css('background', "rgb(201,201,206)");
         this.$el.prop("id", "listview");    // toggle css
 
+        // TODO: for narrow layouts like mobile, show few columns or just one column
+        // TODO: and then redraw on resize
+
         $("#ui-jqgrid").jqGrid({
             datatype: "local",
             height: 'auto',
@@ -250,15 +253,15 @@ var ListView = Backbone.View.extend({
             rowNum: 9999999,
             colNames: ['Sample name', 'Vol', 'Cells', 'Conc', 'BP', 'Exp', 'Note', 'internalname'],
             colModel: [
-                { name: 'name', index: 'name', width: 150 },
-                { name: 'volume', index: 'volume', width: 30, align: "right", sorttype: "float" },
-                { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
-                { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
-                { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
-                { name: 'export', index: 'export', width: 30, align: "right", sortable: false },
-                { name: 'note', index: 'note', width: 220, sortable: false },
-                { name: 'internalname', index: "internalname", width: 0, hidden: true }
-            ],
+                    { name: 'name', index: 'name', width: 150 },
+                    { name: 'volume', index: 'volume', width: 30, align: "right", sorttype: "float" },
+                    { name: 'cells', index: 'cells', width: 30, align: "right", sorttype: "int" },
+                    { name: 'conc', index: 'conc', width: 30, align: "right", sorttype: "float" },
+                    { name: 'bp', index: 'bp', width: 36, align: "right", sorttype: "int" },
+                    { name: 'export', index: 'export', width: 30, align: "right", sortable: false },
+                    { name: 'note', index: 'note', width: 220, sortable: false },
+                    { name: 'internalname', index: "internalname", width: 0, hidden: true }
+                    ],
             multiselect: true,
             caption: "Samples"
         });

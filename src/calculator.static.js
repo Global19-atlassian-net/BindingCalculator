@@ -16,7 +16,7 @@ var Constants = function () {
 };
 
 Constants.prototype.globals = {
-    "PolymeraseStockConcentration": "1600.0",
+    //"PolymeraseStockConcentration": "1600.0", now per bucket in 2.3.0.0 since it changes for P6
     "AnnealingPrimerStockConcentration": "5000.0",
     "CustomAnnealingConcentration": "5",
     "CustomBindingConcentration": "3",
@@ -60,6 +60,7 @@ Constants.prototype.strings = {
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
     Step9: "Step 8: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
+    Step9oneCellPerWell: "Step 8: IMPORTANT: Re-suspend beads to homogeneity immediately prior to aliquoting.  Aliquot 45uL per well into separate wells of a new 96-well PCR plate for processing on PacBio RS.",
     TitrationTitle: "Loading Titration",
     StorageTitle: "Long Term Storage",
     StorageStart: "Glycerol preparation for storage",
@@ -67,19 +68,20 @@ Constants.prototype.strings = {
     ChemistryV2option: "C2",
     ChemistryXLoption: "XL",
     ChemistryP4option: "P4",
-    ChemistryP5option: "P5"
+    ChemistryP5option: "P5",
+    ChemistryP6option: "P6"
 };
 
 Constants.prototype.errors = {
 	SampleConcentrationLow: {
 		Coefficient: "StartingSampleConcentration",
         ShortMessage: "Too Low",
-        LongMessage: "Your concentration is too low for these settings. You may disable the Standard option."
+        LongMessage: "Your concentration is too low for these settings. You may disable the Standard Concentration option."
 	},
 	BindingVolumeLow: {
 		Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Error: Not enough binding volume. You may disable the Standard option."
+        LongMessage: "Error: Not enough binding volume. You may disable the Standard Concentration option."
 	},
     DifficultPipetting: {
         Coefficient: "",
@@ -121,22 +123,22 @@ Constants.prototype.errors = {
 	NonStandardLargeScaleNew: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations require the Standard option."
+        LongMessage: "Large scale preparations require Standard Concentration."
 	},
 	NonStandardLargeScale: {    // deprecated, included just for comparison unit tests against C# version
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Large scale preparations require the Standard option."
+        LongMessage: "Large scale preparations require Standard Concentration."
 	},
 	NonStandardTitration: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Titrations require the Standard option."
+        LongMessage: "Titrations requires Standard Concentration."
 	},
 	NonStandardByCells: {
 		Coefficient: "LowConcentrationsAllowed",
         ShortMessage: "Not Allowed",
-        LongMessage: "Computing by # of SMRTCells require the Standard option."
+        LongMessage: "Computing by # of SMRTCells requires Standard Concentration."
 	},
 	ReuseRequiredWithStrobe: {
 		Coefficient: "ComplexReuse",
@@ -168,12 +170,12 @@ Constants.prototype.errors = {
 	TitrationConcentrationTooHigh: {
 		Coefficient: "TitrationConcentration4",
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard option."
+        LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard Concentration option."
 	},
 	TitrationConcentrationTooHighNonStandard: {
 		Coefficient: "TitrationConcentration4",		// C# had TitrationConcentrations
         ShortMessage: "Too High",					// C# had "Too Low"
-        LongMessage: "A requested titration concentration is too high for the sample even without the Standard option. Try a lower value."
+        LongMessage: "A requested titration concentration is too high for the sample even without a Standard Concentration. Try a lower value."
 	},
 	NotEnoughAvailableVolume: {
 		Coefficient: "AvailableSampleVolume",
@@ -212,7 +214,12 @@ Constants.prototype.errors = {
     NonStandardSmallStorageNotSupported: {
         Coefficient: "",
         ShortMessage: "",
-        LongMessage: "Small scale preparation using long term storage require the Standard option."
+        LongMessage: "Small scale preparation using long term storage require Standard Concentration."
+    },
+    DiffusionSmallStorageNotSupported: {
+        Coefficient: "",
+        ShortMessage: "",
+        LongMessage: "Long term storage is not supported for small scale preparation and standard loading."
     }
 };
 
@@ -225,7 +232,9 @@ Constants.prototype.tooltips = [
         'Enter the titration experiment on-plate concentrations for up to four SMRT Cells.' },
     { "htmlclass": 'help-dna-concentration', "position": 'left', "content": 
         'Concentration of SMRTbell template before annealing.' },
-    { "htmlclass": 'help-prep-protocol', "position": 'left', "content": 
+    { "htmlclass": 'help-protocol', "position": 'left', "content":
+        'Select the protocol type. Standard is diffusion loading. MagBead uses magnetic beads and includes the OneCellPerWell option.' },
+    { "htmlclass": 'help-prep-protocol', "position": 'left', "content":
         'Select the library scale you used to prepare your sample.' },
     { "htmlclass": 'help-collection-protocol', "position": 'left', "content": 
         'Select the sequencing protocol you will be using.' },
@@ -235,8 +244,10 @@ Constants.prototype.tooltips = [
         'For DNA concentration greater than 62 nM.' },
     { "htmlclass": 'help-chemistry-122', "position": 'right', "content": 
         'For preparation with the 1.2.2 version of PacBio RS chemistry.' },
-    { "htmlclass": 'help-chemistry-130', "position": 'right', "content": 
+    { "htmlclass": 'help-chemistry-130', "position": 'right', "content":
         'For preparation with the 1.3 version of PacBio RS chemistry' },
+    { "htmlclass": 'help-chemistry', "position": 'right', "content":
+        'Select the binding chemistry used to prepare your sample.' },
     { "htmlclass": 'help-standard-collection', "position": 'right', "content": 
         'If this sample will be used in standard sequencing.' },
     { "htmlclass": 'help-strobe-collection', "position": 'right', "content": 
@@ -300,13 +311,13 @@ Constants.prototype.tooltips = [
     { "htmlclass": 'help_sa_dna_tube', "position": 'left', "content": 
         'SA-DNA polymerase tube in your Binding Kit.' },
     { "htmlclass": 'help-low-amounts', "position": 'left', "content": 
-        'To allow concentrations and volumes that are not recommended.' },
+        'To allow low concentrations or low volumes that do not meet recommended annealing and binding concentrations. Standard concentrations: MagBead: 0.833 nM for annealing, 0.5 nM for polymerase binding. Diffusion:  5 nM for annealing, 3 nM for polymerase binding.' },
     { "htmlclass": 'help-tube-label-left', "position": 'left', "content": 
         'Label your tubes with these shorthand designations.' },
     { "htmlclass": 'help-tube-label-right', "position": 'right', "content": 
         'Label your tubes with these shorthand designations.' },
     { "htmlclass": 'help-available-volume', "position": 'left', "content": 
-        'Enter how much sample you have for non-standard titrations.' }
+        'Enter how much sample you have for titrations without standard concentrations.' }
 ];
 
 Constants.prototype.errorbucket = {
@@ -317,6 +328,7 @@ Constants.prototype.errorbucket = {
     "Size": Number.NaN,
     "LowSize": Number.NaN,
     "HighSize": Number.NaN,
+    "PolymeraseStockConcentration": Number.NaN,
     "MaxNumberOfCellsPerWellNoReuse": Number.NaN,
     "MaxNumberOfCellsPerWellWithReuse": Number.NaN,
     "MaxVolumePerWellNoReuse": Number.NaN,
@@ -360,7 +372,264 @@ Constants.prototype.errorbucket = {
 
 Constants.prototype.buckets = [
 
-/////////////////////////////////////////
+    /////////////////////////////////////////
+    //
+    // Diffusion P5 Chemistry and V3 chips
+    //
+
+    { "Name": "p6-standard-cv3-parent", // PARENT
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        //"Size": "500",
+        "LowSize": Number.NaN,
+        "HighSize": Number.NaN,
+        "PolymeraseStockConcentration": "500.0",
+        "MaxNumberOfCellsPerWellNoReuse": "18",
+        "MaxNumberOfCellsPerWellWithReuse": "24",
+        "MaxVolumePerWellNoReuse": "77",
+        "MaxVolumePerWellWithReuse": "44",
+        "VolumePerChipNoReuse": "9",
+        "SampleConcentrationOnChipSmallScale": "0.06",
+        "SampleConcentrationOnChipLargeScale": "0.06",
+        "SampleDilutionFactorOnInstrument": "0.33333",
+        "SampleConcentrationInAnnealingSmallScale": "5",
+        "SampleConcentrationInAnnealingSmallStorage": Number.NaN,
+        "SampleConcentrationInAnnealingLargeScale": "50",
+        "RatioOfBindingToAnnealingConcentration": "0.6",
+        "MaxNumberOfCellsPerReuseCycle": "3",
+        "VolumeOfDilutedSamplePerReuseCycle": "4.8",
+        "SpikeInPercentOfTemplateConcentration": "0.01",
+        "TargetConcentrationOfFirstDilution": "100",
+        "PolymeraseTemplateRatioSmallScale": "3.01",
+        "PolymeraseTemplateRatioLargeScale": "3.01",
+        "MinimumSampleConcentrationSmallScale": "6.25",
+        "MinimumSampleConcentrationLargeScale": "62.5",
+        "SpikeInStockConcentration": "10",
+        "SpikeInConcentrationInDilution": "0.1",
+        "MinimumSpikeInDilutionVolume": "50",
+        "DilutedPrimerConcentrationSmallScale": "1000",
+        "DilutedPrimerConcentrationLargeScale": "1000",
+        "MinimumVolumeOfDilutedPrimer": "10",
+        "DefaultPrimerToTemplateRatioSmallScale": "20",
+        "DefaultPrimerToTemplateRatioLargeScale": "2",
+        "DeadVolumePerWell": "5",
+        "TubeNamePolymerase": "SA-DNA Polymerase P6",
+        "TubeNameBindingBuffer": "Binding Buffer v2",
+        "TubeNameDtt": "DTT",
+        "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
+        "TubeNameComplexDilutionBuffer": "Complex Dilution Buffer v2",
+        "TubeNameSequencingPrimer": "Sequencing Primer v2",
+        "TubeNameNucleotides": "dNTP",
+        "TubeNameSpikeInControl": "DNA Control Complex P6",
+        "SpikeInTubeLabel": "DNA Control Complex P6",
+        "PolymeraseTubeLabel": "NotUsed"
+    },
+
+    { "Name": "p6-standard-250-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "250",
+        "LowSize": "100",
+        "HighSize": "300",
+        "VolumePerChipNoReuse": "4",
+        "PolymeraseTemplateRatioSmallScale": "2.01",
+        "PolymeraseTemplateRatioLargeScale": "2.01",
+        "DefaultPrimerToTemplateRatioLargeScale": "2",
+        "SpikeInPercentOfTemplateConcentration": "0.001",
+        "SampleDilutionFactorOnInstrument": "0.13333",
+        "SampleConcentrationOnChipSmallScale": "0.05",
+        "SampleConcentrationOnChipLargeScale": "0.025"
+    },
+
+    { "Name": "p6-standard-500-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "500",
+        "LowSize": "301",
+        "HighSize": "750",
+        "VolumePerChipNoReuse": "4",
+        "PolymeraseTemplateRatioSmallScale": "2.01",
+        "PolymeraseTemplateRatioLargeScale": "2.01",
+        "DefaultPrimerToTemplateRatioLargeScale": "2",
+        "SpikeInPercentOfTemplateConcentration": "0.002",
+        "SampleDilutionFactorOnInstrument": "0.13333",
+        "SampleConcentrationOnChipSmallScale": "0.125",
+        "SampleConcentrationOnChipLargeScale": "0.075"
+    },
+
+    { "Name": "p6-standard-1000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "1000",
+        "LowSize": "751",
+        "HighSize": "1500",
+        "DefaultPrimerToTemplateRatioLargeScale": "5",
+        "SpikeInPercentOfTemplateConcentration": "0.004",
+        "SampleConcentrationOnChipSmallScale": "0.15",
+        "SampleConcentrationOnChipLargeScale": "0.075"
+    },
+
+    { "Name": "p6-standard-2000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "2000",
+        "LowSize": "1501",
+        "HighSize": "3000",
+        "DefaultPrimerToTemplateRatioLargeScale": "10",
+        "SpikeInPercentOfTemplateConcentration": "0.008",
+        "SampleConcentrationOnChipSmallScale": "0.15",
+        "SampleConcentrationOnChipLargeScale": "0.075"
+    },
+
+    { "Name": "p6-standard-5000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "5000",
+        "LowSize": "3001",
+        "HighSize": "7500",
+        "SampleConcentrationOnChipSmallScale": Number.NaN,
+        "SampleConcentrationOnChipLargeScale": Number.NaN,
+        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6 binding. Use a MagBead protocol instead."
+    },
+
+    { "Name": "p6-standard-10000-cv3",
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "Standard",
+        "CellType": "CellVersion3",
+        "Size": "10000",
+        "LowSize": "7501",
+        "HighSize": "50000",
+        "SampleConcentrationOnChipSmallScale": Number.NaN,
+        "SampleConcentrationOnChipLargeScale": Number.NaN,
+        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6 binding. Use a MagBead protocol instead."
+    },
+
+
+    /////////////////////////////////////////
+    //
+    // MagBead P5 Chemistry and V3 chips
+    //
+
+    { "Name": "p6-magbead-cv3-parent",     // PARENT
+        "Parent": "p6-standard-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "LowSize": Number.NaN,
+        "HighSize": Number.NaN,
+        "PolymeraseStockConcentration": "500.0",
+        "MaxNumberOfCellsPerWellNoReuse": "8",
+        "MaxNumberOfCellsPerWellWithReuse": "18",
+        "MaxVolumePerWellNoReuse": "82",
+        "MaxVolumePerWellWithReuse": "82",
+        "VolumePerChipNoReuse": "9",
+        "SampleConcentrationOnChipSmallScale": "0.005",
+        "SampleConcentrationOnChipLargeScale": "0.005",
+        "SampleDilutionFactorOnInstrument": "0.2",
+        "SampleConcentrationInAnnealingSmallScale": "0.83333",
+        "SampleConcentrationInAnnealingSmallStorage": "5",
+        "SampleConcentrationInAnnealingLargeScale": "50",
+        "RatioOfBindingToAnnealingConcentration": "0.6",
+        "MaxNumberOfCellsPerReuseCycle": "3",
+        "VolumeOfDilutedSamplePerReuseCycle": "12",
+        "SpikeInPercentOfTemplateConcentration": "0.008",
+        "TargetConcentrationOfFirstDilution": "100",
+        "PolymeraseTemplateRatioSmallScale": "10",
+        "PolymeraseTemplateRatioLargeScale": "3",
+        "MinimumSampleConcentrationSmallScale": "1.06",
+        "MinimumSampleConcentrationLargeScale": "76.93",
+        "SpikeInStockConcentration": "10",
+        "SpikeInConcentrationInDilution": "0.1",
+        "MinimumSpikeInDilutionVolume": "50",
+        "DilutedPrimerConcentrationSmallScale": "150",
+        "DilutedPrimerConcentrationLargeScale": "1000",
+        "MinimumVolumeOfDilutedPrimer": "10",
+        "DefaultPrimerToTemplateRatioSmallScale": "20",
+        "DefaultPrimerToTemplateRatioLargeScale": "5",
+        "DeadVolumePerWell": "10",
+        "TubeNamePolymerase": "SA-DNA Polymerase P6",
+        "TubeNameBindingBuffer": "Binding Buffer v2",
+        "TubeNameDtt": "DTT",
+        "TubeNameComplexStorageBuffer": "Complex Storage Buffer v2",
+        "TubeNameComplexDilutionBuffer": "Complex Dilution Buffer v2",
+        "TubeNameSequencingPrimer": "Sequencing Primer v2",
+        "TubeNameNucleotides": "dNTP",
+        "TubeNameSpikeInControl": "DNA Control Complex P6",
+        "SpikeInTubeLabel": "DNA Control Complex P6",
+        "PolymeraseTubeLabel": "NotUsed"
+    },
+
+    { "Name": "p6-magbead-1000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "1000",
+        "LowSize": "751",
+        "HighSize": "1500",
+        "SpikeInPercentOfTemplateConcentration": "0.005"
+    },
+
+    { "Name": "p6-magbead-2000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "2000",
+        "LowSize": "1501",
+        "HighSize": "3000",
+        "SpikeInPercentOfTemplateConcentration": "0.01"
+    },
+
+    { "Name": "p6-magbead-5000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "5000",
+        "LowSize": "3001",
+        "HighSize": "7500",
+        "SpikeInPercentOfTemplateConcentration": "0.025"
+    },
+
+    { "Name": "p6-magbead-10000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "10000",
+        "LowSize": "7501",
+        "HighSize": "15000",
+        "SpikeInPercentOfTemplateConcentration": "0.05"
+    },
+
+    { "Name": "p6-magbead-20000-cv3",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "Size": "10000",
+        "LowSize": "15001",
+        "HighSize": "50000",
+        "SampleConcentrationOnChipSmallScale": "0.04", // 40 pM on cell for 20k size selected
+        "SampleConcentrationOnChipLargeScale": "0.04",
+        "SpikeInPercentOfTemplateConcentration": "0.005",
+        "WarningMessage": "Use size selected libraries for insert sizes larger than 15kb."
+    },
+
+    /////////////////////////////////////////
     //
     // Diffusion P5 Chemistry and V3 chips
     //
@@ -372,6 +641,7 @@ Constants.prototype.buckets = [
         "Size": "500",
         "LowSize": "301",
         "HighSize": "750",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "18",
         "MaxNumberOfCellsPerWellWithReuse": "24",
         "MaxVolumePerWellNoReuse": "77",
@@ -420,6 +690,7 @@ Constants.prototype.buckets = [
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -468,6 +739,7 @@ Constants.prototype.buckets = [
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -516,6 +788,7 @@ Constants.prototype.buckets = [
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -564,6 +837,7 @@ Constants.prototype.buckets = [
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "50000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "77",
@@ -618,6 +892,7 @@ Constants.prototype.buckets = [
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -666,6 +941,7 @@ Constants.prototype.buckets = [
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -714,6 +990,7 @@ Constants.prototype.buckets = [
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -762,6 +1039,7 @@ Constants.prototype.buckets = [
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "15000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -810,6 +1088,7 @@ Constants.prototype.buckets = [
         "Size": "10000",
         "LowSize": "15001",
         "HighSize": "50000",
+        "PolymeraseStockConcentration": "1600.0",
         "MaxNumberOfCellsPerWellNoReuse": "8",
         "MaxNumberOfCellsPerWellWithReuse": "18",
         "MaxVolumePerWellNoReuse": "82",
@@ -864,6 +1143,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -912,6 +1192,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -960,6 +1241,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1008,6 +1290,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1056,6 +1339,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1104,6 +1388,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1158,6 +1443,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1206,6 +1492,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1254,6 +1541,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1302,6 +1590,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "15000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1350,6 +1639,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "15001",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1402,6 +1692,7 @@ Constants.prototype.buckets = [
     "CellType": "CellVersion3",
     "LowSize": Number.NaN,
     "HighSize": Number.NaN,
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1573,6 +1864,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -1622,6 +1914,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -1671,6 +1964,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1720,6 +2014,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1769,6 +2064,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1818,6 +2114,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -1872,6 +2169,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1920,6 +2218,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -1968,6 +2267,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2016,6 +2316,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2069,6 +2370,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2117,6 +2419,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2165,6 +2468,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2213,6 +2517,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2274,6 +2579,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -2322,6 +2628,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -2370,6 +2677,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2418,6 +2726,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2466,6 +2775,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2514,6 +2824,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2568,6 +2879,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -2617,6 +2929,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -2666,6 +2979,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2715,6 +3029,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2764,6 +3079,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2813,6 +3129,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -2868,6 +3185,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2916,6 +3234,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -2964,6 +3283,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -3012,6 +3332,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -3066,6 +3387,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -3114,6 +3436,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -3162,6 +3485,7 @@ Constants.prototype.buckets = [
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -3210,6 +3534,7 @@ Constants.prototype.buckets = [
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "82",
@@ -3265,6 +3590,7 @@ Constants.prototype.buckets = [
     "Size": "6000",
     "LowSize": "3500",
     "HighSize": "50000",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -3314,6 +3640,7 @@ Constants.prototype.buckets = [
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -3361,6 +3688,7 @@ Constants.prototype.buckets = [
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "18",
     "MaxNumberOfCellsPerWellWithReuse": "24",
     "MaxVolumePerWellNoReuse": "77",
@@ -3408,6 +3736,7 @@ Constants.prototype.buckets = [
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -3455,6 +3784,7 @@ Constants.prototype.buckets = [
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -3502,6 +3832,7 @@ Constants.prototype.buckets = [
     "Size": "6000",
     "LowSize": "3501",
     "HighSize": "10500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "8",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "77",
@@ -3549,6 +3880,7 @@ Constants.prototype.buckets = [
     "Size": "6000",
     "LowSize": "3500",
     "HighSize": "10500",
+    "PolymeraseStockConcentration": "1600.0",
     "MaxNumberOfCellsPerWellNoReuse": "NaN",
     "MaxNumberOfCellsPerWellWithReuse": "18",
     "MaxVolumePerWellNoReuse": "NaN",

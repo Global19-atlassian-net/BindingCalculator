@@ -86,6 +86,7 @@ var PrintView = Backbone.View.extend({
             sections.LoadingTitrationTable = this.loadingTitrationTable();
             sections.UsingBoundComplexTable = this.usingBoundComplexTable();
             sections.PlateLayout = this.plateLayout();
+            sections.Step9 = this.Step9Text();
 
             template += _.template($('#print-view-details').html(), {
                 strings: that.constants.strings,
@@ -195,10 +196,6 @@ var PrintView = Backbone.View.extend({
             sampleTitration = (sample.ComputeOption === "Titration");
             if (sampleTitration !== titration) {
                 similarCompute = false;
-            }
-
-            if (sample.PreparationProtocol !== preparation) {
-                sameSize = false;
             }
         }
 
@@ -353,6 +350,25 @@ var PrintView = Backbone.View.extend({
         if (type === "VersionP4") {
             return "P4";
         }
+        if (type === "VersionP5") {
+            return "P5";
+        }
+        if (type === "VersionP6") {
+            return "P6";
+        }
+        return "Unknown";
+    },
+
+    protocolNameByType: function(type){
+        if (type === "False") {
+            return "Standard";
+        }
+        if (type === "True") {
+            return "MagBead Standard";
+        }
+        if (type === "OneCellPerWell") {
+            return "MagBead OCPW";
+        }
         return "Unknown";
     },
 
@@ -374,6 +390,10 @@ var PrintView = Backbone.View.extend({
         result += this.rowfromGetter(function (sample) {
             return sample.AnnealedBasePairLength;
         }, "Insert size", " bp", "", false, "input");
+
+        result += this.rowfromGetter(function (sample) {
+            return that.protocolNameByType(sample.MagBead);
+        }, "Protocol", "", "", false, "string");
 
         if (first.ShowChemistryOption) {
             result += this.rowfromGetter(function (sample) {
@@ -412,7 +432,7 @@ var PrintView = Backbone.View.extend({
         result += this.rowfromGetter(function (sample) {
             // return the opposite of LowConcentrationsAllowed for "Standard"
             return ("True" === sample.LowConcentrationsAllowed) ? "False" : "True";
-        }, "Standard", "", "", false, "string");
+        }, "Standard Concentration", "", "", false, "string");
 
         // include Optional information so the print view is a complete archive of sample inputs (bugzilla 25310)'
 
@@ -433,6 +453,12 @@ var PrintView = Backbone.View.extend({
                 return "Default (" + sample.DefaultPolymeraseTemplateRatio + ")";
             return "Custom (" + sample.CustomPolymeraseTemplateRatio + ")";
         }, "Polymerase:Template Ratio", "", "", false, "string");
+
+        result += this.rowfromGetter(function (sample) {
+            if ("Default" === sample.PrimerTemplateRatioOption)
+                return "Default (" + sample.DefaultPrimerTemplateRatio + ")";
+            return "Custom (" + sample.CustomPrimerTemplateRatio + ")";
+        }, "Primer:Template Ratio", "", "", false, "string");
 
         result += "</table>";
 
@@ -970,9 +996,13 @@ var PrintView = Backbone.View.extend({
             return sample[which].MagBeadComplexDilutionVolumeOfSecondBindingBuffer;
         }, "MagBead Binding Buffer", " uL", "", false, "volume");
 
-        result += this.rowfromGetter(function (sample) {
-            return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
-        }, "DNA Control Dilution", " uL", "", false, "volume");
+        // For 2.3.0.0, we add the P6 DNA control below diffusion loaded instead of here
+        first = this.model.fetched[0];
+        if (first.Chemistry !== "VersionP6") {
+            result += this.rowfromGetter(function (sample) {
+                return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
+            }, "DNA Control Dilution", " uL", "", false, "volume");
+        }
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].MagBeadComplexDilutionVolumeOfSecondComplex;
@@ -1011,7 +1041,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].BeadWashVolumeOfBeadBindingBuffer;
-        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and mix <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
 
         result += "</table><p>MagBead Step 2. Incubate Bead-Complex. <span class='instructions'>Place the indicated " +
@@ -1050,7 +1080,7 @@ var PrintView = Backbone.View.extend({
 
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfFirstBindingBuffer;
-        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and mix <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
             return "Collect beads. Remove supernatant and discard";
@@ -1064,9 +1094,16 @@ var PrintView = Backbone.View.extend({
             return "Collect beads. Remove supernatant and discard";
         }, "", "", "", false, "string");
 
+        // For 2.3.0.0, we add the P6 DNA control here diffusion loaded instead of above
+        if (first.Chemistry === "VersionP6") {
+            result += this.rowfromGetter(function (sample) {
+                return sample[which].MagBeadComplexDilutionVolumeOfSpikeInDilution;
+            }, "DNA Control Dilution", " uL", "", false, "volume");
+        }
+
         result += this.rowfromGetter(function (sample) {
             return sample[which].ComplexBeadWashVolumeOfSecondBindingBuffer;
-        }, "Add MagBead Binding Buffer and wash <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
+        }, "Add MagBead Binding Buffer and mix <span class='instructions'>by slowly aspirating and dispensing 10 times</span>", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function () {
             return "<i>keep at 4C until use</i>";
@@ -1145,6 +1182,11 @@ var PrintView = Backbone.View.extend({
         return result;
     },
 
+    Step9Text: function () {
+        var first = this.model.fetched[0];
+        return first.Step9Text;
+    },
+
     plateLayout: function () {
         //
         // Finish with the sample plate well allocations
@@ -1154,27 +1196,27 @@ var PrintView = Backbone.View.extend({
         result += "<h4 class='instructions'>Sample Plate Wells</h4><table class='PlateLayout'>";
         result += this.columnHeader();
         result += this.rowfromGetter(function (sample) {
-            return sample.NumberOfFullWells;
+            return sample.DisplayNumberOfFullWells;
         }, "# of Max Volume Wells", "", "lineabove", false, "integer");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.MaxVolumePerWell;
+            return sample.DisplayMaxVolumePerWell;
         }, "Volume / Well", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.MaxNumberOfCellsPerWell;
+            return sample.DisplayMaxNumberOfCellsPerWell;
         }, "# of SMRT Cells / Well", "", "", false, "integer");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.NumberOfPartialWells;
+            return sample.DisplayNumberOfPartialWells;
         }, "# of Partial Wells", "", "lineabove", false, "integer");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.VolumeFromPartialWells;
+            return sample.DisplayVolumePerPartialWell;
         }, "Volume / Well", " uL", "", false, "volume");
 
         result += this.rowfromGetter(function (sample) {
-            return sample.NumberOfCellsFromPartialWells;
+            return sample.DisplayNumberOfCellsPerPartialWell;
         }, "# of SMRT Cells / Well", "", "", false, "integer");
 
         result += "</table>";

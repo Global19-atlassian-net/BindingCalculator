@@ -1,3 +1,10 @@
+Version 2.3.1
+- Add support for the P6v2 binding protocol
+- Add a Size Selection input option
+- Formatting changes in the print page and edit sample page
+- Add additional warning messages, warning highlighting, and tool tips
+- Correct DNA Control dilution with high custom Concentration on Plate with Magnetic Bead Loading (issue 25998)
+
 Version 2.3.0.0
 - Add support for the P6 binding protocol
 - Add support for the OneCellPerWell (OCPW) protocol

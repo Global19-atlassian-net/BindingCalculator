@@ -72,9 +72,12 @@
 
     <script type="text/template" id="print-view-details">
 
-        <h4>{{= strings.AnnealingTitle }}</h4>
-        <p class="instructions">{{= strings.Step2 }}</p>
+        <h4>{{= strings.ConditioningTitle }}</h4>
+        <p class="instructions">{{= strings.Step1 }}</p>
         {{= sections.AnnealingSequencingPrimerDilution }}
+        <p class="instructions">{{= strings.Step2 }}</p>
+
+        <h4>{{= strings.AnnealingTitle }}</h4>
         <p class="instructions">{{= strings.Step3 }}</p>
         {{= sections.AnnealingRecipeTable }}
         <p class="instructions">{{= strings.Step4 }}</p>
@@ -210,7 +213,7 @@
     <div id="sampleinfo">
       <section>
         <input type="button" id="delete-button" value="Delete" style="float:right;"/>
-        <h3 style="float:left;">Edit Sample</h3><div id="statusMessage"></div><div id="statusIcon"></div>
+        <h3 style="float:left;" id="SinglePageTitle">Edit Sample</h3><div id="statusMessage"></div><div id="statusIcon"></div>
         <div class="clear"></div>
         <p>{{= strings.Step1Entry }}</p>
 
@@ -248,28 +251,35 @@
         <div class="grid1 alpha top2">ng/uL</div>
         <div class="clear"></div>
         
-        <div class="grid2 rightalign top2"><span>Insert Size</span></div>
+        <div class="grid2 rightalign top2"><span class="help-insert-size">Insert Size</span></div>
         <input type="text" class="grid1 top1" name="AnnealedBasePairLength" id="calc-basepairs" value="" />
         <div class="grid1 alpha top2">bp</div>
         <div class="clear"></div>
-        
+
+        <div class="grid2 rightalign top5"><span class="help-size-selection">Size Selection</span></div>
+        <div class="grid2 top4 highlight_SizeSelection-Radio-True"><span><input type="radio" name="SizeSelection" id="SizeSelection-Radio-True" value="True" {{= radios.SizeSelectionYes }} />Yes</span></div>
+        <div class="clear"></div>
+
+        <div class="grid2 push2 top1"><span><input type="radio" name="SizeSelection" id="SizeSelection-Radio-False" value="False" {{= radios.SizeSelectionNo }} />No</span></div>
+        <div class="clear"></div>
+
         <div class="grid2 rightalign top5"><span class="help-protocol">Protocol</span></div>
-          <div class="grid2 top4"><span><input type="radio" name="MagBead" value="False" {{= radios.MagBeadNo }} />Standard</span></div>
+          <div class="grid2 top4 highlight_MagBead-Radio-No"><span><input type="radio" name="MagBead" id="MagBead-Radio-No" value="False" {{= radios.MagBeadNo }} />Standard</span></div>
           <div class="clear"></div>
           <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" id="MagBead-Radio-Yes" value="True" {{= radios.MagBeadYes }} />MagBead Standard</span></div>
           <div class="clear"></div>
           <div class="grid2 push2 top1"><span><input type="radio" name="MagBead" id="MagBead-Radio-One" value="OneCellPerWell" {{= radios.MagBeadOne }} />MagBead OCPW</span></div>
           <div class="clear"></div>
 
-        <div class='global_ShowChemistryOption'>
+        <div class='global_ShowChemistryOption highlight_Chemistry-Radios'>
             <div class="grid2 rightalign top5"><span class="help-chemistry">Binding Kit</span></div>
-            <div class="grid2 top4"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
+            <div class="grid2 top4 highlight_Chemistry-Radio-P4"><span class=""><input type="radio" name="Chemistry" value="VersionP4" {{= radios.ChemistryP4 }} />{{= strings.ChemistryP4option }}</span></div>
             <div class="clear"></div>
 
-            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
+            <div class="grid2 push2 top1 highlight_Chemistry-Radio-P5"><span class=""><input type="radio" name="Chemistry" value="VersionP5" {{= radios.ChemistryP5 }} />{{= strings.ChemistryP5option }}</span></div>
             <div class="clear"></div>
 
-            <div class="grid2 push2 top1"><span class=""><input type="radio" name="Chemistry" id="Chemistry-Radio-P6" value="VersionP6" {{= radios.ChemistryP6 }} />{{= strings.ChemistryP6option }}</span></div>
+            <div class="grid2 push2 top1 highlight_Chemistry-Radio-P6"><span class=""><input type="radio" name="Chemistry" id="Chemistry-Radio-P6" value="VersionP6" {{= radios.ChemistryP6 }} />{{= strings.ChemistryP6option }}</span></div>
             <div class="clear"></div>
         </div>
 
@@ -283,38 +293,38 @@
         </div>
 
         <div class="grid2 rightalign top5"><span class="help-prep-protocol">Preparation Protocol</span></div>
-        <div class="grid2 top4"><span class="help-small-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Small" value="Small" {{= radios.PreparationSmall }} />Small scale</span></div>
+        <div class="grid2 top4 highlight_Small-Scale"><span class="help-small-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Small" value="Small" {{= radios.PreparationSmall }} />Small scale</span></div>
         <div class="clear"></div>
         
         <div class="grid2 push2 top1"><span class="help-large-scale"><input type="radio" name="PreparationProtocol" id="PreparationProtocol-Radio-Large" value="Large" {{= radios.PreparationLarge }} />Large scale</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 rightalign top5"><span class="help-prep-protocol">Long Term Storage</span></div>
-        <div class="grid2 top4"><span class="help-storage-yet"><input type="radio" name="LongTermStorage" id="LongTermStorage-Radio-True" value="True" {{= radios.LongTermStorageYes }} />Yes</span></div>
+        <div class="grid2 rightalign top5"><span class="help-long-term-storage">Long-Term Storage</span></div>
+        <div class="grid2 top4 highlight_Storage-Yes"><span class="help-storage-yes"><input type="radio" name="LongTermStorage" id="LongTermStorage-Radio-True" value="True" {{= radios.StorageYes }} />Yes</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 push2 top1"><span class="help-storage-no"><input type="radio" name="LongTermStorage" id="LongTermStorage-Radio-False" value="False" {{= radios.LongTermStorageNo }} />No</span></div>
+        <div class="grid2 push2 top1"><span class="help-storage-no"><input type="radio" name="LongTermStorage" id="LongTermStorage-Radio-False" value="False" {{= radios.StorageNo }} />No</span></div>
         <div class="clear"></div>
         
         <div class="grid2 rightalign top5"><span class="help-spike-in-control">DNA Control Complex</span></div>
-        <div class="grid2 top4"><span><input type="radio" name="UseSpikeInControl" id="UseSpikeInControl-Radio-True" value="True" {{= radios.ControlYes }} />Yes</span></div>
+        <div class="grid2 top4 highlight_Control-Yes"><span><input type="radio" name="UseSpikeInControl" id="UseSpikeInControl-Radio-True" value="True" {{= radios.ControlYes }} />Yes</span></div>
         <div class="clear"></div>
         
         <div class="grid2 push2 top1"><span><input type="radio" name="UseSpikeInControl" value="False" {{= radios.ControlNo }} />No</span></div>
         <div class="clear"></div>
 
-        <div class="grid2 rightalign top5"><span>Complex Reuse</span></div>
-        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="True" {{= radios.ReuseYes }} id="ComplexReuse-Radio-Yes" />Yes</span></div>
+        <div class="grid2 rightalign top5"><span class="help-complex-reuse">Complex Reuse</span></div>
+        <div class="grid2 top4"><span><input type="radio" name="ComplexReuse" value="True" {{= radios.ReuseYes }} id="ComplexReuse-Radio-Yes" />Yes</span></div>
         <div class="clear"></div>
         
-        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
+        <div class="grid2 push2 top1"><span><input type="radio" name="ComplexReuse" value="False" {{= radios.ReuseNo }} id="ComplexReuse-Radio-No" />No</span></div>
         <div class="clear"></div>
 
         <div class="grid2 rightalign top5"><span class="help-low-amounts">Standard Concentration</span></div>
-        <div class="grid2 top4"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />Yes</span></div>
+        <div class="grid2 top4 highlight_Standard-Concentration-Yes"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="False" {{= radios.NonStandardNo }} id="NonStandard-Radio-No" />Yes</span></div>
         <div class="clear"></div>
         
-        <div class="grid2 push2 top1"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />No</span></div>
+        <div class="grid2 push2 top1 highlight_Standard-Concentration-No"><span class="help-tbd-right"><input type="radio" name="LowConcentrationsAllowed" value="True" {{= radios.NonStandardYes }} id="NonStandard-Radio-Yes" />No</span></div>
         <div class="clear"></div>
 
         <div class='global_AllowNonStandardReverseCalculations'>
@@ -363,7 +373,7 @@
         <input type="text" class="grid1" name="CustomPolymeraseTemplateRatio" id="CustomPolymeraseTemplateRatio" value="" disabled='disabled' />
         <div class="clear"></div>
 
-        <h4>Primer:Template Ratio</h4>
+        <h4><span class="help-primer-to-template">Primer:Template Ratio</span></h4>
 
         <div class="grid2"><input type="radio" name="PrimerTemplateRatioOption" value="Default" {{= radios.PrimerRatioDefault }} id="PrimerTemplateRatioOption-Radio-Default" /> Use Default</div>
         <div class="grid1 top2"><span class="output_DefaultPrimerTemplateRatio"></span></div>
@@ -384,9 +394,9 @@
 
       <section>
         <header>
-          <h3>Sequencing Primer Annealing</h3>
+          <h3>{{= strings.ConditioningTitle }}</h3>
         </header>
-        <p>Step 1: Dilute the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
+        <p>Step 1: Dilute and pre-heat the Sequencing Primer from <span class="nM output_StartingSequencingPrimerBufferConcentration"></span> to <span class="nM output_DilutedPrimerConcentration"></span> in Elution Buffer</p>
         
         <div class="grid2 rightalign top2">
             <span class="output_TubeNameSequencingPrimer help-annealing-sequencingprimer"></span>
@@ -405,7 +415,10 @@
         <div class="grid2 rightalign top2"><span class="">Total Volume</span></div>
         <div class="grid2 top2"><span class="output_TotalVolumeOfDilutedPrimer uL"></span></div>
         <div class="clear"></div>
-        
+
+        <p class="top5">{{= strings.Step2 }}</p>
+
+        <h3>{{= strings.AnnealingTitle }}</h3>
         <p class="top5">{{= strings.Step3 }}</p>
         
         <div class="grid2 rightalign top2"><span class="">Volume H2O</span></div>
@@ -642,6 +655,11 @@
             <div class="grid2 top2"><span class="output_VolumeOfComplexDilutionBufferInComplexDilution uL"></span></div>
             <div class="clear"></div>
 
+            <div class="showP6SpikeInOutputs" style='display:none;'>
+                <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
+                <div class="grid2 top2"><span class="output_VolumeOfSpikeInDilutionInComplexDilution uL"></span></div>
+                <div class="clear"></div>
+            </div>
             <div class="showV2SpikeInOutputs" style='display:none;'>
                 <div class="grid2 rightalign top2"><span class="">DNA Control Dilution</span></div>
                 <div class="grid2 top2"><span class="output_VolumeOfSpikeInDilutionInComplexDilution uL"></span></div>

@@ -693,7 +693,7 @@ var SamplesView = Backbone.View.extend({
 
     processErrorMessages: function (detailsJson) {
         var myObject, numErrors,
-            errorkey, details, inputid,
+            errorkey, details, inputids,
             shortmessage, longmessage,
             randomnumber, shorthtml;
 
@@ -719,24 +719,34 @@ var SamplesView = Backbone.View.extend({
             if (myObject.hasOwnProperty(errorkey)) {
                 details = myObject[errorkey];
 
-                inputid = details.Coefficient;
+                inputids = details.Coefficients;
                 shortmessage = details.ShortMessage;
                 longmessage = details.LongMessage;
 
-                if ("" !== inputid) {
-                    $('.highlight_' + inputid).addClass('error_highlight');
-                    $('input[name=' + inputid + ']').addClass('error_highlight');
-                    $('.output_' + inputid).addClass('error_color');
+                for (var index in inputids) {
+                    var coefficient = inputids[index];
+                    if ("" !== coefficient) {
+                        // add a highlight to the controls that relate to the error
+                        $('.highlight_' + coefficient).addClass('error_highlight');
+                        $('input[name=' + coefficient + ']').addClass('error_highlight');
+                        $('.output_' + coefficient).addClass('error_color');
+                    }
                 }
 
                 randomnumber = Math.floor(Math.random() * 11);
                 shorthtml = "<div class='error_message push2 grid1 long_error_" + randomnumber + "'>" +
-                    shortmessage + "</div><div class='error_message clear'></div>";
+                shortmessage + "</div><div class='error_message clear'></div>";
 
-                if ("" !== inputid) {
-                    $('.output_' + inputid).parent('div').next('.clear').first().after(shorthtml);
-                    $('input[name=' + inputid + '] ~ div').filter('.clear').first().after(shorthtml);
-                    $('input[name=' + inputid + ']').filter('input[type=radio]').parent().parent().last().next('.clear').first().after(shorthtml);
+                for (var index in inputids) {
+                    var coefficient = inputids[index];
+                    if ("" !== coefficient &&
+                        (coefficient.indexOf("Radio") < 0)) {
+                        // append the short message after the controls that relate to the message
+                        // but don't do that for Radio inputs...
+                        $('.output_' + coefficient).parent('div').next('.clear').first().after(shorthtml);
+                        $('input[name=' + coefficient + '] ~ div').filter('.clear').first().after(shorthtml);
+                        $('input[name=' + coefficient + ']').filter('input[type=radio]').parent().parent().last().next('.clear').first().after(shorthtml);
+                    }
                 }
 
                 //
@@ -1066,6 +1076,17 @@ var SamplesView = Backbone.View.extend({
             }
 
             //
+            // I tried changing the title of the page from "Edit Sample"
+            // to "New Sample" here, which works. But then the page
+            // updates immediately to load the Untitled sample details
+            // and that wipes out the changed title. To really show
+            // New Sample until the customer navigates away, I would need
+            // to keep a flag for this and decide when to clear it.
+            //
+            // $('#SinglePageTitle').text("Foobar");
+            //
+
+            //
             // we want to both load the sample on the page and
             // also change the window location, so if the user
             // navigates away (or to 'print') and back we don't
@@ -1195,6 +1216,8 @@ var SamplesView = Backbone.View.extend({
         radios.ComputeOptionVolume = "checked='checked'";
         radios.ComputeOptionCells = "";
         radios.ComputeOptionTitration = "";
+        radios.SizeSelectionYes = "";
+        radios.SizeSelectionNo = "checked='checked'";
         radios.MagBeadYes = "";
         radios.MagBeadNo = "";
         radios.MagBeadOne = "checked='checked'";

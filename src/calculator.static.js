@@ -44,182 +44,204 @@ Constants.prototype.strings = {
     SampleInformationTitle: "Sample Information",
     Step1Entry: "Enter sample information",
     Step1Display: "Review sample information",
-    AnnealingTitle: "Sequencing Primer Annealing",
-    Step2: "Step 1: Dilute the Sequencing Primer in Elution Buffer",
-    Step3: "Step 2: In 0.2mL tubes, add the appropriate amount of reagents in the order listed below",
-    Step4: "Step 3: Incubate @ 80°C for 2 minutes then ramp temperature to 25°C at a rate of 0.1°C/second",
-    Step5: "Step 4: Transfer to 4°C location for immediate use or store at -20°C",
+    ConditioningTitle: "Conditioning Primer",
+    AnnealingTitle: "Annealing Primer",
+    Step1: "Step 1: Dilute the Sequencing Primer in Elution Buffer",
+    Step2: "Step 2: Incubate @ 80C for 2 minutes then hold at 4C. Conditioned primer may be stored at -20C and used for up to 30 days",
+    Step3: "Step 3: In a fresh tube, add the appropriate amount of reagents in the order listed below",
+    Step4: "Step 4: Incubate @ 20C for 30 minutes",
+    Step5: "Step 5: Transfer to 4C location for immediate use or store at -20C",
     DilutionsTitle: "Dilutions",
-    Step6: "Step 5: Prepare dilution(s) of polymerase",
+    Step6: "Step 6: Prepare dilution(s) of polymerase",
     BindingPolymeraseTitle: "Binding Polymerase to Templates",
-    Step7: "Step 6: In a new 0.5mL tube, add the components in the order shown below",
+    Step7: "Step 7: In a new 0.5mL tube, add the components in the order shown below",
     Step7_1: "After adding each component, mix the tube contents",
-    Step8: "Step 7: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
-        "For MagBead preparations only, after the 30 C incubation, heat to 37 C for 30 min. " +
-        "Finish all preparations with a hold at 4 C",
+    Step8: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30C for 30 minutes. " +
+        "Finish all preparations with a hold at 4C",
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
-    Step9: "Step 8: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
-    Step9oneCellPerWell: "Step 8: IMPORTANT: Re-suspend beads to homogeneity immediately prior to aliquoting.  Aliquot 45uL per well into separate wells of a new 96-well PCR plate for processing on PacBio RS.",
+    Step9: "Step 9: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
+    Step9oneCellPerWell: "Step 9: IMPORTANT: Re-suspend beads to homogeneity immediately prior to aliquoting.  Aliquot 45uL per well into separate wells of a new 96-well PCR plate for processing on PacBio RS.",
     TitrationTitle: "Loading Titration",
-    StorageTitle: "Long Term Storage",
+    StorageTitle: "Long-Term Storage",
     StorageStart: "Glycerol preparation for storage",
     ChemistryV1option: "C1",
     ChemistryV2option: "C2",
     ChemistryXLoption: "XL",
     ChemistryP4option: "P4",
     ChemistryP5option: "P5",
-    ChemistryP6option: "P6"
+    ChemistryP6option: "P6v2"
 };
 
 Constants.prototype.errors = {
 	SampleConcentrationLow: {
-		Coefficient: "StartingSampleConcentration",
+        Coefficients: ["StartingSampleConcentration", "Standard-Concentration-Yes"],
         ShortMessage: "Too Low",
         LongMessage: "Your concentration is too low for these settings. You may disable the Standard Concentration option."
 	},
 	BindingVolumeLow: {
-		Coefficient: "",
+        Coefficients: ["Standard-Concentration-Yes"],
         ShortMessage: "",
         LongMessage: "Error: Not enough binding volume. You may disable the Standard Concentration option."
 	},
     DifficultPipetting: {
-        Coefficient: "",
+        Coefficients: [""],
         ShortMessage: "",
-        LongMessage: "Warning: Pipetting some volumes will be difficult."
+        LongMessage: "Pipetting may be difficult."
     },
 	TooManyCellsInBinding: {
-		Coefficient: "NumberOfCellsInBinding",
+        Coefficients: ["NumberOfCellsInBinding"],
         ShortMessage: "Too Many",
         LongMessage: "You won't have enough annealed sample for the number of SMRT Cells requested in the binding reaction."
 	},
 	NotEnoughCellsForBindingComplex: {
-		Coefficient: "BindingComplexNumberOfCellsRequested",
+        Coefficients: ["BindingComplexNumberOfCellsRequested"],
         ShortMessage: "Too Many",
         LongMessage: "You have requested too many SMRT Cells for complex dilution. There is not enough complex."
 	},
 	InvalidInsertSizeStandard: {
-		Coefficient: "AnnealedBasePairLength",
+        Coefficients: ["AnnealedBasePairLength"],
         ShortMessage: "Not supported",
         LongMessage: "Your insert size is not supported for standard collections."
 	},
 	InvalidInsertSizeStrobe: {
-		Coefficient: "AnnealedBasePairLength",
+        Coefficients: ["AnnealedBasePairLength"],
         ShortMessage: "Not supported",
         LongMessage: "Your insert size is not supported for strobe collections."
 	},
-	InvalidInsertSizeMagBeadNew: {
-		Coefficient: "AnnealedBasePairLength",
+    InvalidSizeSelectionLength: {
+        Coefficients: ["SizeSelection-Radio-True", "AnnealedBasePairLength"],
+        ShortMessage: "Not supported",
+        LongMessage: "Calculations with size selection are only provided for insert sizes above 7500 bp."
+    },
+    InvalidSizeSelectionDiffusion: {
+        Coefficients: ["SizeSelection-Radio-True", "MagBead-Radio-No"],
+        ShortMessage: "",
+        LongMessage: "Calculations with size selection are only provided for Magnetic Bead Loading."
+    },
+    InvalidSizeSelectionChemistry: {
+        Coefficients: ["SizeSelection-Radio-True", "Chemistry-Radio-P4", "Chemistry-Radio-P5"],
+        ShortMessage: "",
+        LongMessage: "Calculations with size selection are only provided for binding with P6v2."
+    },
+    InvalidSizeSelection: {
+        Coefficients: ["SizeSelection-Radio-True", "MagBead-Radio-No", "Chemistry-Radio-P4", "Chemistry-Radio-P5"],
+        ShortMessage: "Not supported",
+        LongMessage: "Calculations with size selection are only provided for insert sizes above 7500 bp" +
+        " with Magnetic Bead Loading and binding with P6v2."
+    },
+    InvalidInsertSizeMagBeadNew: {
+        Coefficients: ["AnnealedBasePairLength"],
         ShortMessage: "Not supported",
         LongMessage: "Inserts shorter than 1 kb will not load efficiently using Magnetic Bead Loading."
-	},
+    },
 	InvalidInsertSizeMagBead: {
-		Coefficient: "AnnealedBasePairLength",
+        Coefficients: ["AnnealedBasePairLength"],
         ShortMessage: "Not supported",
-        LongMessage: "Calculations for Magnetic Bead Loading have only been optimized for insert sizes over 7500bp." +
+        LongMessage: "Calculations for Magnetic Bead Loading have only been optimized for insert sizes above 7500 bp." +
             " It will not work for insert sizes under 750 bp. " +
             "Additional optimization and testing should be done with inserts between 750 bp and 7500 bp."
 	},
 	NonStandardLargeScaleNew: {
-		Coefficient: "LowConcentrationsAllowed",
+        Coefficients: ["LowConcentrationsAllowed", "Standard-Concentration-No"],
         ShortMessage: "Not Allowed",
         LongMessage: "Large scale preparations require Standard Concentration."
 	},
 	NonStandardLargeScale: {    // deprecated, included just for comparison unit tests against C# version
-		Coefficient: "LowConcentrationsAllowed",
+        Coefficients: ["LowConcentrationsAllowed", "Standard-Concentration-No"],
         ShortMessage: "Not Allowed",
         LongMessage: "Large scale preparations require Standard Concentration."
 	},
 	NonStandardTitration: {
-		Coefficient: "LowConcentrationsAllowed",
+        Coefficients: ["LowConcentrationsAllowed", "Standard-Concentration-No"],
         ShortMessage: "Not Allowed",
         LongMessage: "Titrations requires Standard Concentration."
 	},
 	NonStandardByCells: {
-		Coefficient: "LowConcentrationsAllowed",
+        Coefficients: ["LowConcentrationsAllowed", "Standard-Concentration-No"],
         ShortMessage: "Not Allowed",
         LongMessage: "Computing by # of SMRTCells requires Standard Concentration."
 	},
 	ReuseRequiredWithStrobe: {
-		Coefficient: "ComplexReuse",
+        Coefficients: ["ComplexReuse"],
         ShortMessage: "Reuse Required",
         LongMessage: "The Strobe Collection Protocol requires Complex Reuse"
 	},
 	AnnealingConcentrationSuspect: {	// internal error, but helpful if we find out about it
-		Coefficient: "StartingSampleConcentration",
+        Coefficients: ["StartingSampleConcentration"],
         ShortMessage: "Warning",
         LongMessage: "There is a problem achieving the desired annealing concentration."
 	},
 	BindingConcentrationSuspect: {
-		Coefficient: "StartingSampleConcentration",
+        Coefficients: ["StartingSampleConcentration"],
         ShortMessage: "Warning",
         LongMessage: "There is a problem achieving the desired binding concentration."
 	},
 	BindingConcentrationTooLowForOneChip: {			// Super low non-standard concentrations which don't produce enough for one chip
-		Coefficient: "BindingComplexNumberOfCellsRequested",
-        ShortMessage: "See above",
+        Coefficients: ["BindingComplexNumberOfCellsRequested"],
+        ShortMessage: "View error",
         LongMessage: "Either use the binding complex directly on the sample plate or " +
             "select a custom parameter concentration on plate less than the final binding concentration."
 	},
 	BindingConcentrationTooLowForReverseCalculation: {
-		Coefficient: "StartingSampleConcentration",
+        Coefficients: ["StartingSampleConcentration"],
         ShortMessage: "Too Low",
         LongMessage: "Concentration was too low on plate, select a custom parameter " +
             "concentration on plate somewhat less than the final binding concentration."
 	},
 	TitrationConcentrationTooHigh: {
-		Coefficient: "TitrationConcentration4",
+        Coefficients: ["TitrationConcentration4"],
         ShortMessage: "Too High",					// C# had "Too Low"
         LongMessage: "A requested titration concentration is too high for the sample. You may disable the Standard Concentration option."
 	},
 	TitrationConcentrationTooHighNonStandard: {
-		Coefficient: "TitrationConcentration4",		// C# had TitrationConcentrations
+        Coefficients: ["TitrationConcentration4"],	// C# had TitrationConcentrations
         ShortMessage: "Too High",					// C# had "Too Low"
         LongMessage: "A requested titration concentration is too high for the sample even without a Standard Concentration. Try a lower value."
 	},
 	NotEnoughAvailableVolume: {
-		Coefficient: "AvailableSampleVolume",
+        Coefficients: ["AvailableSampleVolume"],
         ShortMessage: "Not Enough",
         LongMessage: "There is not enough sample volume available for these options."
 	},
 	StrobeDeprecated: {								// no longer supported as of 1.3.1
-		Coefficient: "",
+        Coefficients: [""],
         ShortMessage: "",
         LongMessage: "Strobe chemistry is no longer supported. Please make a new sample. " +
             "To delete multiple samples select them in the list view and use the delete button."
 	},
 	VersionOneDeprecated: {
-		Coefficient: "",
+        Coefficients: [""],
         ShortMessage: "",
         LongMessage: "Version 1 chemistry is no longer supported. Please make a new sample. " +
             "To delete multiple samples select them in the list view and use the delete button."
 	},
     ConcentrationOnPlateTooHighWithControl: {
-        Coefficient: "CustomConcentrationOnPlate",
+        Coefficients: ["CustomConcentrationOnPlate"],
         ShortMessage: "Too High",
         LongMessage: "The custom parameter concentration on plate is too high. Try disabling " +
             "DNA Control Complex to allow for a higher concentration."
     },
     ConcentrationOnPlateTooHighWithoutControl: {
-        Coefficient: "CustomConcentrationOnPlate",
+        Coefficients: ["CustomConcentrationOnPlate"],
         ShortMessage: "Too High",
         LongMessage: "The custom parameter concentration on plate is too high for the resulting binding concentration."
     },
     UntestedControlWithLongInsertSize: {
-        Coefficient: "",
+        Coefficients: ["Control-Yes"],
         ShortMessage: "",
         LongMessage: "Using DNA Control Complex with insert sizes larger than 15kb " +
             " has not been optimized."
     },
     NonStandardSmallStorageNotSupported: {
-        Coefficient: "",
+        Coefficients: ["Standard-Concentration-No"],
         ShortMessage: "",
-        LongMessage: "Small scale preparation using long term storage require Standard Concentration."
+        LongMessage: "Small scale preparation using long-term storage require Standard Concentration."
     },
     DiffusionSmallStorageNotSupported: {
-        Coefficient: "",
+        Coefficients: ["MagBead-Radio-No", "Small-Scale", "Storage-Yes"],
         ShortMessage: "",
-        LongMessage: "Long term storage is not supported for small scale preparation and standard loading."
+        LongMessage: "Long-term storage is not supported for small scale preparation without Magnetic Bead loading."
     }
 };
 
@@ -230,12 +252,18 @@ Constants.prototype.tooltips = [
         'Enter the desired number of SMRT Cells.' },
     { "htmlclass": 'help-by-titration', "position": 'left', "content": 
         'Enter the titration experiment on-plate concentrations for up to four SMRT Cells.' },
-    { "htmlclass": 'help-dna-concentration', "position": 'left', "content": 
+    { "htmlclass": 'help-dna-concentration', "position": 'left', "content":
         'Concentration of SMRTbell template before annealing.' },
+    { "htmlclass": 'help-insert-size', "position": 'left', "content":
+        'Length of the double-stranded nucleic acid fragment in a SMRTbell template, excluding the hairpin adapters.' },
+    { "htmlclass": 'help-size-selection', "position": 'left', "content":
+        'Remove unwanted fragments from the mixture based on size, using AMPure PB beads, manual isolation from an agarose gel, or automated gel isolation.' },
     { "htmlclass": 'help-protocol', "position": 'left', "content":
         'Select the protocol type. Standard is diffusion loading. MagBead uses magnetic beads and includes the OneCellPerWell option.' },
     { "htmlclass": 'help-prep-protocol', "position": 'left', "content":
         'Select the library scale you used to prepare your sample.' },
+    { "htmlclass": 'help-long-term-storage', "position": 'left', "content":
+        'Prepare a Long-Term Storage tube, which can be stored at -20C for up to 40 days.' },
     { "htmlclass": 'help-collection-protocol', "position": 'left', "content": 
         'Select the sequencing protocol you will be using.' },
     { "htmlclass": 'help-small-scale', "position": 'right', "content": 
@@ -252,9 +280,11 @@ Constants.prototype.tooltips = [
         'If this sample will be used in standard sequencing.' },
     { "htmlclass": 'help-strobe-collection', "position": 'right', "content": 
         'If this sample will be used in strobe sequencing.' },
-    { "htmlclass": 'help-spike-in-control', "position": 'left', "content": 
+    { "htmlclass": 'help-spike-in-control', "position": 'left', "content":
         'Add to the sample as an optional sequencing control.' },
-    { "htmlclass": 'help-optional-concentration-on-plate', "position": 'left', "content": 
+    { "htmlclass": 'help-complex-reuse', "position": 'left', "content":
+        'Option to take the immobilization complex out of one SMRT Cell and dispense it to another SMRT Cell for immobilization.' },
+    { "htmlclass": 'help-optional-concentration-on-plate', "position": 'left', "content":
         'Enter the desired concentration of binding complex.' },
     { "htmlclass": 'help-optional-spike-in-to-template-ratio', "position": 'left', "content": 
         'Enter the desired ratio of Spike-In control to Template concentration.' },
@@ -316,8 +346,11 @@ Constants.prototype.tooltips = [
         'Label your tubes with these shorthand designations.' },
     { "htmlclass": 'help-tube-label-right', "position": 'right', "content": 
         'Label your tubes with these shorthand designations.' },
-    { "htmlclass": 'help-available-volume', "position": 'left', "content": 
-        'Enter how much sample you have for titrations without standard concentrations.' }
+    { "htmlclass": 'help-available-volume', "position": 'left', "content":
+        'Enter how much sample you have for titrations without standard concentrations.' },
+    { "htmlclass": 'help-primer-to-template', "position": 'left', "content":
+        'Enter the desired template to primer ratio.' },
+
 ];
 
 Constants.prototype.errorbucket = {
@@ -325,6 +358,7 @@ Constants.prototype.errorbucket = {
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": Number.NaN,
     "LowSize": Number.NaN,
     "HighSize": Number.NaN,
@@ -381,6 +415,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         //"Size": "500",
         "LowSize": Number.NaN,
         "HighSize": Number.NaN,
@@ -391,7 +426,7 @@ Constants.prototype.buckets = [
         "MaxVolumePerWellWithReuse": "44",
         "VolumePerChipNoReuse": "9",
         "SampleConcentrationOnChipSmallScale": "0.06",
-        "SampleConcentrationOnChipLargeScale": "0.06",
+        "SampleConcentrationOnChipLargeScale": Number.NaN,
         "SampleDilutionFactorOnInstrument": "0.33333",
         "SampleConcentrationInAnnealingSmallScale": "5",
         "SampleConcentrationInAnnealingSmallStorage": Number.NaN,
@@ -431,6 +466,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "250",
         "LowSize": "100",
         "HighSize": "300",
@@ -438,10 +474,9 @@ Constants.prototype.buckets = [
         "PolymeraseTemplateRatioSmallScale": "2.01",
         "PolymeraseTemplateRatioLargeScale": "2.01",
         "DefaultPrimerToTemplateRatioLargeScale": "2",
-        "SpikeInPercentOfTemplateConcentration": "0.001",
+        "SpikeInPercentOfTemplateConcentration": "0.003",
         "SampleDilutionFactorOnInstrument": "0.13333",
-        "SampleConcentrationOnChipSmallScale": "0.05",
-        "SampleConcentrationOnChipLargeScale": "0.025"
+        "SampleConcentrationOnChipSmallScale": "0.015"
     },
 
     { "Name": "p6-standard-500-cv3",
@@ -449,6 +484,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "500",
         "LowSize": "301",
         "HighSize": "750",
@@ -456,10 +492,9 @@ Constants.prototype.buckets = [
         "PolymeraseTemplateRatioSmallScale": "2.01",
         "PolymeraseTemplateRatioLargeScale": "2.01",
         "DefaultPrimerToTemplateRatioLargeScale": "2",
-        "SpikeInPercentOfTemplateConcentration": "0.002",
+        "SpikeInPercentOfTemplateConcentration": "0.006",
         "SampleDilutionFactorOnInstrument": "0.13333",
-        "SampleConcentrationOnChipSmallScale": "0.125",
-        "SampleConcentrationOnChipLargeScale": "0.075"
+        "SampleConcentrationOnChipSmallScale": "0.025"
     },
 
     { "Name": "p6-standard-1000-cv3",
@@ -467,13 +502,13 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
         "DefaultPrimerToTemplateRatioLargeScale": "5",
-        "SpikeInPercentOfTemplateConcentration": "0.004",
-        "SampleConcentrationOnChipSmallScale": "0.15",
-        "SampleConcentrationOnChipLargeScale": "0.075"
+        "SpikeInPercentOfTemplateConcentration": "0.012",
+        "SampleConcentrationOnChipSmallScale": "0.0325"
     },
 
     { "Name": "p6-standard-2000-cv3",
@@ -481,13 +516,13 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
         "DefaultPrimerToTemplateRatioLargeScale": "10",
-        "SpikeInPercentOfTemplateConcentration": "0.008",
-        "SampleConcentrationOnChipSmallScale": "0.15",
-        "SampleConcentrationOnChipLargeScale": "0.075"
+        "SpikeInPercentOfTemplateConcentration": "0.024",
+        "SampleConcentrationOnChipSmallScale": "0.05"
     },
 
     { "Name": "p6-standard-5000-cv3",
@@ -495,12 +530,12 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
         "SampleConcentrationOnChipSmallScale": Number.NaN,
-        "SampleConcentrationOnChipLargeScale": Number.NaN,
-        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6 binding. Use a MagBead protocol instead."
+        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6v2 binding. Use a MagBead protocol instead."
     },
 
     { "Name": "p6-standard-10000-cv3",
@@ -508,12 +543,12 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "50000",
         "SampleConcentrationOnChipSmallScale": Number.NaN,
-        "SampleConcentrationOnChipLargeScale": Number.NaN,
-        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6 binding. Use a MagBead protocol instead."
+        "WarningMessage": "Insert sizes larger than 3000kb are not supported with diffusion loading and P6v2 binding. Use a MagBead protocol instead."
     },
 
 
@@ -527,6 +562,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "LowSize": Number.NaN,
         "HighSize": Number.NaN,
         "PolymeraseStockConcentration": "500.0",
@@ -535,8 +571,8 @@ Constants.prototype.buckets = [
         "MaxVolumePerWellNoReuse": "82",
         "MaxVolumePerWellWithReuse": "82",
         "VolumePerChipNoReuse": "9",
-        "SampleConcentrationOnChipSmallScale": "0.005",
-        "SampleConcentrationOnChipLargeScale": "0.005",
+        "SampleConcentrationOnChipSmallScale": "0.002",
+        "SampleConcentrationOnChipLargeScale": Number.NaN,
         "SampleDilutionFactorOnInstrument": "0.2",
         "SampleConcentrationInAnnealingSmallScale": "0.83333",
         "SampleConcentrationInAnnealingSmallStorage": "5",
@@ -544,7 +580,7 @@ Constants.prototype.buckets = [
         "RatioOfBindingToAnnealingConcentration": "0.6",
         "MaxNumberOfCellsPerReuseCycle": "3",
         "VolumeOfDilutedSamplePerReuseCycle": "12",
-        "SpikeInPercentOfTemplateConcentration": "0.008",
+        "SpikeInPercentOfTemplateConcentration": "0.0125",
         "TargetConcentrationOfFirstDilution": "100",
         "PolymeraseTemplateRatioSmallScale": "10",
         "PolymeraseTemplateRatioLargeScale": "3",
@@ -576,10 +612,11 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
-        "SpikeInPercentOfTemplateConcentration": "0.005"
+        "SampleConcentrationOnChipSmallScale": "0.0025"
     },
 
     { "Name": "p6-magbead-2000-cv3",
@@ -587,10 +624,23 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
+        "Size": "2000",
+        "LowSize": "1501",
+        "HighSize": "3000"
+    },
+
+    { "Name": "p6-magbead-2000-cv3-ss",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "SizeSelection": "True",
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
-        "SpikeInPercentOfTemplateConcentration": "0.01"
+        "SampleConcentrationOnChipSmallScale": Number.NaN,
+        "WarningMessage": "Refer to an applications specific procedure for this insert size with size selection."
     },
 
     { "Name": "p6-magbead-5000-cv3",
@@ -598,10 +648,23 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
+        "Size": "5000",
+        "LowSize": "3001",
+        "HighSize": "7500"
+    },
+
+    { "Name": "p6-magbead-5000-cv3-ss",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "SizeSelection": "True",
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
-        "SpikeInPercentOfTemplateConcentration": "0.025"
+        "SampleConcentrationOnChipSmallScale": Number.NaN,
+        "WarningMessage": "Refer to an applications specific procedure for this insert size with size selection."
     },
 
     { "Name": "p6-magbead-10000-cv3",
@@ -609,10 +672,23 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
+        "Size": "10000",
+        "LowSize": "7501",
+        "HighSize": "15000"
+    },
+
+    { "Name": "p6-magbead-10000-cv3-ss",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "SizeSelection": "True",     // optional for 10kb
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "15000",
-        "SpikeInPercentOfTemplateConcentration": "0.05"
+        "SpikeInPercentOfTemplateConcentration": "0.005",   // 0.5%
+        "SampleConcentrationOnChipSmallScale": "0.008"
     },
 
     { "Name": "p6-magbead-20000-cv3",
@@ -620,13 +696,22 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP6",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
+        "Size": "10000",
+        "LowSize": "15001",
+        "HighSize": "50000"
+    },
+
+    { "Name": "p6-magbead-20000-cv3-ss",
+        "Parent": "p6-magbead-cv3-parent",
+        "Chemistry": "VersionP6",
+        "Type": "MagBead",
+        "CellType": "CellVersion3",
+        "SizeSelection": "True",
         "Size": "10000",
         "LowSize": "15001",
         "HighSize": "50000",
-        "SampleConcentrationOnChipSmallScale": "0.04", // 40 pM on cell for 20k size selected
-        "SampleConcentrationOnChipLargeScale": "0.04",
-        "SpikeInPercentOfTemplateConcentration": "0.005",
-        "WarningMessage": "Use size selected libraries for insert sizes larger than 15kb."
+        "SampleConcentrationOnChipSmallScale": "0.02"   // 20 pM instead of 2 pM
     },
 
     /////////////////////////////////////////
@@ -638,6 +723,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "500",
         "LowSize": "301",
         "HighSize": "750",
@@ -687,6 +773,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
@@ -736,6 +823,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
@@ -785,6 +873,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
@@ -834,6 +923,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "Standard",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "50000",
@@ -889,6 +979,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "1000",
         "LowSize": "751",
         "HighSize": "1500",
@@ -938,6 +1029,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "2000",
         "LowSize": "1501",
         "HighSize": "3000",
@@ -987,6 +1079,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "5000",
         "LowSize": "3001",
         "HighSize": "7500",
@@ -1036,6 +1129,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "10000",
         "LowSize": "7501",
         "HighSize": "15000",
@@ -1085,6 +1179,7 @@ Constants.prototype.buckets = [
         "Chemistry": "VersionP5",
         "Type": "MagBead",
         "CellType": "CellVersion3",
+        "SizeSelection": "False",
         "Size": "10000",
         "LowSize": "15001",
         "HighSize": "50000",
@@ -1140,6 +1235,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
@@ -1189,6 +1285,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
@@ -1238,6 +1335,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -1287,6 +1385,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -1336,6 +1435,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -1385,6 +1485,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -1440,6 +1541,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -1489,6 +1591,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -1538,6 +1641,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -1587,6 +1691,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "15000",
@@ -1636,6 +1741,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionP4",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "15001",
     "HighSize": "50000",
@@ -1690,6 +1796,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "LowSize": Number.NaN,
     "HighSize": Number.NaN,
     "PolymeraseStockConcentration": "1600.0",
@@ -1731,6 +1838,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
@@ -1757,6 +1865,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
@@ -1781,6 +1890,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -1799,6 +1909,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -1817,6 +1928,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -1837,6 +1949,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -1861,6 +1974,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
@@ -1911,6 +2025,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
@@ -1961,6 +2076,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -2011,6 +2127,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -2061,6 +2178,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -2111,6 +2229,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -2166,6 +2285,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -2215,6 +2335,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -2264,6 +2385,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -2313,6 +2435,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -2367,6 +2490,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -2416,6 +2540,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -2465,6 +2590,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -2514,6 +2640,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion3",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -2576,6 +2703,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
@@ -2625,6 +2753,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
@@ -2674,6 +2803,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -2723,6 +2853,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -2772,6 +2903,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -2821,6 +2953,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -2876,6 +3009,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
@@ -2926,6 +3060,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
@@ -2976,6 +3111,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -3026,6 +3162,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -3076,6 +3213,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -3126,6 +3264,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -3182,6 +3321,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -3231,6 +3371,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -3280,6 +3421,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -3329,6 +3471,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -3384,6 +3527,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -3433,6 +3577,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3000",
@@ -3482,6 +3627,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "5000",
     "LowSize": "3001",
     "HighSize": "7500",
@@ -3531,6 +3677,7 @@ Constants.prototype.buckets = [
     "Chemistry": "VersionXL",
     "Type": "MagBead",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "10000",
     "LowSize": "7501",
     "HighSize": "50000",
@@ -3587,6 +3734,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version2",
     "Type": "Strobe",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "6000",
     "LowSize": "3500",
     "HighSize": "50000",
@@ -3637,6 +3785,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version1",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "250",
     "LowSize": "100",
     "HighSize": "300",
@@ -3685,6 +3834,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version1",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "500",
     "LowSize": "301",
     "HighSize": "750",
@@ -3733,6 +3883,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version1",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "1000",
     "LowSize": "751",
     "HighSize": "1500",
@@ -3781,6 +3932,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version1",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "2000",
     "LowSize": "1501",
     "HighSize": "3500",
@@ -3829,6 +3981,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version1",
     "Type": "Standard",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "6000",
     "LowSize": "3501",
     "HighSize": "10500",
@@ -3877,6 +4030,7 @@ Constants.prototype.buckets = [
     "Chemistry": "Version1",
     "Type": "Strobe",
     "CellType": "CellVersion2",
+    "SizeSelection": "False",
     "Size": "6000",
     "LowSize": "3500",
     "HighSize": "10500",
@@ -3922,7 +4076,7 @@ Constants.prototype.buckets = [
     }
 ];
 
-    Constants.prototype.FindBucket = function (insertsize, type, chemistry, celltype) {
+    Constants.prototype.FindBucket = function (insertsize, type, chemistry, celltype, sizeselection) {
 
         var result, parent, parentprop, prop, size, item, low, high, i, j;
 
@@ -3932,6 +4086,7 @@ Constants.prototype.buckets = [
             if (type !== item.Type) { continue; }
             if (chemistry !== item.Chemistry) { continue; }
             if (celltype !== item.CellType) { continue; }
+            if (sizeselection !== item.SizeSelection) { continue; }
 
             low = parseInt(item.LowSize, 10);
             high = parseInt(item.HighSize, 10);

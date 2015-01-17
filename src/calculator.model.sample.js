@@ -2501,6 +2501,11 @@ var SampleCalc = Backbone.Model.extend({
         this.ComplexDilutionBufferName = "Complex Dilution Buffer";     // Result: Prep0 (todo convert to global string)
     },
 
+    Prep0_Step8Text: function() {
+        this.Step8Text = ((this.Chemistry === "VersionP4" || this.Chemistry === "VersionP5")
+            ? this.strings.Step8preP6 : this.strings.Step8);
+    },
+
     Prep0_Step9Text: function () {
         this.Step9Text = ((this.MagBead === "OneCellPerWell") ?
             this.strings.Step9oneCellPerWell : this.strings.Step9);

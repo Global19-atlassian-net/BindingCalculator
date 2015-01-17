@@ -86,6 +86,7 @@ var PrintView = Backbone.View.extend({
             sections.LoadingTitrationTable = this.loadingTitrationTable();
             sections.UsingBoundComplexTable = this.usingBoundComplexTable();
             sections.PlateLayout = this.plateLayout();
+            sections.Step8 = this.Step8Text();
             sections.Step9 = this.Step9Text();
 
             template += _.template($('#print-view-details').html(), {
@@ -1157,6 +1158,11 @@ var PrintView = Backbone.View.extend({
         }
 
         return result;
+    },
+
+    Step8Text: function() {
+        var first = this.model.fetched[0];
+        return first.Step8Text;
     },
 
     Step9Text: function () {

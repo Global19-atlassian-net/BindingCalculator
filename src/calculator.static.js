@@ -56,8 +56,11 @@ Constants.prototype.strings = {
     BindingPolymeraseTitle: "Binding Polymerase to Templates",
     Step7: "Step 7: In a new 0.5mL tube, add the components in the order shown below",
     Step7_1: "After adding each component, mix the tube contents",
+    Step8preP6: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
+    "For MagBead preparations only, after the 30 C incubation, heat to 37 C for 30 min. " +
+    "Finish all preparations with a hold at 4 C",
     Step8: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30C for 30 minutes. " +
-        "Finish all preparations with a hold at 4C",
+    "Finish all preparations with a hold at 4C",
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
     Step9: "Step 9: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",

@@ -1095,7 +1095,7 @@ div#printview p
         <p class="instructions">{{= strings.Step7 }}</p>
         <p class="instructions">{{= strings.Step7_1 }}</p>
         {{= sections.BindingPolymeraseTable }}
-        <p class="instructions">{{= strings.Step8 }}</p>
+        <p class="instructions">{{= sections.Step8 }}</p>
  
         <!-- todo: only show if we are computing long term storage -->
         {{ if (sections.showLongTermStorage) { }}
@@ -1552,7 +1552,7 @@ div#printview p
         <div class="grid2 top2"><span class="output_NumberOfCellsFromBinding"></span></div>
         <div class="clear"></div>
 
-        <p class="top5">{{= strings.Step8 }}</p>
+        <p class="top5"><span class="output_Step8Text">{{= strings.Step8 }}</span></p>
       </section>
       
       <!-- ------------------------------------------------------------------------------------------------
@@ -7023,7 +7023,7 @@ false;if(a.stop&&b.isFunction(a.stop)){a._stop_=a.stop;delete a.stop}else a._sto
             });
         });
     };
-})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.3.1";
+})(jQuery);</script><script type='text/javascript'>var CalculatorVersion = "2.3.1.1";
 </script><script type='text/javascript'>//
 // Sample Preparation Calculator
 // Static settings/strings
@@ -7082,8 +7082,11 @@ Constants.prototype.strings = {
     BindingPolymeraseTitle: "Binding Polymerase to Templates",
     Step7: "Step 7: In a new 0.5mL tube, add the components in the order shown below",
     Step7_1: "After adding each component, mix the tube contents",
+    Step8preP6: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30 C for 4 hours. " +
+    "For MagBead preparations only, after the 30 C incubation, heat to 37 C for 30 min. " +
+    "Finish all preparations with a hold at 4 C",
     Step8: "Step 8: Transfer to a 0.2mL tube (if necessary) and seal. Incubate at 30C for 30 minutes. " +
-        "Finish all preparations with a hold at 4C",
+    "Finish all preparations with a hold at 4C",
     BindingComplexTitle: "Using Binding Complex for Sequencing",
     BindingComplexStart: "Select number of SMRT Cells:",
     Step9: "Step 9: Transfer the specified volumes into separate wells of a new 96-well PCR plate for processing on PacBio RS",
@@ -14461,6 +14464,11 @@ var SampleCalc = Backbone.Model.extend({
         this.ComplexDilutionBufferName = "Complex Dilution Buffer";     // Result: Prep0 (todo convert to global string)
     },
 
+    Prep0_Step8Text: function() {
+        this.Step8Text = ((this.Chemistry === "VersionP4" || this.Chemistry === "VersionP5")
+            ? this.strings.Step8preP6 : this.strings.Step8);
+    },
+
     Prep0_Step9Text: function () {
         this.Step9Text = ((this.MagBead === "OneCellPerWell") ?
             this.strings.Step9oneCellPerWell : this.strings.Step9);
@@ -16841,6 +16849,7 @@ var PrintView = Backbone.View.extend({
             sections.LoadingTitrationTable = this.loadingTitrationTable();
             sections.UsingBoundComplexTable = this.usingBoundComplexTable();
             sections.PlateLayout = this.plateLayout();
+            sections.Step8 = this.Step8Text();
             sections.Step9 = this.Step9Text();
 
             template += _.template($('#print-view-details').html(), {
@@ -17912,6 +17921,11 @@ var PrintView = Backbone.View.extend({
         }
 
         return result;
+    },
+
+    Step8Text: function() {
+        var first = this.model.fetched[0];
+        return first.Step8Text;
     },
 
     Step9Text: function () {

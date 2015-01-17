@@ -1,3 +1,6 @@
+Version 2.3.1.1
+- Correct incubation time for samples using P4 or P5 chemistry
+
 Version 2.3.1
 - Add support for the P6v2 binding protocol
 - Add a Size Selection input option

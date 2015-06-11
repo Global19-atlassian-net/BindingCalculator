@@ -68,4 +68,3 @@ python build.py src/index.html src/ Calculator.html
 
 
 
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/1e07cf2392b62fcc7a3c46eeb7323884 "githalytics.com")](http://githalytics.com/PacificBiosciences/BindingCalculator)

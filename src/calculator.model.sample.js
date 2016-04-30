@@ -1969,7 +1969,7 @@ var SampleCalc = Backbone.Model.extend({
                 that.StartingSampleConcentrationInNanoMolar /                   // Prep4
                 that.TotalVolumeOfAnnealingReaction;                            // Prep9
 
-            if (!this.nonStandard) {
+            if (!that.nonStandard) {
                 roundedresult = that.gaussianRounding(result, 1);
                 roundedsciar = that.gaussianRounding(that.SampleConcentrationInAnnealingReaction, 1); // Prep??
                 if ((!_.isNaN(result)) && (roundedresult !== roundedsciar)) {
